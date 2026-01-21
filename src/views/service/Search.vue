@@ -228,7 +228,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { mockData } from '@/data/mockData'
+import { services } from '@/data/mockData'
 
 const router = useRouter()
 
@@ -287,8 +287,8 @@ const serviceData = ref([])
 const recommendedServices = ref([])
 
 onMounted(() => {
-  serviceData.value = mockData.services || []
-  recommendedServices.value = mockData.recommendedServices || []
+  serviceData.value = services || []
+  recommendedServices.value = services.slice(0, 2) || []
 })
 
 const filteredResults = computed(() => {

@@ -159,7 +159,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { mockData } from '@/data/mockData'
+import { biddingInfo } from '@/data/mockData'
 
 const router = useRouter()
 
@@ -210,8 +210,8 @@ const tenderData = ref([])
 const hotTenders = ref([])
 
 onMounted(() => {
-  tenderData.value = mockData.tenders || []
-  hotTenders.value = mockData.hotTenders || []
+  tenderData.value = biddingInfo || []
+  hotTenders.value = biddingInfo.slice(0, 5) || []
 })
 
 const filteredResults = computed(() => {
