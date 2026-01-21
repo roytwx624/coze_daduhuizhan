@@ -662,3 +662,31 @@ export const chats = [
     unread: 0
   }
 ]
+
+export const mockData = {
+  exhibitions,
+  calendarData,
+  policies,
+  videos,
+  collections,
+  venues,
+  biddingInfo,
+  tenders: biddingInfo,
+  hotTenders: biddingInfo,
+  services,
+  recommendedServices: services.slice(0, 2),
+  userInfo,
+  userProfile: userInfo,
+  orders,
+  platformStats,
+  favorites,
+  follows,
+  messages,
+  unreadCount: messages.filter(m => m.unread).length,
+  points,
+  tickets,
+  appointments,
+  reviews,
+  invoices,
+  chats
+}
