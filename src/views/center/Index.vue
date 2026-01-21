@@ -3,21 +3,21 @@
     <div class="center-header">
       <div class="user-info">
         <div class="avatar">
-          <img v-if="userInfo.avatar" :src="userInfo.avatar" :alt="userInfo.name" />
-          <span v-else>{{ userInfo.name?.charAt(0) || '用' }}</span>
+          <img v-if="currentUserInfo.avatar" :src="currentUserInfo.avatar" :alt="currentUserInfo.name" />
+          <span v-else>{{ currentUserInfo.name?.charAt(0) || '用' }}</span>
         </div>
         <div class="info">
-          <h2 class="name">{{ userInfo.name || '未登录' }}</h2>
-          <p class="role">{{ userInfo.role || '普通用户' }}</p>
+          <h2 class="name">{{ currentUserInfo.name || '未登录' }}</h2>
+          <p class="role">{{ currentUserInfo.role || '普通用户' }}</p>
           <div class="stats">
             <span class="stat-item">
-              <strong>{{ userInfo.pointCount || 0 }}</strong> 积分
+              <strong>{{ currentUserInfo.pointCount || 0 }}</strong> 积分
             </span>
             <span class="stat-item">
-              <strong>{{ userInfo.followCount || 0 }}</strong> 关注
+              <strong>{{ currentUserInfo.followCount || 0 }}</strong> 关注
             </span>
             <span class="stat-item">
-              <strong>{{ userInfo.collectCount || 0 }}</strong> 收藏
+              <strong>{{ currentUserInfo.collectCount || 0 }}</strong> 收藏
             </span>
           </div>
         </div>
@@ -109,12 +109,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { mockData } from '@/data/mockData'
+import { userInfo } from '@/data/mockData'
 
 const router = useRouter()
 const route = useRoute()
 
-const userInfo = ref({})
+const currentUserInfo = ref({})
 const unreadCount = ref(0)
 
 const activeMenu = computed(() => {
@@ -138,8 +138,8 @@ const activeMenu = computed(() => {
 })
 
 onMounted(() => {
-  userInfo.value = mockData.userProfile || {}
-  unreadCount.value = mockData.unreadCount || 0
+  currentUserInfo.value = userInfo || {}
+  unreadCount.value = 3 // Mock unread count
 })
 
 const handleMenuSelect = (index) => {
