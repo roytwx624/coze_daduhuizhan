@@ -96,7 +96,7 @@ import {
   OfficeBuilding, 
   ShoppingCart,
   Star,
-  Shield,
+  Lock,
   Platform,
   DataAnalysis,
   Coordinate,
@@ -146,9 +146,9 @@ const stats = ref([
 const advantages = ref([
   {
     id: 1,
-    icon: Shield,
-    title: '权威背书',
-    desc: '北辰实业集团旗下，30余年会展行业经验，政府支持，值得信赖'
+    icon: Lock,
+    title: '安全保障',
+    desc: '全方位的数据加密与隐私保护机制'
   },
   {
     id: 2,
