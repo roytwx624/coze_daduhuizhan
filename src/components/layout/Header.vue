@@ -1,120 +1,111 @@
 <template>
   <header class="site-header">
-    <div class="container">
-      <div class="header-content">
-        <!-- Logo区 -->
-        <div class="logo-section">
-          <router-link to="/" class="logo">
-            <svg width="160" height="48" viewBox="0 0 160 48" fill="none">
-              <rect x="0" y="0" width="48" height="48" rx="8" fill="#204E9C"/>
-              <path d="M24 12 L32 28 H16 L24 12Z" fill="white"/>
-              <text x="56" y="32" font-size="18" font-weight="bold" fill="#204E9C">会展服务平台</text>
-            </svg>
-          </router-link>
-        </div>
+    <div class="main-header">
+      <div class="container">
+        <div class="header-content">
+          <!-- Logo区 -->
+          <div class="logo-section">
+            <router-link to="/" class="logo">
+              <svg width="200" height="40" viewBox="0 0 200 40" fill="none">
+                <text x="0" y="28" font-size="22" font-weight="bold" fill="#FFFFFF" font-family="PingFang SC, Microsoft YaHei">大都会展数智平台</text>
+              </svg>
+            </router-link>
+          </div>
 
-        <!-- 导航菜单 -->
-        <nav class="main-nav">
-          <ul class="nav-list">
-            <li class="nav-item">
-              <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">首页</router-link>
-            </li>
-            
-            <li class="nav-item" @mouseenter="showExhibitionMenu = true" @mouseleave="showExhibitionMenu = false">
-              <div class="nav-link has-submenu">
-                找展会
-                <svg class="arrow-icon" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
-              <transition name="dropdown">
-                <ul v-show="showExhibitionMenu" class="dropdown-menu">
-                  <li><router-link to="/exhibition/search">展会搜索</router-link></li>
-                  <li><router-link to="/video">视频中心</router-link></li>
-                  <li><router-link to="/collection">展会文集</router-link></li>
-                  <li><router-link to="/mall">线上商城</router-link></li>
-                </ul>
-              </transition>
-            </li>
-
-            <li class="nav-item" @mouseenter="showVenueMenu = true" @mouseleave="showVenueMenu = false">
-              <div class="nav-link has-submenu">
-                找场馆
-                <svg class="arrow-icon" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
-              <transition name="dropdown">
-                <ul v-show="showVenueMenu" class="dropdown-menu">
-                  <li><router-link to="/venue/search">场馆搜索</router-link></li>
-                </ul>
-              </transition>
-            </li>
-
-            <li class="nav-item" @mouseenter="showPolicyMenu = true" @mouseleave="showPolicyMenu = false">
-              <div class="nav-link has-submenu">
-                找政策
-                <svg class="arrow-icon" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
-              <transition name="dropdown">
-                <ul v-show="showPolicyMenu" class="dropdown-menu">
-                  <li><router-link to="/policy/search">政策搜索</router-link></li>
-                  <li><router-link to="/policy/apply">一站式报批</router-link></li>
-                </ul>
-              </transition>
-            </li>
-
-            <li class="nav-item" @mouseenter="showServiceMenu = true" @mouseleave="showServiceMenu = false">
-              <div class="nav-link has-submenu">
-                找服务
-                <svg class="arrow-icon" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </div>
-              <transition name="dropdown">
-                <ul v-show="showServiceMenu" class="dropdown-menu">
-                  <li><router-link to="/hotel/search">酒店搜索</router-link></li>
-                  <li><router-link to="/service/search">展会服务搜索</router-link></li>
-                  <li><router-link to="/bidding">招投标信息</router-link></li>
-                </ul>
-              </transition>
-            </li>
-
-            <li class="nav-item">
-              <router-link to="/about" class="nav-link" :class="{ active: $route.path === '/about' }">关于我们</router-link>
-            </li>
-          </ul>
-        </nav>
-
-        <!-- 用户区域 -->
-        <div class="user-section">
-          <template v-if="isLoggedIn">
-            <div class="user-info" @click="goToPersonal">
-              <el-badge :value="unreadCount" :hidden="unreadCount === 0" class="message-badge">
-                <el-icon :size="20" class="bell-icon">
-                  <Bell />
-                </el-icon>
-              </el-badge>
-              <el-dropdown @command="handleCommand">
-                <div class="user-avatar">
-                  <img :src="user.avatar" :alt="user.name" />
+          <!-- 导航菜单 -->
+          <nav class="main-nav">
+            <ul class="nav-list">
+              <li class="nav-item">
+                <router-link to="/" class="nav-link" active-class="active">首页</router-link>
+              </li>
+              
+              <li class="nav-item" @mouseenter="showExhibitionMenu = true" @mouseleave="showExhibitionMenu = false">
+                <div class="nav-link has-submenu" :class="{ active: $route.path.startsWith('/exhibition') }">
+                  找展会
                 </div>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item command="personal">个人中心</el-dropdown-item>
-                    <el-dropdown-item command="orders">我的订单</el-dropdown-item>
-                    <el-dropdown-item command="settings">设置</el-dropdown-item>
-                    <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </div>
-          </template>
-          <template v-else>
-            <button class="btn btn-login" @click="handleLogin">登录 / 注册</button>
-          </template>
+                <transition name="dropdown">
+                  <ul v-show="showExhibitionMenu" class="dropdown-menu">
+                    <li><router-link to="/exhibition/overview">展会概览</router-link></li>
+                    <li><router-link to="/exhibition/search">展会搜索</router-link></li>
+                    <li><router-link to="/video">视频中心</router-link></li>
+                    <li><router-link to="/collection">展会文集</router-link></li>
+                    <li><router-link to="/mall">线上商城</router-link></li>
+                  </ul>
+                </transition>
+              </li>
+
+              <li class="nav-item" @mouseenter="showVenueMenu = true" @mouseleave="showVenueMenu = false">
+                <div class="nav-link has-submenu" :class="{ active: $route.path.startsWith('/venue') }">
+                  找场馆
+                </div>
+                <transition name="dropdown">
+                  <ul v-show="showVenueMenu" class="dropdown-menu">
+                    <li><router-link to="/venue/overview">场馆概览</router-link></li>
+                    <li><router-link to="/venue/search">场馆搜索</router-link></li>
+                  </ul>
+                </transition>
+              </li>
+
+              <li class="nav-item" @mouseenter="showPolicyMenu = true" @mouseleave="showPolicyMenu = false">
+                <div class="nav-link has-submenu" :class="{ active: $route.path.startsWith('/policy') }">
+                  找政策
+                </div>
+                <transition name="dropdown">
+                  <ul v-show="showPolicyMenu" class="dropdown-menu">
+                    <li><router-link to="/policy/search">政策搜索</router-link></li>
+                    <li><router-link to="/policy/apply">一站式报批</router-link></li>
+                  </ul>
+                </transition>
+              </li>
+
+              <li class="nav-item" @mouseenter="showServiceMenu = true" @mouseleave="showServiceMenu = false">
+                <div class="nav-link has-submenu" :class="{ active: $route.path.startsWith('/service') }">
+                  找服务
+                </div>
+                <transition name="dropdown">
+                  <ul v-show="showServiceMenu" class="dropdown-menu">
+                    <li><router-link to="/hotel/search">酒店搜索</router-link></li>
+                    <li><router-link to="/service/search">展会服务搜索</router-link></li>
+                    <li><router-link to="/bidding">招投标信息</router-link></li>
+                  </ul>
+                </transition>
+              </li>
+
+              <li class="nav-item">
+                <router-link to="/about" class="nav-link" active-class="active">关于我们</router-link>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- 用户区域 -->
+          <div class="user-section">
+            <template v-if="isLoggedIn">
+              <div class="user-info">
+                <el-badge :value="unreadCount" :hidden="unreadCount === 0" class="message-badge">
+                  <el-icon :size="20" class="bell-icon">
+                    <Bell />
+                  </el-icon>
+                </el-badge>
+                <el-dropdown @command="handleCommand">
+                  <div class="user-avatar-container">
+                    <img :src="user.avatar" :alt="user.name" class="user-avatar"/>
+                    <span class="user-name">{{ user.name }}</span>
+                  </div>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item command="personal">个人中心</el-dropdown-item>
+                      <el-dropdown-item command="orders">我的订单</el-dropdown-item>
+                      <el-dropdown-item command="settings">设置</el-dropdown-item>
+                      <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
+            </template>
+            <template v-else>
+              <router-link to="/login" class="btn btn-login">登录 / 注册</router-link>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -177,11 +168,15 @@ const handleCommand = (command) => {
   left: 0;
   right: 0;
   height: 80px;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   z-index: 1000;
-  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.main-header {
+  height: 80px;
+  background: #204E9C; /* Blue background */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
 
 .header-content {
@@ -213,66 +208,78 @@ const handleCommand = (command) => {
 .nav-list {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 32px;
 }
 
 .nav-item {
   position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 10px 16px;
+  padding: 8px 12px;
   font-size: 16px;
   font-weight: 500;
-  color: #374151;
-  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
   transition: all 0.3s ease;
   white-space: nowrap;
   cursor: pointer;
+  position: relative;
+  border-radius: 6px;
 
-  &.has-submenu {
-    .arrow-icon {
-      transition: transform 0.3s ease;
-    }
-  }
-
-  &:hover,
-  &.active {
-    color: #204E9C;
-    background: rgba(32, 78, 156, 0.08);
-
-    .arrow-icon {
-      transform: rotate(180deg);
-    }
+  &.active,
+  &:hover {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 180px;
+  top: 80px; /* Adjust to match header height */
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 160px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 8px;
-  margin-top: 8px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  border: 1px solid #F3F4F6;
+
+  li {
+    list-style: none;
+  }
 
   a {
     display: block;
-    padding: 10px 16px;
+    padding: 10px 20px;
     font-size: 14px;
     color: #374151;
-    border-radius: 6px;
     transition: all 0.2s ease;
+    text-align: center;
 
     &:hover {
-      background: rgba(32, 78, 156, 0.08);
+      background: #F9FAFB;
       color: #204E9C;
     }
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-left: 1px solid #F3F4F6;
+    border-top: 1px solid #F3F4F6;
   }
 }
 
@@ -285,66 +292,61 @@ const handleCommand = (command) => {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+}
 
-  &:hover {
-    transform: scale(1.02);
+.user-avatar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .user-name {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
   }
 }
 
 .message-badge {
-  position: relative;
-
   :deep(.el-badge__content) {
     background: #DC2626;
+    border: none;
   }
 }
 
 .bell-icon {
-  color: #6B7280;
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   transition: color 0.3s ease;
 
   &:hover {
-    color: #204E9C;
-  }
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid #F3F4F6;
-  transition: border-color 0.3s ease;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  &:hover {
-    border-color: #204E9C;
+    color: #FFFFFF;
   }
 }
 
 .btn-login {
-  padding: 10px 24px;
-  background: linear-gradient(135deg, #204E9C, #2563EB);
-  color: white;
+  padding: 8px 24px;
+  background: white;
+  color: #111827;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    background: #F3F4F6;
+    transform: translateY(-1px);
   }
 }
 
@@ -356,24 +358,6 @@ const handleCommand = (command) => {
 .dropdown-enter-from,
 .dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-8px);
-}
-
-@media (max-width: 1440px) {
-  .nav-link {
-    padding: 8px 12px;
-    font-size: 15px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .nav-list {
-    gap: 4px;
-  }
-
-  .nav-link {
-    padding: 8px 10px;
-    font-size: 14px;
-  }
+  transform: translateX(-50%) translateY(10px);
 }
 </style>

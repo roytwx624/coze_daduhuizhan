@@ -36,64 +36,64 @@
           @select="handleMenuSelect"
         >
           <el-menu-item index="profile">
-            <i class="icon">👤</i>
+            <el-icon class="icon"><User /></el-icon>
             <span>个人资料</span>
           </el-menu-item>
           <el-menu-item index="security">
-            <i class="icon">🔒</i>
+            <el-icon class="icon"><Lock /></el-icon>
             <span>账号安全</span>
           </el-menu-item>
           <el-menu-item index="collection">
-            <i class="icon">❤️</i>
+            <el-icon class="icon"><Star /></el-icon>
             <span>我的收藏</span>
           </el-menu-item>
           <el-menu-item index="follow">
-            <i class="icon">⭐</i>
+            <el-icon class="icon"><View /></el-icon>
             <span>我的关注</span>
           </el-menu-item>
           <el-menu-item index="benefits">
-            <i class="icon">🎁</i>
+            <el-icon class="icon"><Present /></el-icon>
             <span>我的权益</span>
           </el-menu-item>
           <el-menu-item index="tickets">
-            <i class="icon">🎟️</i>
+            <el-icon class="icon"><Ticket /></el-icon>
             <span>我的门票</span>
           </el-menu-item>
           <el-menu-item index="reservation">
-            <i class="icon">📅</i>
+            <el-icon class="icon"><Calendar /></el-icon>
             <span>预约记录</span>
           </el-menu-item>
           <el-menu-item index="orders">
-            <i class="icon">📦</i>
+            <el-icon class="icon"><Box /></el-icon>
             <span>我的订单</span>
           </el-menu-item>
           <el-menu-item index="reviews">
-            <i class="icon">💬</i>
+            <el-icon class="icon"><ChatDotRound /></el-icon>
             <span>我的评价</span>
           </el-menu-item>
           <el-menu-item index="invoice">
-            <i class="icon">📄</i>
+            <el-icon class="icon"><Document /></el-icon>
             <span>我的发票</span>
           </el-menu-item>
           <el-menu-item index="messages">
-            <i class="icon">🔔</i>
+            <el-icon class="icon"><Bell /></el-icon>
             <span>消息通知</span>
             <el-badge v-if="unreadCount > 0" :value="unreadCount" class="badge" />
           </el-menu-item>
           <el-menu-item index="chat">
-            <i class="icon">💭</i>
+            <el-icon class="icon"><ChatLineRound /></el-icon>
             <span>在线洽谈</span>
           </el-menu-item>
           <el-menu-item index="admin">
-            <i class="icon">🔧</i>
+            <el-icon class="icon"><Setting /></el-icon>
             <span>管理后台入口</span>
           </el-menu-item>
           <el-menu-item index="member">
-            <i class="icon">👑</i>
+            <el-icon class="icon"><Trophy /></el-icon>
             <span>会员管理</span>
           </el-menu-item>
           <el-menu-item index="points">
-            <i class="icon">💰</i>
+            <el-icon class="icon"><Money /></el-icon>
             <span>我的积分</span>
           </el-menu-item>
         </el-menu>

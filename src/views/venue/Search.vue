@@ -1,17 +1,26 @@
 <template>
   <div class="venue-search-page">
-    <div class="container">
-      <div class="page-layout">
-        <!-- 左侧搜索面板 -->
-        <div class="search-panel">
-          <div class="panel-header">
-            <h3>场馆搜索</h3>
-            <el-button type="primary" link @click="resetSearch">重置</el-button>
-          </div>
+    <!-- 全屏地图容器 -->
+    <div class="map-container">
+      <div id="amap-container" class="amap-container"></div>
+    </div>
 
-          <!-- 关键词搜索 -->
-          <div class="panel-section">
-            <label>关键词</label>
+    <!-- 左侧可收起面板 -->
+    <div class="left-panel" :class="{ collapsed: isPanelCollapsed }">
+      <div class="panel-toggle" @click="togglePanel">
+        <el-icon><component :is="isPanelCollapsed ? 'ArrowRight' : 'ArrowLeft'" /></el-icon>
+      </div>
+
+      <div class="panel-content">
+        <!-- 搜索头部 -->
+        <div class="panel-header">
+          <h3>场馆搜索</h3>
+          <el-button type="primary" link @click="resetSearch">重置</el-button>
+        </div>
+
+        <!-- 搜索表单 -->
+        <div class="search-form">
+          <div class="form-item">
             <el-input
               v-model="searchForm.keyword"
               placeholder="输入场馆名称或地址"
@@ -24,104 +33,23 @@
             </el-input>
           </div>
 
-          <!-- 筛选条件 -->
-          <div class="panel-section">
-            <label>场馆面积</label>
-            <el-select v-model="searchForm.area" placeholder="请选择" clearable @change="handleSearch" style="width: 100%">
-              <el-option label="全部" value="" />
-              <el-option label="5万㎡以上" value="large" />
-              <el-option label="2-5万㎡" value="medium" />
-              <el-option label="2万㎡以下" value="small" />
-            </el-select>
-          </div>
-
-          <div class="panel-section">
-            <label>最大展厅面积</label>
-            <el-select v-model="searchForm.maxHallArea" placeholder="请选择" clearable @change="handleSearch" style="width: 100%">
-              <el-option label="全部" value="" />
-              <el-option label="5万㎡以上" value="5" />
-              <el-option label="3-5万㎡" value="3" />
-              <el-option label="1-3万㎡" value="1" />
-              <el-option label="1万㎡以下" value="0" />
-            </el-select>
-          </div>
-
-          <div class="panel-section">
-            <label>可容纳人数</label>
-            <el-select v-model="searchForm.capacity" placeholder="请选择" clearable @change="handleSearch" style="width: 100%">
-              <el-option label="全部" value="" />
-              <el-option label="5万人以上" value="50000" />
-              <el-option label="2-5万人" value="20000" />
-              <el-option label="1-2万人" value="10000" />
-              <el-option label="1万人以下" value="0" />
-            </el-select>
-          </div>
-
-          <div class="panel-section">
-            <label>配套设施</label>
-            <el-checkbox-group v-model="searchForm.facilities" @change="handleSearch">
-              <el-checkbox label="会议室" />
-              <el-checkbox label="餐厅" />
-              <el-checkbox label="停车场" />
-              <el-checkbox label="贵宾厅" />
-              <el-checkbox label="展览馆" />
-            </el-checkbox-group>
-          </div>
-
-          <div class="panel-section">
-            <label>用户评分</label>
-            <el-rate
-              v-model="searchForm.rating"
-              allow-half
-              show-text
-              :texts="['全部', '4分以上', '4.5分以上', '5分']"
-              @change="handleSearch"
-            />
+          <div class="filter-actions">
+            <el-button type="primary" @click="handleSearch">搜索</el-button>
+            <el-button @click="showFilterDialog = true">筛选</el-button>
           </div>
         </div>
 
-        <!-- 右侧地图与结果 -->
-        <div class="map-result-section">
-          <!-- 结果统计 -->
-          <div class="results-header">
-            <div class="results-count">
-              共找到 <span class="count-number">{{ filteredVenues.length }}</span> 个场馆
-            </div>
-            <div class="results-sort">
-              <span>排序：</span>
-              <el-radio-group v-model="sortBy" size="small" @change="handleSort">
-                <el-radio-button label="distance">距离</el-radio-button>
-                <el-radio-button label="area">面积</el-radio-button>
-                <el-radio-button label="popularity">人气</el-radio-button>
-              </el-radio-group>
-            </div>
+        <!-- 搜索结果列表 -->
+        <div class="result-list">
+          <div class="list-header">
+            <span class="count">共 {{ filteredVenues.length }} 个场馆</span>
+            <el-radio-group v-model="sortBy" size="small" @change="handleSort">
+              <el-radio-button label="distance">距离</el-radio-button>
+              <el-radio-button label="area">面积</el-radio-button>
+            </el-radio-group>
           </div>
 
-          <div class="map-container">
-            <!-- 模拟地图 -->
-            <div class="mock-map">
-              <div class="map-placeholder">
-                <el-icon :size="80"><MapLocation /></el-icon>
-                <p>高德地图集成区域</p>
-                <p class="hint">实际项目中将集成高德地图API</p>
-              </div>
-              
-              <!-- 场馆标记点 -->
-              <div
-                v-for="venue in filteredVenues"
-                :key="venue.id"
-                class="map-marker"
-                :style="getMarkerPosition(venue)"
-                @click="selectVenue(venue)"
-                :class="{ active: selectedVenueId === venue.id }"
-              >
-                <el-icon><LocationFilled /></el-icon>
-              </div>
-            </div>
-          </div>
-
-          <!-- 场馆列表 -->
-          <div class="venue-list">
+          <div class="venue-items">
             <div
               v-for="venue in filteredVenues"
               :key="venue.id"
@@ -133,7 +61,7 @@
                 <img :src="venue.image" :alt="venue.name" />
               </div>
               <div class="venue-info">
-                <h3 class="venue-name">{{ venue.name }}</h3>
+                <h4 class="venue-name">{{ venue.name }}</h4>
                 <div class="venue-meta">
                   <div class="meta-item">
                     <el-icon><Location /></el-icon>
@@ -141,19 +69,11 @@
                   </div>
                   <div class="meta-item">
                     <el-icon><Grid /></el-icon>
-                    面积：{{ formatArea(venue.area) }}㎡
-                  </div>
-                  <div class="meta-item">
-                    <el-icon><User /></el-icon>
-                    可容纳：{{ venue.capacity }}人
+                    {{ formatArea(venue.area) }}㎡
                   </div>
                 </div>
-                <div class="venue-footer">
-                  <div class="venue-rating">
-                    <el-rate v-model="venue.rating" disabled show-score text-color="#F59E0B" />
-                    <span class="popularity">人气 {{ venue.popularity }}</span>
-                  </div>
-                  <el-button type="primary" @click.stop="viewDetail(venue)">查看详情</el-button>
+                <div class="venue-desc">
+                  {{ venue.description || '暂无描述' }}
                 </div>
               </div>
             </div>
@@ -162,18 +82,74 @@
       </div>
     </div>
   </div>
+
+  <!-- 筛选弹窗 -->
+  <el-dialog
+    v-model="showFilterDialog"
+    title="筛选条件"
+    width="500px"
+    :close-on-click-modal="false"
+  >
+    <el-form :model="searchForm" label-position="top">
+      <el-form-item label="地区">
+        <el-select v-model="searchForm.region" placeholder="请选择地区" clearable style="width: 100%">
+          <el-option label="朝阳区" value="chaoyang" />
+          <el-option label="海淀区" value="haidian" />
+          <el-option label="顺义区" value="shunyi" />
+          <el-option label="大兴区" value="daxing" />
+        </el-select>
+      </el-form-item>
+      
+      <el-form-item label="场馆面积范围">
+        <el-select v-model="searchForm.area" placeholder="请选择场馆面积" clearable style="width: 100%">
+          <el-option label="5万㎡以上" value="large" />
+          <el-option label="2-5万㎡" value="medium" />
+          <el-option label="2万㎡以下" value="small" />
+        </el-select>
+      </el-form-item>
+      
+      <el-form-item label="最大会议厅面积要求">
+        <el-select v-model="searchForm.maxHallArea" placeholder="请选择最大会议厅面积" clearable style="width: 100%">
+          <el-option label="2000㎡以上" value="large" />
+          <el-option label="1000-2000㎡" value="medium" />
+          <el-option label="1000㎡以下" value="small" />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="showFilterDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmFilter">
+          确认
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import AMapLoader from '@amap/amap-jsapi-loader'
 import { useRouter } from 'vue-router'
-import { Search, MapLocation, LocationFilled, Location, Grid, User } from '@element-plus/icons-vue'
+import { 
+  Search, 
+  MapLocation, 
+  LocationFilled, 
+  Location, 
+  Grid, 
+  ArrowLeft, 
+  ArrowRight 
+} from '@element-plus/icons-vue'
 import { venues } from '@/data/mockData'
 
 const router = useRouter()
+const isPanelCollapsed = ref(false)
+const showFilterDialog = ref(false)
+let map = null
 
 const searchForm = reactive({
   keyword: '',
+  region: '',
   area: '',
   maxHallArea: '',
   capacity: '',
@@ -183,6 +159,62 @@ const searchForm = reactive({
 
 const sortBy = ref('distance')
 const selectedVenueId = ref(null)
+
+const initMap = () => {
+  AMapLoader.load({
+    key: '1701f978cfa88c3681a7e767dcdc4dc3', // 申请好的Web端开发者Key，首次调用 load 时必填
+    version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+    plugins: ['AMap.Scale'], // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+  })
+    .then((AMap) => {
+      map = new AMap.Map('amap-container', {
+        // 设置地图容器id
+        viewMode: '3D', // 是否为3D地图模式
+        zoom: 11, // 初始化地图级别
+        center: [116.397428, 39.90923], // 初始化地图中心点位置
+      })
+      
+      // 添加标记点
+      filteredVenues.value.forEach(venue => {
+        // 这里假设venue有经纬度数据，如果没有可以使用默认坐标或随机生成
+        // 实际开发中应该在数据中包含经纬度
+        const position = new AMap.LngLat(116.397428 + (Math.random() - 0.5) * 0.1, 39.90923 + (Math.random() - 0.5) * 0.1)
+        
+        const marker = new AMap.Marker({
+          position: position,
+          title: venue.name
+        })
+        
+        marker.on('click', () => {
+          selectVenue(venue)
+        })
+        
+        map.add(marker)
+      })
+    })
+    .catch((e) => {
+      console.log(e)
+    })
+}
+
+onMounted(() => {
+  initMap()
+})
+
+onUnmounted(() => {
+  if (map) {
+    map.destroy()
+  }
+})
+
+const togglePanel = () => {
+  isPanelCollapsed.value = !isPanelCollapsed.value
+}
+
+const confirmFilter = () => {
+  showFilterDialog.value = false
+  handleSearch()
+}
 
 // 筛选后的场馆列表
 const filteredVenues = computed(() => {
@@ -195,6 +227,23 @@ const filteredVenues = computed(() => {
     )
   }
   
+  // 地区筛选
+  if (searchForm.region) {
+    // 模拟地区筛选逻辑
+    // 实际项目中应该根据 venue.region 或 venue.address 进行判断
+  }
+
+  // 面积筛选
+  if (searchForm.area) {
+    if (searchForm.area === 'large') {
+      result = result.filter(v => v.area >= 50000)
+    } else if (searchForm.area === 'medium') {
+      result = result.filter(v => v.area >= 20000 && v.area < 50000)
+    } else if (searchForm.area === 'small') {
+      result = result.filter(v => v.area < 20000)
+    }
+  }
+
   return result
 })
 
@@ -223,7 +272,10 @@ const handleSort = () => {
 // 选择场馆
 const selectVenue = (venue) => {
   selectedVenueId.value = venue.id
-  // 实际项目中会触发地图定位
+  // 如果面板收起，点击标记点时展开面板查看详情
+  if (isPanelCollapsed.value) {
+    isPanelCollapsed.value = false
+  }
 }
 
 // 查看详情
@@ -233,16 +285,19 @@ const viewDetail = (venue) => {
 
 // 格式化面积
 const formatArea = (area) => {
+  if (area >= 10000) {
+    return (area / 10000).toFixed(1) + '万'
+  }
   return area.toLocaleString()
 }
 
 // 获取标记点位置（模拟）
-const getMarkerPosition = (venue, index) => {
+const getMarkerPosition = (venue) => {
   const positions = [
-    { top: '30%', left: '20%' },
-    { top: '50%', left: '40%' },
-    { top: '35%', left: '60%' },
-    { top: '60%', left: '75%' }
+    { top: '30%', left: '40%' },
+    { top: '50%', left: '60%' },
+    { top: '35%', left: '55%' },
+    { top: '60%', left: '45%' }
   ]
   return positions[venue.id % positions.length] || positions[0]
 }
@@ -250,214 +305,168 @@ const getMarkerPosition = (venue, index) => {
 
 <style lang="scss" scoped>
 .venue-search-page {
-  padding: 100px 0 60px;
-  min-height: calc(100vh - 80px);
+  padding-top: 80px;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
   background: #F9FAFB;
 }
 
-.container {
-  max-width: 1920px;
-  margin: 0 auto;
-  padding: 0 24px;
+.map-container {
+  position: absolute;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
 }
 
-.page-layout {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 24px;
+.amap-container {
+  width: 100%;
+  height: 100%;
 }
 
-// 左侧搜索面板
-.search-panel {
+.left-panel {
+  position: absolute;
+  top: 80px;
+  left: 20px; /* Added spacing from edge */
+  bottom: 20px; /* Added spacing from edge */
+  width: 400px;
   background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  height: fit-content;
-  position: sticky;
-  top: 100px;
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #F3F4F6;
-
-  h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1F2937;
-    margin: 0;
-  }
-}
-
-.panel-section {
-  margin-bottom: 24px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  label {
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 8px;
-  }
-
-  :deep(.el-checkbox-group) {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  :deep(.el-rate) {
-    .el-rate__text {
-      font-size: 12px;
-    }
-  }
-}
-
-// 右侧地图与结果
-.map-result-section {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
+  border-radius: 8px; /* Added border radius */
 
-.results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  padding: 20px 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.results-count {
-  font-size: 16px;
-  color: #6B7280;
-
-  .count-number {
-    font-size: 24px;
-    font-weight: 700;
-    color: #204E9C;
-    margin: 0 4px;
-  }
-}
-
-.results-sort {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  color: #6B7280;
-}
-
-.map-container {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.mock-map {
-  width: 100%;
-  height: 500px;
-  position: relative;
-  background: linear-gradient(135deg, #E8F4F8 0%, #D1E8E2 100%);
-}
-
-.map-placeholder {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: #6B7280;
-
-  .el-icon {
-    color: #204E9C;
-    margin-bottom: 16px;
-  }
-
-  p {
-    margin: 8px 0;
-    font-size: 16px;
-
-    &.hint {
-      font-size: 14px;
-      color: #9CA3AF;
+  &.collapsed {
+    transform: translateX(-440px); /* Adjusted for margin */
+    
+    .panel-toggle {
+      right: -32px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
     }
   }
 }
 
-.map-marker {
+.panel-toggle {
   position: absolute;
-  width: 40px;
-  height: 40px;
-  background: #204E9C;
-  border-radius: 50%;
+  top: 50%;
+  right: -24px;
+  width: 24px;
+  height: 48px;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(32, 78, 156, 0.4);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  border-radius: 0 8px 8px 0;
+  transform: translateY(-50%);
+  z-index: 101;
+  color: #6B7280;
 
   &:hover {
-    transform: scale(1.2);
-    z-index: 10;
-  }
-
-  &.active {
-    background: #DC2626;
-    transform: scale(1.3);
-    z-index: 10;
+    color: #204E9C;
+    background: #F3F4F6;
   }
 }
 
-// 场馆列表
-.venue-list {
+.panel-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #F3F4F6;
+  
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #1F2937;
+  }
+}
+
+.search-form {
+  padding: 20px;
+  border-bottom: 1px solid #F3F4F6;
+  
+  .form-item {
+    margin-bottom: 16px;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+
+  .el-button {
+    flex: 1;
+  }
+}
+
+.result-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #F9FAFB;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  
+  .count {
+    font-size: 13px;
+    color: #6B7280;
+  }
+}
+
+.venue-items {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .venue-card {
-  display: flex;
-  gap: 20px;
   background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   }
-
+  
   &.active {
     border-color: #204E9C;
+    background: #eff6ff;
   }
 }
 
 .venue-image {
-  width: 200px;
-  height: 150px;
-  border-radius: 8px;
+  width: 100px;
+  height: 80px;
+  border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
-
+  
   img {
     width: 100%;
     height: 100%;
@@ -466,86 +475,45 @@ const getMarkerPosition = (venue, index) => {
 }
 
 .venue-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.venue-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1F2937;
-  margin: 0 0 16px 0;
-}
-
-.venue-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #6B7280;
-
-  .el-icon {
-    color: #204E9C;
-    font-size: 16px;
-  }
-}
-
-.venue-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid #F3F4F6;
-}
-
-.venue-rating {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  :deep(.el-rate) {
-    .el-rate__item {
-      margin-right: 4px;
+    flex: 1;
+    min-width: 0;
+    
+    .venue-name {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1F2937;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .venue-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+      
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: #6B7280;
+        
+        .el-icon {
+          font-size: 14px;
+          color: #9CA3AF;
+        }
+      }
+    }
+    
+    .venue-desc {
+      font-size: 12px;
+      color: #9CA3AF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
-
-  .popularity {
-    font-size: 13px;
-    color: #6B7280;
-  }
-}
-
-@media (max-width: 1024px) {
-  .page-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .search-panel {
-    position: static;
-  }
-}
-
-@media (max-width: 768px) {
-  .venue-search-page {
-    padding: 100px 16px 40px;
-  }
-
-  .venue-card {
-    flex-direction: column;
-  }
-
-  .venue-image {
-    width: 100%;
-    height: 200px;
-  }
-}
 </style>

@@ -17,20 +17,19 @@
         <span class="tooltip">电话客服</span>
       </div>
 
-      <div class="floating-item" @click="showQRCode = !showQRCode">
+      <div class="floating-item" @mouseenter="showQRCode = true" @mouseleave="showQRCode = false">
         <el-icon :size="20"><Grid /></el-icon>
         <span class="tooltip">小程序</span>
-      </div>
-
-      <!-- 二维码弹出 -->
-      <transition name="fade">
-        <div v-show="showQRCode" class="qr-modal">
-          <div class="qr-content">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://exhibition.com/miniapp" alt="小程序二维码" />
-            <p>扫码进入小程序</p>
+        <!-- 二维码弹出 -->
+        <transition name="fade">
+          <div v-show="showQRCode" class="qr-modal">
+            <div class="qr-content">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://exhibition.com/miniapp" alt="小程序二维码" />
+              <p>扫码进入小程序</p>
+            </div>
           </div>
-        </div>
-      </transition>
+        </transition>
+      </div>
     </div>
 
     <!-- 电话客服弹窗 -->
@@ -39,6 +38,7 @@
       title="联系客服"
       width="400px"
       center
+      append-to-body
     >
       <div class="phone-content">
         <div class="phone-number">
@@ -48,9 +48,6 @@
         </div>
         <p class="work-time">服务时间：9:00 - 18:00（工作日）</p>
       </div>
-      <template #footer>
-        <el-button type="primary" @click="phoneModalVisible = false">知道了</el-button>
-      </template>
     </el-dialog>
   </teleport>
 </template>
@@ -206,6 +203,8 @@ onUnmounted(() => {
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   text-align: center;
+  width: 180px;
+  pointer-events: none; /* Avoid blocking hover */
 }
 
 .qr-content {

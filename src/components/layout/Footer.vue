@@ -60,7 +60,7 @@
       <!-- 底部版权信息 -->
       <div class="footer-bottom">
         <div class="copyright">
-          <p>© 2026 会展服务平台 版权所有</p>
+          <p>© 2026 大都会展数智平台 版权所有</p>
           <p>京ICP备12345678号-1 | 增值电信业务经营许可证：京B2-20261234</p>
         </div>
         <div class="footer-links">
@@ -81,7 +81,7 @@ import { Phone, Message, Location } from '@element-plus/icons-vue'
 
 <style lang="scss" scoped>
 .site-footer {
-  background: linear-gradient(180deg, #1F2937 0%, #111827 100%);
+  background: #204E9C;
   color: #F3F4F6;
   padding: 64px 0 32px;
   margin-top: auto;
