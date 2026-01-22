@@ -191,12 +191,20 @@ const handleCommand = (command) => {
 }
 
 .logo {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   transition: transform 0.3s ease;
 
   &:hover {
     transform: scale(1.02);
   }
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
 }
 
 .main-nav {

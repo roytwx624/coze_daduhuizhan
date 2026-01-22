@@ -172,6 +172,7 @@ const initMap = () => {
         viewMode: '3D', // 是否为3D地图模式
         zoom: 11, // 初始化地图级别
         center: [116.397428, 39.90923], // 初始化地图中心点位置
+        mapStyle: "amap://styles/whitesmoke", //设置地图的显示样式 
       })
       
       // 添加标记点

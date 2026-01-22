@@ -1,4 +1,8 @@
 // 模拟数据 - 会展服务平台
+import exhibition1 from '@/assets/images/exhibition/20260122-111812.430-1.jpg'
+import exhibition2 from '@/assets/images/exhibition/20260122-111812.430-2.jpg'
+import exhibition3 from '@/assets/images/exhibition/20260122-111812.430-3.jpg'
+import exhibition4 from '@/assets/images/exhibition/插画展.png'
 
 // 展会数据
 export const exhibitions = [
@@ -9,7 +13,7 @@ export const exhibitions = [
     venue: '中国国际展览中心（顺义馆）',
     industry: '电子科技',
     tags: ['热门推荐', '即将开展'],
-    poster: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+    poster: exhibition1,
     description: '中国制冷、空调、热泵、通风及冷冻冷藏设备展览会',
     exhibitors: 800,
     area: 100000,
@@ -23,7 +27,7 @@ export const exhibitions = [
     venue: '国家会议中心',
     industry: '商贸零售',
     tags: ['热门推荐', '即将开展'],
-    poster: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?w=800',
+    poster: exhibition2,
     description: '中国规模最大的特许加盟展览会',
     exhibitors: 1200,
     area: 80000,
@@ -37,7 +41,7 @@ export const exhibitions = [
     venue: '北京展览馆',
     industry: '智能制造',
     tags: ['品牌展会', '即将开展'],
-    poster: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800',
+    poster: exhibition3,
     description: '国家级科技产业博览会，展示最新科技成果',
     exhibitors: 1500,
     area: 120000,
@@ -51,7 +55,7 @@ export const exhibitions = [
     venue: '国家会议中心',
     industry: '文化艺术',
     tags: ['特色展会', '即将开展'],
-    poster: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800',
+    poster: exhibition4,
     description: '亚洲规模最大的插画艺术专业展会',
     exhibitors: 300,
     area: 30000,

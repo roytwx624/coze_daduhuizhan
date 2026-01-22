@@ -1169,16 +1169,16 @@ const getStatusClass = (status) => {
     align-items: flex-start; /* Left align content */
     justify-content: space-between;
     text-align: left;
-    gap: 16px;
+    gap: 12px;
     background: linear-gradient(135deg, #1E3A8A, #3B82F6); /* Matched with map entry */
-    padding: 32px;
+    padding: 24px;
     border-radius: 20px;
     box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     height: 100%;
-    min-height: 360px;
+    min-height: 180px;
     position: relative;
     overflow: hidden;
     color: white;
