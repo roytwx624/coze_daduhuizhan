@@ -56,10 +56,28 @@ const routes = [
     meta: { title: '政策搜索' }
   },
   {
-    path: '/tender',
+    path: '/policy/apply',
+    name: 'PolicyApply',
+    component: () => import('@/views/policy/Apply.vue'),
+    meta: { title: '一站式报批' }
+  },
+  {
+    path: '/bidding',
     name: 'TenderInfo',
     component: () => import('@/views/tender/Index.vue'),
     meta: { title: '招投标信息' }
+  },
+  {
+    path: '/hotel/search',
+    name: 'HotelSearch',
+    component: () => import('@/views/hotel/Search.vue'),
+    meta: { title: '酒店搜索' }
+  },
+  {
+    path: '/mall',
+    name: 'MallIndex',
+    component: () => import('@/views/mall/Index.vue'),
+    meta: { title: '线上商城' }
   },
   {
     path: '/service/search',

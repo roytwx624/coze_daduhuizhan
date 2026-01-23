@@ -166,7 +166,7 @@
               <p class="policy-summary">{{ policy.summary }}</p>
               <div class="policy-meta">
                 <span class="meta-item">
-                  <el-icon><OfficeBuilding /></el-icon>
+                  <el-icon><HomeFilled /></el-icon>
                   {{ policy.publisher }}
                 </span>
               </div>
@@ -269,7 +269,8 @@ import {
   Monitor,
   VideoCamera,
   ShoppingCart,
-  DocumentChecked
+  DocumentChecked,
+  HomeFilled
 } from '@element-plus/icons-vue'
 import { exhibitions, policies, calendarData } from '@/data/mockData'
 import banner1 from '@/assets/images/banner/banner1.png'
@@ -1064,7 +1065,7 @@ const getStatusClass = (status) => {
       color: #9CA3AF;
 
       .el-icon {
-        color: #9CA3AF;
+        color: #2563EB;
       }
     }
   }

@@ -220,7 +220,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Delete, Calendar, Location, Star, StarFilled } from '@element-plus/icons-vue'
+import { Search, Delete, Clock, LocationFilled, Star, StarFilled } from '@element-plus/icons-vue'
 import { exhibitions } from '@/data/mockData'
 
 const router = useRouter()
@@ -613,7 +613,7 @@ onMounted(() => {
   color: #6B7280;
 
   .el-icon {
-    color: #204E9C;
+    color: #2563EB;
   }
 }
 

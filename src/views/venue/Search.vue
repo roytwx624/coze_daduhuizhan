@@ -161,12 +161,20 @@ const sortBy = ref('distance')
 const selectedVenueId = ref(null)
 
 const initMap = () => {
+  // 设置安全密钥
+  window._AMapSecurityConfig = {
+    securityJsCode: '473441a0055f60fe0465ad8e053469be',
+  }
+
   AMapLoader.load({
     key: '1701f978cfa88c3681a7e767dcdc4dc3', // 申请好的Web端开发者Key，首次调用 load 时必填
     version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
     plugins: ['AMap.Scale'], // 需要使用的的插件列表，如比例尺'AMap.Scale'等
   })
     .then((AMap) => {
+      // 注意：生产环境建议使用代理或服务端转发请求，避免Key暴露
+      // 检查域名是否已在高德开放平台控制台绑定
+      console.log('正在加载高德地图...')
       map = new AMap.Map('amap-container', {
         // 设置地图容器id
         viewMode: '3D', // 是否为3D地图模式

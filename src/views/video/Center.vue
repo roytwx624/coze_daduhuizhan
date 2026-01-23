@@ -137,7 +137,7 @@ import exhibition4 from '@/assets/images/exhibition/插画展.png'
 
 const router = useRouter()
 
-const exhibitionImages = [exhibition1, exhibition2, exhibition3, exhibition4]
+const exhibitionImages = [exhibition2, exhibition3, exhibition1, exhibition4]
 
 const liveList = ref([...videos.live, ...videos.live].map((item, index) => ({ 
     ...item, 
