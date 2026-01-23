@@ -8,6 +8,12 @@ const routes = [
     meta: { title: '首页' }
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue'),
+    meta: { title: '登录' }
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('@/views/About.vue'),
@@ -194,6 +200,22 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title ? `${to.meta.title} - 大都会展数智平台` : '大都会展数智平台'
+  
+  // 从场馆搜索页面离开时，提前清理地图资源
+  if (from.name === 'VenueSearch' && to.name !== 'VenueSearch') {
+    // 清理body样式，防止地图API修改后未恢复
+    document.body.style.overflow = 'auto'
+    document.body.style.height = 'auto'
+    
+    // 清理地图容器
+    const mapContainer = document.getElementById('amap-container')
+    if (mapContainer) {
+      mapContainer.innerHTML = ''
+    }
+    
+    // 清理可能存在的地图事件监听器和定时器
+    window.removeEventListener('resize', () => {})
+  }
   
   // 权限验证
   if (to.meta.requiresAuth) {

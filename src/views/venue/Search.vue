@@ -5,11 +5,8 @@
       <div id="amap-container" class="amap-container"></div>
     </div>
 
-    <!-- 左侧可收起面板 -->
-    <div class="left-panel" :class="{ collapsed: isPanelCollapsed }">
-      <div class="panel-toggle" @click="togglePanel">
-        <el-icon><component :is="isPanelCollapsed ? 'ArrowRight' : 'ArrowLeft'" /></el-icon>
-      </div>
+    <!-- 左侧固定面板 -->
+    <div class="left-panel">
 
       <div class="panel-content">
         <!-- 搜索头部 -->
@@ -78,6 +75,17 @@
               </div>
             </div>
           </div>
+
+          <!-- 固定页码区域 -->
+          <div class="pagination-container">
+            <el-pagination
+              layout="prev, pager, next"
+              :total="filteredVenues.length"
+              :page-size="filteredVenues.length"
+              :current-page="1"
+              @current-change="handleCurrentChange"
+            ></el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -143,9 +151,9 @@ import {
 import { venues } from '@/data/mockData'
 
 const router = useRouter()
-const isPanelCollapsed = ref(false)
 const showFilterDialog = ref(false)
 let map = null
+let isMounted = ref(true)
 
 const searchForm = reactive({
   keyword: '',
@@ -167,8 +175,9 @@ const initMap = () => {
     plugins: ['AMap.Scale'], // 需要使用的的插件列表，如比例尺'AMap.Scale'等
   })
     .then((AMap) => {
-      // 注意：生产环境建议使用代理或服务端转发请求，避免Key暴露
-      // 检查域名是否已在高德开放平台控制台绑定
+      // 检查组件是否已卸载，避免在卸载后创建地图
+      if (!isMounted.value) return
+      
       console.log('正在加载高德地图...')
       map = new AMap.Map('amap-container', {
         // 设置地图容器id
@@ -212,18 +221,29 @@ const initMap = () => {
 }
 
 onMounted(() => {
+  isMounted.value = true
   initMap()
 })
 
 onUnmounted(() => {
+  isMounted.value = false
+  
+  // 销毁地图实例
   if (map) {
     map.destroy()
+    map = null
+  }
+  
+  // 重置body样式，防止地图API修改后未恢复导致页面空白
+  document.body.style.overflow = 'auto'
+  document.body.style.height = 'auto'
+  
+  // 清理地图容器
+  const mapContainer = document.getElementById('amap-container')
+  if (mapContainer) {
+    mapContainer.innerHTML = ''
   }
 })
-
-const togglePanel = () => {
-  isPanelCollapsed.value = !isPanelCollapsed.value
-}
 
 const confirmFilter = () => {
   showFilterDialog.value = false
@@ -283,13 +303,14 @@ const handleSort = () => {
   console.log('排序方式：', sortBy.value)
 }
 
+// 页码切换
+const handleCurrentChange = (currentPage) => {
+  console.log('当前页码：', currentPage)
+}
+
 // 选择场馆
 const selectVenue = (venue) => {
   selectedVenueId.value = venue.id
-  // 如果面板收起，点击标记点时展开面板查看详情
-  if (isPanelCollapsed.value) {
-    isPanelCollapsed.value = false
-  }
   
   // 地图定位到对应坐标
   if (map && venue.coordinates && venue.coordinates.length === 2) {
@@ -324,73 +345,50 @@ const getMarkerPosition = (venue) => {
 
 <style lang="scss" scoped>
 .venue-search-page {
-  padding-top: 80px;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
+  background: #F9FAFB;
+  display: flex;
+  flex-direction: column;
   position: relative;
   overflow: hidden;
-  background: #F9FAFB;
 }
 
 .map-container {
-  position: absolute;
-  top: 80px;
+  width: 100%;
+  height: 100vh;
+  background: #f0f2f5;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  border: none;
 }
 
 .amap-container {
   width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
 }
 
 .left-panel {
-  position: absolute;
-  top: 80px;
-  left: 20px; /* Added spacing from edge */
-  bottom: 20px; /* Added spacing from edge */
+  position: fixed;
+  top: 100px; /* 距离header底部20px */
+  left: 0;
   width: 400px;
+  height: calc(100vh - 120px); /* 距离页面底部20px */
   background: white;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  transition: transform 0.3s ease;
+  z-index: 10;
   display: flex;
   flex-direction: column;
-  border-radius: 8px; /* Added border radius */
-
-  &.collapsed {
-    transform: translateX(-420px); /* Adjusted for margin */
-    
-    .panel-toggle {
-      right: -32px;
-      border-radius: 0 8px 8px 0;
-      box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
-    }
-  }
-}
-
-.panel-toggle {
-  position: absolute;
-  top: 50%;
-  right: -24px;
-  width: 24px;
-  height: 48px;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
   border-radius: 0 8px 8px 0;
-  transform: translateY(-50%);
-  z-index: 101;
-  color: #6B7280;
-
-  &:hover {
-    color: #204E9C;
-    background: #F3F4F6;
-  }
 }
 
 .panel-content {
@@ -399,6 +397,7 @@ const getMarkerPosition = (venue) => {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  padding-top: 0;
 }
 
 .panel-header {
@@ -439,6 +438,27 @@ const getMarkerPosition = (venue) => {
   overflow-y: auto;
   padding: 20px;
   background: #F9FAFB;
+  display: flex;
+  flex-direction: column;
+}
+
+.venue-items {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.pagination-container {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid #F3F4F6;
+  margin: 0 -20px -20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
 }
 
 .list-header {
@@ -487,7 +507,7 @@ const getMarkerPosition = (venue) => {
 
 .venue-image {
     width: 100px;
-    height: 100px; /* Match venue-info height approx */
+    height: 100px;
     border-radius: 4px;
     overflow: hidden;
     flex-shrink: 0;

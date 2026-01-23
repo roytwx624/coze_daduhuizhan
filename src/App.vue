@@ -1,14 +1,21 @@
 <template>
   <div id="app">
+    <!-- 登录页面也显示Header和Footer -->
     <Header />
-    <main class="main-content">
+    <!-- 为场馆搜索页面单独处理，避免地图样式影响其他页面 -->
+    <div v-if="$route.name === 'VenueSearch'" class="venue-search-wrapper">
+      <router-view v-slot="{ Component }">
+        <component :is="Component" />
+      </router-view>
+    </div>
+    <main v-else class="main-content">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
     </main>
-    <Footer />
+    <Footer v-if="$route.name !== 'VenueSearch'" />
   </div>
 </template>
 
@@ -33,6 +40,15 @@ onMounted(() => {
 .main-content {
   flex: 1;
   min-height: calc(100vh - 80px - 300px);
+  position: relative;
+  z-index: 1;
+}
+
+/* 场馆搜索页面容器 */
+.venue-search-wrapper {
+  flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .fade-enter-active,

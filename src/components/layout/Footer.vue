@@ -28,8 +28,6 @@
             <li><a href="#">北辰实业</a></li>
             <li><a href="#">首都会展集团</a></li>
             <li><a href="#">国家会议中心</a></li>
-            <li><a href="#">中国国际展览中心</a></li>
-            <li><a href="#">北京展览馆</a></li>
           </ul>
         </div>
 
@@ -146,35 +144,34 @@ import { Phone, Message, Location } from '@element-plus/icons-vue'
 }
 
 .wechat-section {
-  .qrcode-box {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
+    .qrcode-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
 
-  .qrcode {
-    width: 150px;
-    height: 150px;
-    background: white;
-    padding: 12px;
-    border-radius: 12px;
-    overflow: hidden;
+    .qrcode {
+      width: 150px;
+      height: 150px;
+      background: white;
+      padding: 12px;
+      border-radius: 12px;
+      overflow: hidden;
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .qrcode-text {
+      font-size: 13px;
+      color: white;
+      text-align: center;
     }
   }
-
-  .qrcode-text {
-    font-size: 13px;
-    color: white;
-    text-align: left;
-    margin-left: 4px;
-  }
-}
 
 .footer-bottom {
   display: flex;
