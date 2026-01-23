@@ -256,7 +256,8 @@ export const venues = [
     image: venue1,
     coordinates: [116.389432, 40.002901],
     distance: 5.2,
-    popularity: 98
+    popularity: 98,
+    description: '国家会议中心外形优美，它的立面设计取自中国古代建筑屋檐的曲线概念，对传统的建筑形式赋予现代的演绎，同时又象征一座桥梁，与奥运公园的其他建筑遥相呼应，体现人文、信息的沟通和交流、跨向未来。'
   },
   {
     id: 2,
@@ -270,7 +271,8 @@ export const venues = [
     image: venue2,
     coordinates: [116.402561, 39.989285],
     distance: 6.8,
-    popularity: 90
+    popularity: 90,
+    description: '北京国际会议中心与北京五洲大酒店楼宇相连，是一家可提供会议、展览、住宿、餐饮、写字楼等大型综合服务企业。'
   },
   {
     id: 3,
@@ -284,7 +286,8 @@ export const venues = [
     image: venue3,
     coordinates: [116.550173, 40.077],
     distance: 32.5,
-    popularity: 95
+    popularity: 95,
+    description: '首都国际会展中心位于北京市顺义区新城第23街区、新国展一期北侧，项目总体布局延续一期的中轴模式，在中轴线上设置了南、北登录厅、展览序厅以及连接会议酒店和新国展一期的景观连廊。'
   },
   {
     id: 4,
@@ -298,7 +301,8 @@ export const venues = [
     image: venue4,
     coordinates: [116.15867, 39.916463],
     distance: 18.3,
-    popularity: 89
+    popularity: 89,
+    description: '首钢国际会展中心是2021、2022和2023年中国国际服务贸易交易会专题展主会场，其工业遗存丰富，占地面积20万平方米，是京西独具烟火气息的群落式会展空间。'
   },
   {
     id: 5,
@@ -312,7 +316,8 @@ export const venues = [
     image: venue5,
     coordinates: [116.296976, 39.990778],
     distance: 12.4,
-    popularity: 93
+    popularity: 93,
+    description: '中关村国际创新中心选址海淀区“三山五园”历史文化景区与中关村科学城核心区的交汇处，秉承“科技、绿色、文化”的设计理念，建筑面积6.5万平方米，外形宛若“三叶草”。'
   }
 ]
 

@@ -42,11 +42,11 @@
         <!-- 搜索结果列表 -->
         <div class="result-list">
           <div class="list-header">
-            <span class="count">共 {{ filteredVenues.length }} 个场馆</span>
-            <el-radio-group v-model="sortBy" size="small" @change="handleSort">
-              <el-radio-button label="distance">距离</el-radio-button>
-              <el-radio-button label="area">面积</el-radio-button>
-            </el-radio-group>
+            <span class="count">共 <span class="highlight">{{ filteredVenues.length }}</span> 个场馆</span>
+            <el-select v-model="sortBy" size="small" style="width: 100px" @change="handleSort">
+              <el-option label="距离排序" value="distance" />
+              <el-option label="面积排序" value="area" />
+            </el-select>
           </div>
 
           <div class="venue-items">
@@ -360,7 +360,7 @@ const getMarkerPosition = (venue) => {
   border-radius: 8px; /* Added border radius */
 
   &.collapsed {
-    transform: translateX(-410px); /* Adjusted for margin */
+    transform: translateX(-420px); /* Adjusted for margin */
     
     .panel-toggle {
       right: -32px;
@@ -442,16 +442,22 @@ const getMarkerPosition = (venue) => {
 }
 
 .list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  
-  .count {
-    font-size: 13px;
-    color: #6B7280;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    
+    .count {
+      font-size: 13px;
+      color: #6B7280;
+
+      .highlight {
+        color: #3B82F6;
+        font-weight: 600;
+        margin: 0 2px;
+      }
+    }
   }
-}
 
 .venue-items {
   display: flex;
@@ -480,22 +486,25 @@ const getMarkerPosition = (venue) => {
 }
 
 .venue-image {
-  width: 100px;
-  height: 80px;
-  border-radius: 4px;
-  overflow: hidden;
-  flex-shrink: 0;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100px;
+    height: 100px; /* Match venue-info height approx */
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
-}
 
-.venue-info {
+  .venue-info {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     
     .venue-name {
       margin: 0 0 8px 0;
