@@ -127,11 +127,11 @@
           </div>
           <div class="results-sort">
             <span>排序方式：</span>
-            <el-radio-group v-model="sortBy" size="small" @change="handleSort">
-              <el-radio-button label="综合">综合</el-radio-button>
-              <el-radio-button label="time">开展时间</el-radio-button>
-              <el-radio-button label="hot">热度</el-radio-button>
-            </el-radio-group>
+            <el-select v-model="sortBy" size="small" @change="handleSort" placeholder="请选择排序方式">
+              <el-option label="综合" value="综合" />
+              <el-option label="开展时间" value="time" />
+              <el-option label="热度" value="hot" />
+            </el-select>
           </div>
         </div>
 
@@ -170,7 +170,14 @@
                   </span>
                 </div>
                 <div class="meta-tags">
-                  <el-tag v-for="tag in item.tags" :key="tag" size="small" type="info">{{ tag }}</el-tag>
+                  <el-tag 
+                    v-for="tag in item.tags.filter(tag => tag !== '即将开展')" 
+                    :key="tag" 
+                    size="small" 
+                    :type="tag === '热门推荐' ? 'danger' : 'info'"
+                  >
+                    {{ tag }}
+                  </el-tag>
                   <el-tag size="small">{{ item.industry }}</el-tag>
                 </div>
               </div>
@@ -520,9 +527,25 @@ onMounted(() => {
 .results-sort {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   font-size: 14px;
   color: #6B7280;
+  
+  span {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  :deep(.el-select) {
+    display: inline-flex;
+    align-items: center;
+    min-width: 120px;
+  }
+  
+  :deep(.el-select__wrapper) {
+    width: 100%;
+  }
 }
 
 // 结果列表

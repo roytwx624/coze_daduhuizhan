@@ -96,10 +96,10 @@
           </div>
           <div class="results-sort">
             <span>排序方式：</span>
-            <el-radio-group v-model="sortBy" size="small" @change="handleSort">
-              <el-radio-button label="time-desc">发布时间 ↓</el-radio-button>
-              <el-radio-button label="time-asc">发布时间 ↑</el-radio-button>
-            </el-radio-group>
+            <el-select v-model="sortBy" size="small" @change="handleSort" placeholder="请选择排序方式">
+              <el-option label="发布时间 ↓" value="time-desc" />
+              <el-option label="发布时间 ↑" value="time-asc" />
+            </el-select>
           </div>
         </div>
 
@@ -375,9 +375,25 @@ const getStatusType = (category) => {
 .results-sort {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   font-size: 14px;
   color: #6B7280;
+  
+  span {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  :deep(.el-select) {
+    display: inline-flex;
+    align-items: center;
+    min-width: 120px;
+  }
+  
+  :deep(.el-select__wrapper) {
+    width: 100%;
+  }
 }
 
 .policy-list {

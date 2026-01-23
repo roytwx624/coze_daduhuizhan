@@ -6,7 +6,7 @@
           <!-- Logo区 -->
           <div class="logo-section">
             <router-link to="/" class="logo">
-              <img src="@/assets/images/logo/Gemini_Generated_Image_wgb2hewgb2hewgb2.png" alt="Logo" class="logo-icon" />
+              <img src="@/assets/images/logo/logo-icon-sdhz.0795949a.png" alt="Logo" class="logo-icon" />
               <svg width="200" height="40" viewBox="0 0 200 40" fill="none">
                 <text x="0" y="28" font-size="22" font-weight="bold" fill="#FFFFFF" font-family="PingFang SC, Microsoft YaHei">大都会展数智平台</text>
               </svg>

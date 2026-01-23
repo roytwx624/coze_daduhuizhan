@@ -14,22 +14,68 @@
         </div>
         <div class="video-grid">
           <div
-            v-for="item in liveList"
+            v-for="item in recommendedVideos"
             :key="item.id"
-            class="video-card live-card"
-            @click="enterLive(item)"
+            class="video-card"
+            :class="{
+              'live-card': item.isLive,
+              'upcoming-card': item.upcoming,
+              'replay-card': item.replay
+            }"
+            @click="handleVideoClick(item)"
           >
             <div class="card-cover">
               <img :src="item.cover" :alt="item.title" />
               <div class="live-overlay">
-                <el-tag v-if="item.memberOnly" type="warning" effect="dark" size="small" class="member-tag">
-                  会员专享
-                </el-tag>
+                  <el-tag v-if="item.memberOnly" type="warning" effect="dark" size="small" class="member-tag">
+                    会员专享
+                  </el-tag>
+                </div>
+              <div class="duration" v-if="item.duration">
+                <el-icon><VideoPlay /></el-icon>
+                {{ item.duration }}
+              </div>
+              <div class="time-overlay" v-if="item.upcoming && item.startTime">
+                <el-icon><Timer /></el-icon>
+                {{ formatTime(item.startTime) }}
               </div>
             </div>
             <div class="card-content">
-              <h3 class="card-title">{{ item.title }}</h3>
+              <h3 class="card-title">
+                <span v-if="item.isLive" class="live-status-tag">
+                  <el-icon><VideoCamera /></el-icon> 直播中
+                </span>
+                <span v-if="item.replay" class="replay-tag">
+                  <el-icon><VideoPlay /></el-icon> 回放
+                </span>
+                {{ item.title }}
+              </h3>
               <p class="card-exhibition">{{ item.exhibitionName }}</p>
+              <div class="card-footer">
+                <span v-if="item.isLive" class="start-time">
+                  <el-icon class="time-icon"><Clock /></el-icon> 正在直播
+                </span>
+                <span v-else-if="item.upcoming" class="start-time">
+                  <el-icon class="time-icon"><Clock /></el-icon> {{ item.startTime }}
+                </span>
+                <span v-else-if="item.replay" class="start-time">
+                  <el-icon class="time-icon"><Clock /></el-icon> {{ item.uploadTime || '2026-01-23' }}
+                </span>
+                <div v-if="item.upcoming" class="action-buttons">
+                  <el-button
+                    :type="item.booked ? 'info' : 'primary'"
+                    size="small"
+                    :disabled="item.booked"
+                    @click.stop="bookLive(item)"
+                  >
+                    <el-icon><Timer /></el-icon>
+                    {{ item.booked ? '已预约' : '预约' }}
+                  </el-button>
+                </div>
+                <span v-else class="views-count">
+                  <el-icon><View /></el-icon> {{ formatNumber(item.viewerCount || item.views || 0) }}次观看
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -57,13 +103,16 @@
               <h3 class="card-title">{{ item.title }}</h3>
               <p class="card-exhibition">{{ item.exhibitionName }}</p>
               <div class="card-footer">
-                <span class="start-time">{{ item.startTime }}</span>
+                <span class="start-time">
+                  <el-icon class="time-icon"><Clock /></el-icon> {{ item.startTime }}
+                </span>
                 <el-button
                   :type="item.booked ? 'info' : 'primary'"
                   size="small"
                   :disabled="item.booked"
                   @click.stop="bookLive(item)"
                 >
+                  <el-icon><Timer /></el-icon>
                   {{ item.booked ? '已预约' : '预约' }}
                 </el-button>
               </div>
@@ -91,7 +140,6 @@
             <div class="card-cover">
               <img :src="item.cover" :alt="item.title" />
               <div class="replay-overlay">
-                <el-tag effect="dark" size="large">回放</el-tag>
                 <el-tag v-if="item.memberOnly" type="warning" effect="dark" size="small" class="member-tag">
                   会员专享
                 </el-tag>
@@ -102,13 +150,20 @@
               </div>
             </div>
             <div class="card-content">
-              <h3 class="card-title">{{ item.title }}</h3>
+              <h3 class="card-title">
+                <span class="replay-tag">
+                  <el-icon><VideoPlay /></el-icon> 回放
+                </span>
+                {{ item.title }}
+              </h3>
               <p class="card-exhibition">{{ item.exhibitionName }}</p>
-              <div class="card-meta">
-                 <div class="views-count">
-                  <el-icon><View /></el-icon>
-                  {{ formatNumber(item.views) }}次观看
-                </div>
+              <div class="card-footer">
+                <span class="start-time">
+                  <el-icon class="time-icon"><Clock /></el-icon> {{ item.uploadTime || '2026-01-23' }}
+                </span>
+                <span class="views-count">
+                  <el-icon><View /></el-icon> {{ formatNumber(item.views) }}次观看
+                </span>
               </div>
             </div>
           </div>
@@ -127,7 +182,8 @@ import {
   Film, 
   View, 
   Timer, 
-  VideoPlay 
+  VideoPlay, 
+  StarFilled 
 } from '@element-plus/icons-vue'
 import { videos } from '@/data/mockData'
 import exhibition1 from '@/assets/images/exhibition/20260122-111812.430-1.jpg'
@@ -142,19 +198,60 @@ const exhibitionImages = [exhibition2, exhibition3, exhibition1, exhibition4]
 const liveList = ref([...videos.live, ...videos.live].map((item, index) => ({ 
     ...item, 
     id: item.id + (index >= videos.live.length ? 100 : 0), // Ensure unique IDs
-    cover: exhibitionImages[index % 4]
+    cover: exhibitionImages[index % 4],
+    isLive: true
   })))
 const upcomingList = ref([...videos.upcoming, ...videos.upcoming].map((item, index) => ({ 
     ...item, 
     id: item.id + (index >= videos.upcoming.length ? 100 : 0), // Ensure unique IDs
     booked: false,
-    cover: exhibitionImages[index % 4]
+    cover: exhibitionImages[index % 4],
+    upcoming: true
   })))
-  const replayList = ref([...videos.replay, ...videos.replay].map((item, index) => ({
+const replayList = ref([...videos.replay, ...videos.replay].map((item, index) => ({ 
     ...item,
     id: item.id + (index >= videos.replay.length ? 100 : 0), // Ensure unique IDs
-    cover: exhibitionImages[index % 4]
+    cover: exhibitionImages[index % 4],
+    replay: true
   })))
+
+// 推荐视频列表：优先展示2个直播中的视频，然后是直播预约和直播回看
+const recommendedVideos = ref([])
+
+// 初始化推荐视频
+const initRecommendedVideos = () => {
+  const tempVideos = []
+  
+  // 添加前2个直播中的视频
+  tempVideos.push(...liveList.value.slice(0, 2))
+  
+  // 添加1个直播预约视频
+  if (upcomingList.value.length > 0) {
+    tempVideos.push({ ...upcomingList.value[0], upcoming: true })
+  }
+  
+  // 添加1个直播回看视频
+  if (replayList.value.length > 0) {
+    tempVideos.push({ ...replayList.value[0], replay: true })
+  }
+  
+  recommendedVideos.value = tempVideos
+}
+
+// 初始化推荐视频
+initRecommendedVideos()
+
+// 处理视频点击事件
+const handleVideoClick = (item) => {
+  if (item.isLive) {
+    enterLive(item)
+  } else if (item.upcoming) {
+    // 进入直播预约详情或预约页面
+    bookLive(item)
+  } else if (item.replay) {
+    watchReplay(item)
+  }
+}
 
 // 进入直播
 const enterLive = (item) => {
@@ -370,7 +467,7 @@ const viewMoreReplay = () => {
 .time-overlay {
   position: absolute;
   bottom: 12px;
-  left: 12px;
+  right: 12px;
   background: rgba(0, 0, 0, 0.6);
   color: white;
   padding: 6px 12px;
@@ -406,19 +503,16 @@ const viewMoreReplay = () => {
   backdrop-filter: blur(10px);
 }
 
-.card-meta {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 8px;
-}
-
 .views-count {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
-  color: #9CA3AF;
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.time-icon {
+  color: #204E9C;
 }
 
 .card-content {
@@ -431,10 +525,39 @@ const viewMoreReplay = () => {
   color: #1F2937;
   margin: 0 0 8px 0;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  display: flex;
+  align-items: center;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
+  .live-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #F56C6C;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  
+  .replay-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #204E9C;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
 }
 
 .card-exhibition {
@@ -452,7 +575,38 @@ const viewMoreReplay = () => {
   border-top: 1px solid #F3F4F6;
 }
 
+.member-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  min-width: 80px;
+  justify-content: center;
+  background: linear-gradient(135deg, #FBBF24, #F59E0B); /* Yellow gradient */
+  color: white;
+  font-weight: 600;
+  border-radius: 20px 0 20px 0;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+.tag-icon {
+  font-size: 14px;
+}
+
+.tag-text {
+  font-size: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .start-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 13px;
   color: #6B7280;
 }
