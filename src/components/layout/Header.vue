@@ -83,20 +83,23 @@
             <template v-if="isLoggedIn">
               <div class="user-info">
                 <el-badge :value="unreadCount" :hidden="unreadCount === 0" class="message-badge">
-                  <el-icon :size="20" class="bell-icon">
-                    <Bell />
-                  </el-icon>
+                  <div class="message-icon-container" @click="goToMessages">
+                    <el-icon :size="20" class="bell-icon">
+                      <Bell />
+                    </el-icon>
+                  </div>
                 </el-badge>
                 <el-dropdown @command="handleCommand">
                   <div class="user-avatar-container">
-                    <img :src="user.avatar" :alt="user.name" class="user-avatar"/>
+                    <el-icon :size="20" class="user-icon">
+                      <User />
+                    </el-icon>
                     <span class="user-name">{{ user.name }}</span>
                   </div>
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item command="personal">个人中心</el-dropdown-item>
-                      <el-dropdown-item command="orders">我的订单</el-dropdown-item>
-                      <el-dropdown-item command="settings">设置</el-dropdown-item>
+                      <el-dropdown-item command="password">修改密码</el-dropdown-item>
                       <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
@@ -114,11 +117,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Bell } from '@element-plus/icons-vue'
+import { ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { Bell, User } from '@element-plus/icons-vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const showExhibitionMenu = ref(false)
 const showVenueMenu = ref(false)
@@ -142,16 +146,35 @@ const getUserInfo = () => {
 
 const user = ref(getUserInfo())
 
+// 监听路由变化，重新检查登录状态
+watch(
+  () => route.path,
+  () => {
+    isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true'
+    user.value = getUserInfo()
+  }
+)
+
+// 监听登录状态变化
+const checkLoginStatus = () => {
+  isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true'
+  user.value = getUserInfo()
+}
+
+// 初始化时检查一次登录状态
+checkLoginStatus()
+
+const goToMessages = () => {
+  router.push('/center/messages')
+}
+
 const handleCommand = (command) => {
   switch(command) {
     case 'personal':
-      router.push('/personal')
+      router.push('/center')
       break
-    case 'orders':
-      router.push('/personal/orders')
-      break
-    case 'settings':
-      router.push('/personal/profile')
+    case 'password':
+      router.push('/center/security')
       break
     case 'logout':
       localStorage.removeItem('isLoggedIn')
@@ -318,13 +341,17 @@ const handleCommand = (command) => {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
   
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .user-icon {
+    color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
   }
   
   .user-name {
@@ -341,12 +368,22 @@ const handleCommand = (command) => {
   }
 }
 
+.message-icon-container {
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
 .bell-icon {
   color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
   transition: color 0.3s ease;
 
-  &:hover {
+  .message-icon-container:hover & {
     color: #FFFFFF;
   }
 }

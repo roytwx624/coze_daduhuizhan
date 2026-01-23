@@ -132,41 +132,41 @@
             <div class="tender-content">
               <div class="tender-header">
                 <h3 class="tender-title" v-html="highlightKeyword(item.title)"></h3>
+                <el-tag size="small" type="info" class="scope-tag">
+                  {{ item.scope }}
+                </el-tag>
                 <el-tag :type="item.status === '招标中' ? 'danger' : 'info'" size="small">
                   {{ item.status }}
                 </el-tag>
               </div>
               
-              <p class="tender-scope">{{ item.scope }}</p>
-              
               <div class="tender-meta">
                 <div class="meta-left">
                   <span class="meta-item">
                     <el-icon><OfficeBuilding /></el-icon>
-                    {{ item.tenderer }}
+                    {{ item.organization }}
+                  </span>
+                  <span class="meta-item">
+                    <el-icon><Location /></el-icon>
+                    {{ item.region }}
                   </span>
                   <span class="meta-item">
                     <el-icon><Calendar /></el-icon>
-                    {{ item.deadline }}
+                    {{ item.publishTime }}
                   </span>
-                  <span class="meta-item">
-                    <el-icon><Money /></el-icon>
-                    {{ item.budget }}
+                  <span v-if="item.status !== '已结束'" class="meta-item">
+                    <el-icon><Clock /></el-icon>
+                    剩余 {{ getRemainingDays(item.deadline) }} 天
                   </span>
-                </div>
-                <div class="meta-right">
-                  <el-tag v-for="tag in item.tags" :key="tag" size="small" type="info">
-                    {{ tag }}
-                  </el-tag>
                 </div>
               </div>
               
               <div class="tender-footer">
-                <span class="publish-time">
-                  <el-icon><Clock /></el-icon>
-                  {{ item.publishTime }}
-                </span>
-                <el-button type="primary" size="small">查看详情</el-button>
+                <div class="budget-info">
+                  <span class="budget-label">预算金额：</span>
+                  <span class="budget-amount">{{ item.budgetAmount }} 万元（人民币）</span>
+                </div>
+                <el-button type="primary" size="small">查看公告</el-button>
               </div>
             </div>
           </div>
@@ -212,7 +212,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, ArrowUp, ArrowDown, Document, OfficeBuilding, Calendar, Clock, Money } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown, Document, OfficeBuilding, Calendar, Clock, Money, Location } from '@element-plus/icons-vue'
 import { biddingInfo } from '@/data/mockData'
 
 const router = useRouter()
@@ -372,6 +372,14 @@ const highlightKeyword = (text) => {
   const keyword = searchKeyword.value
   const regex = new RegExp(`(${keyword})`, 'gi')
   return text.replace(regex, '<span class="highlight">$1</span>')
+}
+
+const getRemainingDays = (deadline) => {
+  const now = new Date()
+  const deadlineDate = new Date(deadline)
+  const diffTime = deadlineDate - now
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays > 0 ? diffDays : 0
 }
 </script>
 
@@ -534,8 +542,8 @@ const highlightKeyword = (text) => {
 }
 
 .tender-icon {
-  width: 56px;
-  height: 56px;
+  width: 80px;
+  height: 80px;
   background: rgba(32, 78, 156, 0.08);
   border-radius: 12px;
   display: flex;
@@ -543,18 +551,19 @@ const highlightKeyword = (text) => {
   justify-content: center;
   color: #204E9C;
   flex-shrink: 0;
+  margin: auto 0;
 }
 
 .tender-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding-left: 8px;
 }
 
 .tender-header {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
   flex-wrap: wrap;
@@ -576,24 +585,21 @@ const highlightKeyword = (text) => {
   }
 }
 
-.tender-scope {
-  font-size: 14px;
-  color: #6B7280;
-  line-height: 1.6;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.scope-tag {
+  margin-left: 6px;
+  background: #EFF6FF;
+  color: #2563EB;
+  font-size: 12px;
+  height: 22px;
+  line-height: 22px;
 }
 
 .tender-meta {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: flex-start;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 8px;
+  gap: 24px;
 }
 
 .meta-left {
@@ -614,31 +620,31 @@ const highlightKeyword = (text) => {
   }
 }
 
-.meta-right {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 .tender-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
   padding-top: 12px;
   border-top: 1px solid #F3F4F6;
+  margin-top: 8px;
 }
 
-.publish-time {
+.budget-info {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #6B7280;
-  
-  .el-icon {
-    color: #9CA3AF;
-  }
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.budget-label {
+  color: #4B5563;
+}
+
+.budget-amount {
+  color: #204E9C;
+  font-weight: 700;
+  font-size: 18px;
 }
 
 .empty-results {

@@ -11,8 +11,7 @@
         
         <div class="avatar-section">
           <div class="avatar-preview">
-            <img v-if="profileForm.avatar" :src="profileForm.avatar" alt="头像" />
-            <span v-else class="avatar-placeholder">{{ profileForm.name?.charAt(0) || '用' }}</span>
+            <span class="avatar-placeholder">{{ profileForm.name?.charAt(0) || '用' }}</span>
           </div>
           <div class="avatar-actions">
             <el-button type="primary" @click="handleUploadAvatar">上传头像</el-button>

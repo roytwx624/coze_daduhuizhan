@@ -3,8 +3,7 @@
     <div class="center-header">
       <div class="user-info">
         <div class="avatar">
-          <img v-if="currentUserInfo.avatar" :src="currentUserInfo.avatar" :alt="currentUserInfo.name" />
-          <span v-else>{{ currentUserInfo.name?.charAt(0) || '用' }}</span>
+          <span>{{ currentUserInfo.name?.charAt(0) || '用' }}</span>
         </div>
         <div class="info">
           <h2 class="name">{{ currentUserInfo.name || '未登录' }}</h2>
@@ -160,6 +159,7 @@ const goToSettings = () => {
   min-height: 100vh;
   background: #f9fafb;
   padding: 40px 0;
+  margin-top: 80px;
 }
 
 .center-header {
