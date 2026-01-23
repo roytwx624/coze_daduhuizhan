@@ -49,65 +49,34 @@
       <div class="charts-section">
         <div class="chart-card">
           <div class="card-header">
-            <h3>场馆区域分布</h3>
+            <h3>场馆区域面积分布</h3>
           </div>
           <div class="chart-container" ref="regionChartRef"></div>
         </div>
         <div class="chart-card">
           <div class="card-header">
-            <h3>重点场馆空窗期分析</h3>
+            <h3>热门场馆办展情况</h3>
           </div>
-          <div class="vacancy-list">
-            <div v-for="(item, index) in vacancyData" :key="index" class="vacancy-item">
-              <div class="venue-name">
-                <span class="rank" :class="{ top: index < 3 }">{{ index + 1 }}</span>
-                {{ item.name }}
-              </div>
-              <div class="progress-wrapper">
-                <el-progress 
-                  :percentage="item.rate" 
-                  :color="getProgressColor(index)"
-                  :format="formatProgress"
-                />
-              </div>
-            </div>
+          <div class="chart-container" ref="cityChartRef"></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header">
+            <h3>区域场馆数量分布</h3>
           </div>
+          <div class="chart-container" ref="regionCountChartRef"></div>
         </div>
-      </div>
-
-      <!-- 热门场馆列表 -->
-      <div class="venues-list-section">
-        <div class="card-header">
-          <h3>热门场馆办展情况</h3>
-          <el-button link type="primary">查看更多 <el-icon><ArrowRight /></el-icon></el-button>
+        <div class="chart-card">
+          <div class="card-header">
+            <h3>城市场馆数量分布</h3>
+          </div>
+          <div class="chart-container" ref="cityCountChartRef"></div>
         </div>
-        <el-table :data="venueData" style="width: 100%" stripe>
-          <el-table-column prop="name" label="场馆名称" min-width="180">
-            <template #default="scope">
-              <div class="venue-cell">
-                <span class="venue-name-text">{{ scope.row.name }}</span>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="area" label="办展总面积 (㎡)" width="150" align="right" />
-          <el-table-column prop="count" label="办展次数" width="100" align="center" />
-          <el-table-column prop="industries" label="主要行业" min-width="200">
-            <template #default="scope">
-              <div class="tags-wrapper">
-                <el-tag 
-                  v-for="tag in scope.row.industries" 
-                  :key="tag" 
-                  size="small" 
-                  effect="plain"
-                >
-                  {{ tag }}
-                </el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="latestExhibition" label="最新展会" min-width="200" show-overflow-tooltip />
-          <el-table-column prop="date" label="展会时间" width="180" />
-        </el-table>
+        <div class="chart-card">
+          <div class="card-header">
+            <h3>场馆面积分布</h3>
+          </div>
+          <div class="chart-container" ref="areaChartRef"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -125,76 +94,74 @@ import {
 } from '@element-plus/icons-vue'
 
 const regionChartRef = ref(null)
+const cityChartRef = ref(null)
+const regionCountChartRef = ref(null)
+const cityCountChartRef = ref(null)
+const areaChartRef = ref(null)
 let regionChart = null
-
-const vacancyData = [
-  { name: '广州保利世贸展览馆', rate: 78.14 },
-  { name: '上海新国际博览中心', rate: 75.14 },
-  { name: '广交会场馆', rate: 45.90 },
-  { name: '北京首都会展中心', rate: 42.35 },
-  { name: '宁波国际会展中心', rate: 31.97 },
-  { name: '厦门国际会展中心', rate: 31.15 },
-  { name: '中国西部国际博览城', rate: 30.05 }
-]
-
-const venueData = [
-  {
-    name: '上海新国际博览中心',
-    area: '8,501,076',
-    count: 135,
-    industries: ['交通工具', '仪器仪表', '体育休闲', '信息通信'],
-    latestExhibition: '2025 Arts中国国际轨道交通展览会',
-    date: '2025-12-17 ~ 2025-12-19'
-  },
-  {
-    name: '广交会场馆',
-    area: '7,796,820',
-    count: 99,
-    industries: ['交通工具', '体育休闲', '信息通信', '光电技术'],
-    latestExhibition: '2025 广州文化产业交易会',
-    date: '2025-12-19 ~ 2025-12-21'
-  },
-  {
-    name: '日本东京有明国际会展中心',
-    area: '6,546,651',
-    count: 207,
-    industries: ['交通工具', '仪器仪表', '信息通信', '光电技术'],
-    latestExhibition: '2025 日本工业清洗设备及清洗剂展',
-    date: '2025-12-03 ~ 2025-12-05'
-  },
-  {
-    name: '德国慕尼黑新国际博览中心',
-    area: '4,376,515',
-    count: 48,
-    industries: ['交通工具', '光电技术', '化工橡塑', '医疗健康'],
-    latestExhibition: '2025 德国慕尼黑电子展',
-    date: '2025-11-18 ~ 2025-11-21'
-  },
-  {
-    name: '美国拉斯维加斯国际会展中心',
-    area: '3,169,928',
-    count: 69,
-    industries: ['交通工具', '信息通信', '化工橡塑', '医疗健康'],
-    latestExhibition: '美国有机产品展 | 美国西部植物提取物展',
-    date: '2025-10-29 ~ 2025-10-30'
-  }
-]
-
-const getProgressColor = (index) => {
-  if (index === 0) return '#F56C6C'
-  if (index === 1) return '#E6A23C'
-  if (index === 2) return '#409EFF'
-  return '#67C23A'
-}
-
-const formatProgress = (percentage) => {
-  return `${percentage}%`
-}
+let cityChart = null
+let regionCountChart = null
+let cityCountChart = null
+let areaChart = null
 
 const initCharts = () => {
+  // 场馆区域面积分布图表
   if (regionChartRef.value) {
     regionChart = echarts.init(regionChartRef.value)
     regionChart.setOption({
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c}m² ({d}%)'
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: '5%',
+        data: ['华东', '华南', '华北', '西南', '华中', '西北', '东北', '港澳台']
+      },
+      series: [
+        {
+          name: '场馆区域面积分布',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: true
+          },
+          data: [
+            { value: 11023307, name: '华东', itemStyle: { color: '#3B82F6' } },
+            { value: 5613696, name: '华南', itemStyle: { color: '#67C23A' } },
+            { value: 3247931, name: '华北', itemStyle: { color: '#E6A23C' } },
+            { value: 1705200, name: '西南', itemStyle: { color: '#F56C6C' } },
+            { value: 1525595, name: '华中', itemStyle: { color: '#409EFF' } },
+            { value: 1347350, name: '西北', itemStyle: { color: '#909399' } },
+            { value: 1089682, name: '东北', itemStyle: { color: '#E066FF' } },
+            { value: 1093511, name: '港澳台', itemStyle: { color: '#667EEA' } }
+          ]
+        }
+      ]
+    })
+  }
+  
+  // 热门场馆办展情况图表
+  if (cityChartRef.value) {
+    cityChart = echarts.init(cityChartRef.value)
+    cityChart.setOption({
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' }
@@ -202,24 +169,28 @@ const initCharts = () => {
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        bottom: '15%',
         containLabel: true
       },
       xAxis: {
         type: 'category',
-        data: ['华东', '华北', '华南', '西南', '华中', '东北', '西北', '港澳台'],
-        axisTick: { alignWithLabel: true }
+        data: ['上海新国际博览中心', '广州交投琶洲会展', '上海世博展览馆', '上海光大大会展中心', '成都世纪城新国际会展中心', '广州保利世贸博览馆', '郑州国际会展中心', '深圳会展中心', '国家会展中心（上海）', '中国国际展览中心（朝阳馆）', '北京全国农业展览馆', '宁波国际会展中心', '南京国际展览中心', '西安曲江国际会展中心'],
+        axisTick: { alignWithLabel: true },
+        axisLabel: {
+          rotate: 45,
+          fontSize: 12
+        }
       },
       yAxis: {
         type: 'value',
-        name: '场馆数量 (个)'
+        name: '数量 (场)'
       },
       series: [
         {
-          name: '场馆数量',
+          name: '办展数量',
           type: 'bar',
           barWidth: '60%',
-          data: [156, 60, 55, 27, 26, 24, 20, 16],
+          data: [2883, 2091, 1195, 1153, 1147, 1005, 978, 940, 877, 691, 626, 595, 559, 506, 503],
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#3B82F6' },
@@ -227,6 +198,154 @@ const initCharts = () => {
             ]),
             borderRadius: [4, 4, 0, 0]
           }
+        }
+      ]
+    })
+  }
+  
+  // 区域场馆数量分布图表
+  if (regionCountChartRef.value) {
+    regionCountChart = echarts.init(regionCountChartRef.value)
+    regionCountChart.setOption({
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c}个 ({d}%)'
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: '5%',
+        data: ['华东', '华北', '华南', '西南', '华中', '东北', '西北', '港澳台']
+      },
+      series: [
+        {
+          name: '区域场馆数量分布',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: true
+          },
+          data: [
+            { value: 156, name: '华东', itemStyle: { color: '#3B82F6' } },
+            { value: 60, name: '华北', itemStyle: { color: '#67C23A' } },
+            { value: 55, name: '华南', itemStyle: { color: '#E6A23C' } },
+            { value: 27, name: '西南', itemStyle: { color: '#F56C6C' } },
+            { value: 26, name: '华中', itemStyle: { color: '#409EFF' } },
+            { value: 24, name: '东北', itemStyle: { color: '#909399' } },
+            { value: 20, name: '西北', itemStyle: { color: '#E066FF' } },
+            { value: 16, name: '港澳台', itemStyle: { color: '#667EEA' } }
+          ]
+        }
+      ]
+    })
+  }
+  
+  // 城市场馆数量分布图表
+  if (cityCountChartRef.value) {
+    cityCountChart = echarts.init(cityCountChartRef.value)
+    cityCountChart.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '15%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['北京市', '上海市', '广州市', '杭州市', '重庆市', '太原市', '苏州市', '宁波市', '济南市', '武汉市', '南京市', '沈阳市', '天津市', '青岛市', '成都市', '石家庄市'],
+        axisTick: { alignWithLabel: true },
+        axisLabel: {
+          rotate: 45,
+          fontSize: 12
+        }
+      },
+      yAxis: {
+        type: 'value',
+        name: '数量 (个)'
+      },
+      series: [
+        {
+          name: '场馆数量',
+          type: 'bar',
+          barWidth: '60%',
+          data: [19, 17, 14, 8, 7, 7, 7, 6, 6, 6, 6, 6, 5, 5, 5, 5],
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#3B82F6' },
+              { offset: 1, color: '#60A5FA' }
+            ]),
+            borderRadius: [4, 4, 0, 0]
+          }
+        }
+      ]
+    })
+  }
+  
+  // 场馆面积分布图表
+  if (areaChartRef.value) {
+    areaChart = echarts.init(areaChartRef.value)
+    areaChart.setOption({
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} (平方米) ({d}%)'
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: '5%',
+        data: ['5万以上', '3万到4万', '2万以下', '2万到3万', '4万到5万']
+      },
+      series: [
+        {
+          name: '场馆面积分布',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: true
+          },
+          data: [
+            { value: 150, name: '5万以上', itemStyle: { color: '#3B82F6' } },
+            { value: 80, name: '3万到4万', itemStyle: { color: '#67C23A' } },
+            { value: 120, name: '2万以下', itemStyle: { color: '#E6A23C' } },
+            { value: 90, name: '2万到3万', itemStyle: { color: '#F56C6C' } },
+            { value: 60, name: '4万到5万', itemStyle: { color: '#409EFF' } }
+          ]
         }
       ]
     })
@@ -240,11 +359,19 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (regionChart) regionChart.dispose()
+  if (cityChart) cityChart.dispose()
+  if (regionCountChart) regionCountChart.dispose()
+  if (cityCountChart) cityCountChart.dispose()
+  if (areaChart) areaChart.dispose()
   window.removeEventListener('resize', handleResize)
 })
 
 const handleResize = () => {
   if (regionChart) regionChart.resize()
+  if (cityChart) cityChart.resize()
+  if (regionCountChart) regionCountChart.resize()
+  if (cityCountChart) cityCountChart.resize()
+  if (areaChart) areaChart.resize()
 }
 </script>
 
@@ -342,7 +469,7 @@ const handleResize = () => {
 
 .charts-section {
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 1fr;
   gap: 24px;
   margin-bottom: 32px;
 }
@@ -352,7 +479,7 @@ const handleResize = () => {
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  height: 420px;
+  height: 500px;
   display: flex;
   flex-direction: column;
 
@@ -459,7 +586,7 @@ const handleResize = () => {
     grid-template-columns: 1fr;
     
     .chart-card {
-      height: 360px;
+      height: 400px;
     }
   }
 }
