@@ -128,19 +128,19 @@ const showServiceMenu = ref(false)
 const isLoggedIn = ref(localStorage.getItem('isLoggedIn') === 'true')
 const unreadCount = ref(3)
 
-const user = ref({
-  name: '张三',
-  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
-})
-
-const goToPersonal = () => {
-  router.push('/personal')
+// 从localStorage读取用户信息
+const getUserInfo = () => {
+  const userInfo = localStorage.getItem('userInfo')
+  if (userInfo) {
+    return JSON.parse(userInfo)
+  }
+  return {
+    name: '管理员',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
+  }
 }
 
-const handleLogin = () => {
-  // 登录逻辑
-  router.push('/login')
-}
+const user = ref(getUserInfo())
 
 const handleCommand = (command) => {
   switch(command) {
@@ -155,7 +155,9 @@ const handleCommand = (command) => {
       break
     case 'logout':
       localStorage.removeItem('isLoggedIn')
+      localStorage.removeItem('userInfo')
       isLoggedIn.value = false
+      user.value = getUserInfo()
       router.push('/')
       break
   }

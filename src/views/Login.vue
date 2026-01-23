@@ -3,42 +3,8 @@
     <div class="login-container">
       <div class="login-left">
         <div class="illustration">
-          <!-- 3D科技感插图 -->
-          <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- 背景网格 -->
-            <rect x="0" y="0" width="300" height="300" fill="url(#gridBg)"/>
-            <!-- 主体结构 -->
-            <g opacity="0.8">
-              <!-- 底部平台 -->
-              <path d="M50 200L100 250L200 250L250 200" fill="#E0F7FA" stroke="#4FC3F7" stroke-width="2"/>
-              <!-- 中间结构 -->
-              <path d="M100 150L150 200L150 100L100 150" fill="#B3E5FC" stroke="#29B6F6" stroke-width="2"/>
-              <path d="M200 150L150 200L150 100L200 150" fill="#81D4FA" stroke="#03A9F4" stroke-width="2"/>
-              <!-- 顶部结构 -->
-              <path d="M125 100L150 75L175 100L150 125L125 100" fill="#4FC3F7" stroke="#0288D1" stroke-width="2"/>
-              <!-- 齿轮 -->
-              <circle cx="150" cy="150" r="25" fill="#2196F3" stroke="#0D47A1" stroke-width="2"/>
-              <path d="M150 125V100M150 200V225M125 150H100M200 150H225M175 175L200 200M100 200L125 175M100 100L125 125M200 100L175 125" stroke="#0D47A1" stroke-width="3" stroke-linecap="round"/>
-              <!-- 连接线 -->
-              <path d="M150 75L150 100" stroke="#2196F3" stroke-width="2" stroke-dasharray="5,5"/>
-              <path d="M150 125L150 150" stroke="#2196F3" stroke-width="2" stroke-dasharray="5,5"/>
-              <path d="M150 175L150 200" stroke="#2196F3" stroke-width="2" stroke-dasharray="5,5"/>
-              <path d="M125 150L100 150" stroke="#2196F3" stroke-width="2" stroke-dasharray="5,5"/>
-              <path d="M175 150L200 150" stroke="#2196F3" stroke-width="2" stroke-dasharray="5,5"/>
-              <!-- 装饰点 -->
-              <circle cx="125" cy="125" r="5" fill="#03A9F4"/>
-              <circle cx="175" cy="125" r="5" fill="#03A9F4"/>
-              <circle cx="125" cy="175" r="5" fill="#03A9F4"/>
-              <circle cx="175" cy="175" r="5" fill="#03A9F4"/>
-            </g>
-            <!-- 发光效果 -->
-            <defs>
-              <radialGradient id="gridBg" cx="150" cy="150" r="150" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#E1F5FE" stop-opacity="0.5"/>
-                <stop offset="100%" stop-color="#B3E5FC" stop-opacity="0.2"/>
-              </radialGradient>
-            </defs>
-          </svg>
+          <!-- 设计师提供的登录插画 -->
+          <img src="@/assets/images/login/login.png" alt="登录插画" class="login-image" />
         </div>
       </div>
       <div class="login-right">
@@ -106,13 +72,21 @@ const handleLogin = () => {
   loginFormRef.value.validate((valid) => {
     if (valid) {
       loading.value = true
-      // 模拟登录请求
+      // 模拟登录请求 - 支持固定用户名密码登录
       setTimeout(() => {
         loading.value = false
-        // 这里可以根据实际情况修改登录逻辑
-        localStorage.setItem('isLoggedIn', 'true')
-        ElMessage.success('登录成功')
-        router.push('/')
+        // 模拟用户名密码：admin / 123456
+        if (loginForm.username === 'admin' && loginForm.password === '123456') {
+          localStorage.setItem('isLoggedIn', 'true')
+          localStorage.setItem('userInfo', JSON.stringify({
+            name: '管理员',
+            avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
+          }))
+          ElMessage.success('登录成功')
+          router.push('/')
+        } else {
+          ElMessage.error('用户名或密码错误')
+        }
       }, 1000)
     }
   })
@@ -180,7 +154,7 @@ const handleLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  background: #B0DFFD;
   padding: 40px;
 }
 
@@ -188,6 +162,13 @@ const handleLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.login-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 400px;
 }
 
 .login-right {

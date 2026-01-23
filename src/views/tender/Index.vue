@@ -1,155 +1,208 @@
 <template>
   <div class="tender-page">
-    <div class="search-section">
-      <div class="search-bar">
-        <input
-          v-model="searchKeyword"
-          type="text"
-          placeholder="输入招投标信息标题、招标单位、关联展会名称..."
-          @keyup.enter="handleSearch"
-        />
-        <button class="search-btn" @click="handleSearch">
-          <i class="icon">🔍</i> 搜索
-        </button>
-      </div>
-
-      <div class="filter-section">
-        <div class="filter-group">
-          <label>项目类型</label>
-          <el-select v-model="filters.projectType" placeholder="选择项目类型" clearable>
-            <el-option label="全部" value="" />
-            <el-option label="展会策划" value="展会策划" />
-            <el-option label="搭建" value="搭建" />
-            <el-option label="宣传推广" value="宣传推广" />
-            <el-option label="物流运输" value="物流运输" />
-            <el-option label="其他" value="其他" />
-          </el-select>
-        </div>
-
-        <div class="filter-group">
-          <label>招标单位类型</label>
-          <el-select v-model="filters.tendererType" placeholder="选择单位类型" clearable>
-            <el-option label="全部" value="" />
-            <el-option label="政府机构" value="政府机构" />
-            <el-option label="企业" value="企业" />
-            <el-option label="其他" value="其他" />
-          </el-select>
-        </div>
-
-        <div class="filter-group">
-          <label>所在地区</label>
-          <el-cascader
-            v-model="filters.region"
-            :options="regionOptions"
-            placeholder="选择地区"
+    <div class="container">
+      <!-- 搜索区域 -->
+      <div class="search-section">
+        <div class="search-box">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="输入招投标信息标题、招标单位、关联展会名称..."
+            size="large"
             clearable
-          />
-        </div>
-
-        <div class="filter-group">
-          <label>报名截止时间</label>
-          <el-select v-model="filters.deadline" placeholder="选择时间" clearable>
-            <el-option label="全部" value="" />
-            <el-option label="≤3天" value="3" />
-            <el-option label="3-7天" value="7" />
-            <el-option label="≥7天" value="30" />
-          </el-select>
-        </div>
-
-        <div class="filter-group">
-          <label>项目预算</label>
-          <el-select v-model="filters.budget" placeholder="选择预算" clearable>
-            <el-option label="全部" value="" />
-            <el-option label="10万以下" value="1" />
-            <el-option label="10-50万" value="2" />
-            <el-option label="50-100万" value="3" />
-            <el-option label="100万以上" value="4" />
-          </el-select>
-        </div>
-
-        <div class="filter-group">
-          <label>招标状态</label>
-          <el-select v-model="filters.status" placeholder="选择状态" clearable>
-            <el-option label="全部" value="" />
-            <el-option label="招标中" value="招标中" />
-            <el-option label="已结束" value="已结束" />
-          </el-select>
-        </div>
-
-        <button class="reset-btn" @click="resetFilters">重置筛选</button>
-      </div>
-    </div>
-
-    <div class="results-section">
-      <div class="results-header">
-        <span class="total-count">共找到 <strong>{{ filteredResults.length }}</strong> 条招投标信息</span>
-        <el-select v-model="sortBy" @change="sortResults" class="sort-select">
-          <el-option label="按发布时间倒序" value="desc" />
-          <el-option label="按发布时间正序" value="asc" />
-        </el-select>
-      </div>
-
-      <div class="results-list" v-if="filteredResults.length > 0">
-        <div
-          v-for="(item, index) in filteredResults"
-          :key="item.id"
-          class="tender-item"
-          @click="goToDetail(item.id)"
-        >
-          <div class="tender-header">
-            <h3 class="tender-title" v-html="highlightKeyword(item.title)"></h3>
-            <span class="status-badge" :class="item.status === '招标中' ? 'active' : 'inactive'">
-              {{ item.status }}
-            </span>
-          </div>
-
-          <div class="tender-info">
-            <div class="info-item">
-              <i class="icon">🏢</i>
-              <span>招标单位：<strong>{{ item.tenderer }}</strong></span>
-            </div>
-            <div class="info-item">
-              <i class="icon">📅</i>
-              <span>报名截止：<strong>{{ formatDate(item.deadline) }}</strong></span>
-            </div>
-            <div class="info-item">
-              <i class="icon">💰</i>
-              <span>项目预算：<strong>{{ item.budget }}</strong></span>
-            </div>
-          </div>
-
-          <div class="tender-content">
-            <div class="content-item">
-              <span class="label">核心招标范围：</span>
-              <span>{{ item.scope }}</span>
-            </div>
-            <div class="tags">
-              <el-tag v-for="tag in item.tags" :key="tag" size="small" type="info">
-                {{ tag }}
-              </el-tag>
-            </div>
-          </div>
-
-          <div class="tender-footer">
-            <span class="publish-time">发布时间：{{ item.publishTime }}</span>
-            <el-button type="primary" size="small">查看详情</el-button>
-          </div>
+            @keyup.enter="handleSearch"
+          >
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+            <template #append>
+              <el-button type="primary" @click="handleSearch">搜索</el-button>
+            </template>
+          </el-input>
         </div>
       </div>
 
-      <div class="empty-result" v-else>
-        <div class="empty-icon">📋</div>
-        <h3>暂无相关招投标信息</h3>
-        <p>为您推荐热门招投标信息</p>
-        <div class="hot-tenders">
+      <!-- 筛选区域 -->
+      <div class="filter-section">
+        <div class="filter-header">
+          <span class="filter-title">高级筛选</span>
+          <el-button type="primary" link @click="toggleFilter">
+            {{ showFilter ? '收起' : '展开筛选' }}
+            <el-icon><component :is="showFilter ? 'ArrowUp' : 'ArrowDown'" /></el-icon>
+          </el-button>
+        </div>
+        <el-collapse-transition>
+          <div v-show="showFilter" class="filter-content">
+            <div class="filter-row">
+              <label>项目类型：</label>
+              <el-select v-model="filters.projectType" placeholder="选择项目类型" clearable style="width: 200px">
+                <el-option label="全部" value="" />
+                <el-option label="展会策划" value="展会策划" />
+                <el-option label="搭建" value="搭建" />
+                <el-option label="宣传推广" value="宣传推广" />
+                <el-option label="物流运输" value="物流运输" />
+                <el-option label="其他" value="其他" />
+              </el-select>
+            </div>
+            
+            <div class="filter-row">
+              <label>招标单位类型：</label>
+              <el-select v-model="filters.tendererType" placeholder="选择单位类型" clearable style="width: 200px">
+                <el-option label="全部" value="" />
+                <el-option label="政府机构" value="政府机构" />
+                <el-option label="企业" value="企业" />
+                <el-option label="其他" value="其他" />
+              </el-select>
+            </div>
+            
+            <div class="filter-row">
+              <label>所在地区：</label>
+              <el-cascader
+                v-model="filters.region"
+                :options="regionOptions"
+                placeholder="选择地区"
+                clearable
+                style="width: 200px"
+              />
+            </div>
+            
+            <div class="filter-row">
+              <label>报名截止时间：</label>
+              <el-select v-model="filters.deadline" placeholder="选择时间" clearable style="width: 200px">
+                <el-option label="全部" value="" />
+                <el-option label="≤3天" value="3" />
+                <el-option label="3-7天" value="7" />
+                <el-option label="≥7天" value="30" />
+              </el-select>
+            </div>
+            
+            <div class="filter-row">
+              <label>项目预算：</label>
+              <el-select v-model="filters.budget" placeholder="选择预算" clearable style="width: 200px">
+                <el-option label="全部" value="" />
+                <el-option label="10万以下" value="1" />
+                <el-option label="10-50万" value="2" />
+                <el-option label="50-100万" value="3" />
+                <el-option label="100万以上" value="4" />
+              </el-select>
+            </div>
+            
+            <div class="filter-row">
+              <label>招标状态：</label>
+              <el-select v-model="filters.status" placeholder="选择状态" clearable style="width: 200px">
+                <el-option label="全部" value="" />
+                <el-option label="招标中" value="招标中" />
+                <el-option label="已结束" value="已结束" />
+              </el-select>
+            </div>
+            
+            <div class="filter-actions">
+              <el-button @click="resetFilters">重置</el-button>
+              <el-button type="primary" @click="handleSearch">应用筛选</el-button>
+            </div>
+          </div>
+        </el-collapse-transition>
+      </div>
+
+      <!-- 搜索结果 -->
+      <div class="results-section">
+        <div class="results-header">
+          <div class="results-count">
+            共找到 <span class="count-number">{{ filteredResults.length }}</span> 条招投标信息
+          </div>
+          <div class="results-sort">
+            <span>排序方式：</span>
+            <el-select v-model="sortBy" size="small" @change="sortResults" placeholder="请选择排序方式">
+              <el-option label="发布时间 ↓" value="desc" />
+              <el-option label="发布时间 ↑" value="asc" />
+            </el-select>
+          </div>
+        </div>
+
+        <!-- 结果列表 -->
+        <div v-if="filteredResults.length > 0" class="tender-list">
           <div
-            v-for="item in hotTenders.slice(0, 10)"
+            v-for="(item, index) in filteredResults"
             :key="item.id"
-            class="hot-tender-item"
+            class="tender-item"
             @click="goToDetail(item.id)"
           >
-            {{ item.title }}
+            <div class="tender-icon">
+              <el-icon :size="28"><Document /></el-icon>
+            </div>
+            <div class="tender-content">
+              <div class="tender-header">
+                <h3 class="tender-title" v-html="highlightKeyword(item.title)"></h3>
+                <el-tag :type="item.status === '招标中' ? 'danger' : 'info'" size="small">
+                  {{ item.status }}
+                </el-tag>
+              </div>
+              
+              <p class="tender-scope">{{ item.scope }}</p>
+              
+              <div class="tender-meta">
+                <div class="meta-left">
+                  <span class="meta-item">
+                    <el-icon><OfficeBuilding /></el-icon>
+                    {{ item.tenderer }}
+                  </span>
+                  <span class="meta-item">
+                    <el-icon><Calendar /></el-icon>
+                    {{ item.deadline }}
+                  </span>
+                  <span class="meta-item">
+                    <el-icon><Money /></el-icon>
+                    {{ item.budget }}
+                  </span>
+                </div>
+                <div class="meta-right">
+                  <el-tag v-for="tag in item.tags" :key="tag" size="small" type="info">
+                    {{ tag }}
+                  </el-tag>
+                </div>
+              </div>
+              
+              <div class="tender-footer">
+                <span class="publish-time">
+                  <el-icon><Clock /></el-icon>
+                  {{ item.publishTime }}
+                </span>
+                <el-button type="primary" size="small">查看详情</el-button>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- 无结果 -->
+        <div v-else class="empty-results">
+          <el-empty description="未找到相关招投标信息">
+            <template #image>
+              <el-icon :size="100" color="#9CA3AF"><Document /></el-icon>
+            </template>
+            <div class="empty-suggestions">
+              <h4>热门招投标推荐</h4>
+              <div class="hot-tenders">
+                <el-tag
+                  v-for="item in hotTenders.slice(0, 10)"
+                  :key="item.id"
+                  class="hot-tag"
+                  @click="goToDetail(item.id)"
+                >
+                  {{ item.title }}
+                </el-tag>
+              </div>
+            </div>
+          </el-empty>
+        </div>
+
+        <!-- 分页 -->
+        <div v-if="filteredResults.length > 0" class="pagination-section">
+          <el-pagination
+            v-model:current-page="pagination.currentPage"
+            v-model:page-size="pagination.pageSize"
+            :page-sizes="[10, 20, 50]"
+            :total="pagination.total"
+            layout="total, sizes, prev, pager, next, jumper"
+          />
         </div>
       </div>
     </div>
@@ -157,14 +210,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { Search, ArrowUp, ArrowDown, Document, OfficeBuilding, Calendar, Clock, Money } from '@element-plus/icons-vue'
 import { biddingInfo } from '@/data/mockData'
 
 const router = useRouter()
 
 const searchKeyword = ref('')
 const sortBy = ref('desc')
+const showFilter = ref(false)
 
 const filters = ref({
   projectType: '',
@@ -173,6 +228,12 @@ const filters = ref({
   deadline: '',
   budget: '',
   status: ''
+})
+
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 4
 })
 
 const regionOptions = [
@@ -278,19 +339,23 @@ const filteredResults = computed(() => {
   return results
 })
 
+const toggleFilter = () => {
+  showFilter.value = !showFilter.value
+}
+
 const handleSearch = () => {
   console.log('搜索关键词:', searchKeyword.value)
 }
 
 const resetFilters = () => {
-  filters.value = {
+  Object.assign(filters.value, {
     projectType: '',
     tendererType: '',
     region: [],
     deadline: '',
     budget: '',
     status: ''
-  }
+  })
   searchKeyword.value = ''
 }
 
@@ -300,13 +365,6 @@ const sortResults = () => {
 
 const goToDetail = (id) => {
   router.push(`/tender/detail/${id}`)
-}
-
-const formatDate = (date) => {
-  const d = new Date(date)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-    d.getDate()
-  ).padStart(2, '0')}`
 }
 
 const highlightKeyword = (text) => {
@@ -319,346 +377,344 @@ const highlightKeyword = (text) => {
 
 <style lang="scss" scoped>
 .tender-page {
-  min-height: 100vh;
-  background: #f9fafb;
-  padding: 40px 0;
+  padding: 100px 0 60px;
+  min-height: calc(100vh - 80px);
+  background: #F9FAFB;
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .search-section {
-  background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 20px;
-}
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
-.search-bar {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-
-  input {
-    flex: 1;
-    padding: 12px 20px;
-    border: 2px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: all 0.3s;
-
-    &:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-  }
-
-  .search-btn {
-    padding: 12px 30px;
-    background: linear-gradient(135deg, #204e9c 0%, #2563eb 100%);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    }
-
-    .icon {
-      font-size: 18px;
+  .search-box {
+    :deep(.el-input-group__append) {
+      .el-button {
+        border: none;
+        border-radius: 0 8px 8px 0;
+        padding: 0 32px;
+        font-size: 16px;
+      }
     }
   }
 }
 
 .filter-section {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.filter-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.filter-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2937;
+}
 
-    label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #374151;
-    }
+.filter-content {
+  padding-top: 16px;
+  border-top: 2px solid #F3F4F6;
+}
 
-    .el-select,
-    .el-cascader {
-      width: 160px;
-    }
+.filter-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
   }
 
-  .reset-btn {
-    padding: 10px 25px;
-    background: #fff;
-    color: #6b7280;
-    border: 2px solid #e5e7eb;
-    border-radius: 6px;
+  label {
+    width: 100px;
     font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s;
-
-    &:hover {
-      border-color: #2563eb;
-      color: #2563eb;
-    }
+    color: #374151;
+    font-weight: 500;
+    flex-shrink: 0;
+    padding-top: 8px;
   }
 }
 
+.filter-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding-top: 24px;
+}
+
 .results-section {
-  background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .results-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #F3F4F6;
+  margin-bottom: 24px;
+}
 
-  .total-count {
-    font-size: 16px;
-    color: #374151;
+.results-count {
+  font-size: 16px;
+  color: #6B7280;
 
-    strong {
-      color: #2563eb;
-      font-size: 20px;
-      font-weight: 700;
-    }
-  }
-
-  .sort-select {
-    width: 180px;
+  .count-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: #204E9C;
+    margin: 0 4px;
   }
 }
 
-.results-list {
+.results-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6B7280;
+  
+  span {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  :deep(.el-select) {
+    display: inline-flex;
+    align-items: center;
+    min-width: 120px;
+  }
+  
+  :deep(.el-select__wrapper) {
+    width: 100%;
+  }
+}
+
+.tender-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
 .tender-item {
-  padding: 25px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 
   &:hover {
-    border-color: #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+    border-color: #204E9C;
   }
+}
+
+.tender-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(32, 78, 156, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #204E9C;
+  flex-shrink: 0;
+}
+
+.tender-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .tender-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
-
-  .tender-title {
-    flex: 1;
-    font-size: 18px;
-    font-weight: 700;
-    color: #111827;
-    margin: 0;
-    line-height: 1.5;
-
-    :deep(.highlight) {
-      background: #fef3c7;
-      color: #d97706;
-      padding: 2px 4px;
-      border-radius: 3px;
-    }
-  }
-
-  .status-badge {
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    margin-left: 20px;
-
-    &.active {
-      background: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fca5a5;
-    }
-
-    &.inactive {
-      background: #f9fafb;
-      color: #9ca3af;
-      border: 1px solid #e5e7eb;
-    }
-  }
-}
-
-.tender-info {
-  display: flex;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 30px;
-  margin-bottom: 20px;
+}
 
-  .info-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #6b7280;
-
-    .icon {
-      font-size: 16px;
-    }
-
-    strong {
-      color: #374151;
-      font-weight: 600;
-    }
+.tender-title {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0;
+  line-height: 1.4;
+  
+  :deep(.highlight) {
+    background: #fef3c7;
+    color: #d97706;
+    padding: 2px 4px;
+    border-radius: 3px;
   }
 }
 
-.tender-content {
-  margin-bottom: 20px;
+.tender-scope {
+  font-size: 14px;
+  color: #6B7280;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-  .content-item {
-    font-size: 15px;
-    color: #374151;
-    margin-bottom: 12px;
+.tender-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 8px;
+}
 
-    .label {
-      font-weight: 600;
-      color: #111827;
-    }
+.meta-left {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #6B7280;
+
+  .el-icon {
+    color: #204E9C;
   }
+}
 
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
+.meta-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .tender-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 15px;
-  border-top: 1px solid #f3f4f6;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #F3F4F6;
+}
 
-  .publish-time {
-    font-size: 13px;
-    color: #9ca3af;
+.publish-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #6B7280;
+  
+  .el-icon {
+    color: #9CA3AF;
   }
 }
 
-.empty-result {
+.empty-results {
+  padding: 60px 0;
   text-align: center;
-  padding: 80px 20px;
+}
 
-  .empty-icon {
-    font-size: 80px;
-    margin-bottom: 20px;
-    opacity: 0.5;
-  }
+.empty-suggestions {
+  margin-top: 32px;
 
-  h3 {
-    font-size: 24px;
-    color: #111827;
-    margin-bottom: 10px;
-  }
-
-  p {
+  h4 {
     font-size: 16px;
-    color: #6b7280;
-    margin-bottom: 30px;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 16px;
   }
+}
 
-  .hot-tenders {
-    max-width: 800px;
-    margin: 0 auto;
-    background: #f9fafb;
-    padding: 25px;
-    border-radius: 8px;
+.hot-tenders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
 
-    .hot-tender-item {
-      padding: 12px 15px;
-      margin-bottom: 8px;
-      background: #fff;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      color: #374151;
-      transition: all 0.3s;
+.hot-tag {
+  cursor: pointer;
+  transition: all 0.3s ease;
 
-      &:hover {
-        background: #eff6ff;
-        color: #2563eb;
-        transform: translateX(5px);
-      }
-    }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
+}
+
+.pagination-section {
+  display: flex;
+  justify-content: center;
+  padding-top: 32px;
+  margin-top: 32px;
+  border-top: 2px solid #F3F4F6;
 }
 
 @media (max-width: 768px) {
   .tender-page {
-    padding: 20px 0;
+    padding: 100px 16px 40px;
   }
 
-  .search-section {
-    padding: 20px;
+  .search-section,
+  .filter-section,
+  .results-section {
+    padding: 20px 16px;
   }
 
-  .search-bar {
+  .tender-item {
     flex-direction: column;
-
-    input {
-      width: 100%;
-    }
-
-    .search-btn {
-      width: 100%;
-      justify-content: center;
-    }
   }
 
-  .filter-section {
-    .filter-group {
-      width: 100%;
-
-      .el-select,
-      .el-cascader {
-        width: 100%;
-      }
-    }
+  .tender-icon {
+    width: 100%;
   }
 
-  .tender-info {
+  .tender-header {
     flex-direction: column;
-    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .meta-left {
+    flex-direction: column;
+    gap: 8px;
   }
 
   .tender-footer {
     flex-direction: column;
-    gap: 15px;
     align-items: flex-start;
+    gap: 12px;
   }
 }
 </style>
