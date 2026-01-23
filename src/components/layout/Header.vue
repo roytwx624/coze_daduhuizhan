@@ -265,6 +265,7 @@ const handleCommand = (command) => {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   padding: 8px 0;
   border: 1px solid #F3F4F6;
+  z-index: 10000; /* Ensure dropdown is above map and other elements */
 
   li {
     list-style: none;
