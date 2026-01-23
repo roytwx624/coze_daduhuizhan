@@ -180,9 +180,13 @@ const initMap = () => {
       
       // 添加标记点
       filteredVenues.value.forEach(venue => {
-        // 这里假设venue有经纬度数据，如果没有可以使用默认坐标或随机生成
-        // 实际开发中应该在数据中包含经纬度
-        const position = new AMap.LngLat(116.397428 + (Math.random() - 0.5) * 0.1, 39.90923 + (Math.random() - 0.5) * 0.1)
+        let position
+        if (venue.coordinates && venue.coordinates.length === 2) {
+          position = new AMap.LngLat(venue.coordinates[0], venue.coordinates[1])
+        } else {
+          // 如果没有坐标，使用默认位置或随机偏移
+          position = new AMap.LngLat(116.397428 + (Math.random() - 0.5) * 0.1, 39.90923 + (Math.random() - 0.5) * 0.1)
+        }
         
         const marker = new AMap.Marker({
           position: position,

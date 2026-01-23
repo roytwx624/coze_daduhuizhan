@@ -4,6 +4,12 @@ import exhibition2 from '@/assets/images/exhibition/20260122-111812.430-2.jpg'
 import exhibition3 from '@/assets/images/exhibition/20260122-111812.430-3.jpg'
 import exhibition4 from '@/assets/images/exhibition/插画展.png'
 
+import venue1 from '@/assets/images/venues/527424142127173.jpg'
+import venue2 from '@/assets/images/venues/527424271376453.jpg'
+import venue3 from '@/assets/images/venues/541684553453637.jpg'
+import venue4 from '@/assets/images/venues/529284468772933.png'
+import venue5 from '@/assets/images/venues/541976601251909.jpg'
+
 // 展会数据
 export const exhibitions = [
   {
@@ -247,48 +253,66 @@ export const venues = [
     capacity: 50000,
     facilities: ['会议室', '餐厅', '停车场', '贵宾厅'],
     rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=600',
+    image: venue1,
+    coordinates: [116.389432, 40.002901],
     distance: 5.2,
     popularity: 98
   },
   {
     id: 2,
-    name: '中国国际展览中心（顺义馆）',
+    name: '北京国际会议中心',
+    address: '北京市朝阳区北辰东路8号',
+    area: 60000,
+    maxHallArea: 10000,
+    capacity: 5000,
+    facilities: ['会议室', '餐厅', '住宿', '商务中心'],
+    rating: 4.5,
+    image: venue2,
+    coordinates: [116.402561, 39.989285],
+    distance: 6.8,
+    popularity: 90
+  },
+  {
+    id: 3,
+    name: '首都国际会展中心',
     address: '北京市顺义区天竺空港工业区',
     area: 200000,
     maxHallArea: 40000,
     capacity: 40000,
     facilities: ['会议室', '餐厅', '停车场', '展览馆'],
     rating: 4.6,
-    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600',
+    image: venue3,
+    coordinates: [116.550173, 40.077],
     distance: 32.5,
     popularity: 95
   },
   {
-    id: 3,
-    name: '北京展览馆',
-    address: '北京市西城区西直门外大街135号',
-    area: 80000,
-    maxHallArea: 20000,
-    capacity: 15000,
-    facilities: ['会议室', '餐厅', '停车场', '艺术展厅'],
-    rating: 4.5,
-    image: 'https://images.unsplash.com/photo-1568043210943-b559e348b06f?w=600',
-    distance: 8.7,
-    popularity: 92
-  },
-  {
     id: 4,
-    name: '首钢会展中心',
+    name: '首钢国际会展中心',
     address: '北京市石景山区石景山路68号',
     area: 150000,
     maxHallArea: 35000,
     capacity: 30000,
     facilities: ['会议室', '餐厅', '停车场', '户外展区'],
     rating: 4.7,
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600',
+    image: venue4,
+    coordinates: [116.15867, 39.916463],
     distance: 18.3,
     popularity: 89
+  },
+  {
+    id: 5,
+    name: '中关村国际创新中心',
+    address: '北京市海淀区中关村大街',
+    area: 65000,
+    maxHallArea: 15000,
+    capacity: 8000,
+    facilities: ['多功能厅', '会议室', '展示区', '科技展厅'],
+    rating: 4.7,
+    image: venue5,
+    coordinates: [116.296976, 39.990778],
+    distance: 12.4,
+    popularity: 93
   }
 ]
 
