@@ -124,7 +124,7 @@
             v-for="(item, index) in filteredResults"
             :key="item.id"
             class="tender-item"
-            @click="goToDetail(item.id)"
+            @click="goToDetail(item.id, item.url)"
           >
             <div class="tender-icon">
               <el-icon :size="28"><Document /></el-icon>
@@ -200,7 +200,7 @@
             v-model:current-page="pagination.currentPage"
             v-model:page-size="pagination.pageSize"
             :page-sizes="[10, 20, 50]"
-            :total="pagination.total"
+            :total="filteredResults.length"
             layout="total, sizes, prev, pager, next, jumper"
           />
         </div>
@@ -283,18 +283,18 @@ const filteredResults = computed(() => {
     results = results.filter(
       (item) =>
         item.title.toLowerCase().includes(keyword) ||
-        item.tenderer.toLowerCase().includes(keyword) ||
+        item.organization.toLowerCase().includes(keyword) ||
         item.relatedExhibition?.toLowerCase().includes(keyword) ||
         item.scope.toLowerCase().includes(keyword)
     )
   }
 
   if (filters.value.projectType) {
-    results = results.filter((item) => item.projectType === filters.value.projectType)
+    results = results.filter((item) => item.type === filters.value.projectType)
   }
 
   if (filters.value.tendererType) {
-    results = results.filter((item) => item.tendererType === filters.value.tendererType)
+    results = results.filter((item) => item.orgType === filters.value.tendererType)
   }
 
   if (filters.value.region.length > 0) {
@@ -317,7 +317,7 @@ const filteredResults = computed(() => {
   if (filters.value.budget) {
     const budgetLevel = parseInt(filters.value.budget)
     results = results.filter((item) => {
-      const budget = item.budgetValue || 0
+      const budget = item.budgetAmount || 0
       if (budgetLevel === 1) return budget < 10
       if (budgetLevel === 2) return budget >= 10 && budget < 50
       if (budgetLevel === 3) return budget >= 50 && budget < 100
@@ -345,6 +345,7 @@ const toggleFilter = () => {
 
 const handleSearch = () => {
   console.log('搜索关键词:', searchKeyword.value)
+  pagination.currentPage = 1
 }
 
 const resetFilters = () => {
@@ -357,14 +358,20 @@ const resetFilters = () => {
     status: ''
   })
   searchKeyword.value = ''
+  pagination.currentPage = 1
 }
 
 const sortResults = () => {
   console.log('排序方式:', sortBy.value)
+  pagination.currentPage = 1
 }
 
-const goToDetail = (id) => {
-  router.push(`/tender/detail/${id}`)
+const goToDetail = (id, url) => {
+  if (url) {
+    window.open(url, '_blank')
+  } else {
+    router.push(`/tender/detail/${id}`)
+  }
 }
 
 const highlightKeyword = (text) => {

@@ -463,7 +463,8 @@ const getStatusClass = (status) => {
 
 <style lang="scss" scoped>
 .home-page {
-  padding-top: 80px; /* Match fixed header height exactly */
+  /* 添加顶部内边距，确保banner从header底部开始显示，不被遮挡 */
+  padding-top: 80px;
 }
 
 .section-header {

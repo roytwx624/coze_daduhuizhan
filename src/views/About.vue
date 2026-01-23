@@ -45,7 +45,7 @@
             </div>
           </div>
           <div class="contact-image">
-            <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800" alt="联系我们" />
+            <img src="@/assets/images/about/20260123-174443.png" alt="联系我们" />
           </div>
         </div>
       </div>

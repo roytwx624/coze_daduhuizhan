@@ -104,9 +104,9 @@
         </div>
 
         <!-- 结果列表 -->
-        <div v-if="policies.length > 0" class="policy-list">
+        <div v-if="filteredResults.length > 0" class="policy-list">
           <div
-            v-for="item in policies"
+            v-for="item in filteredResults"
             :key="item.id"
             class="policy-item"
             @click="viewDetail(item)"
@@ -115,8 +115,18 @@
               <el-icon :size="28"><Document /></el-icon>
             </div>
             <div class="policy-content">
-              <h3 class="policy-title">{{ item.title }}</h3>
-              <p class="policy-summary">{{ item.summary }}</p>
+              <div class="policy-header">
+                <h3 class="policy-title">{{ item.title }}</h3>
+                <div class="policy-tags">
+                  <el-tag :type="getStatusType(item.category)" size="small">
+                    {{ item.category }}
+                  </el-tag>
+                  <el-tag size="small" type="primary">
+                    {{ item.subjectCategory }}
+                  </el-tag>
+                </div>
+              </div>
+              
               <div class="policy-meta">
                 <div class="meta-left">
                   <span class="meta-item">
@@ -127,19 +137,14 @@
                     <el-icon><Calendar /></el-icon>
                     {{ item.publishTime }}
                   </span>
-                  <span class="meta-item">
-                    <el-icon><User /></el-icon>
-                    {{ item.applicable }}
-                  </span>
                 </div>
-                <div class="meta-right">
-                  <el-tag :type="getStatusType(item.category)" size="small">
-                    {{ item.category }}
-                  </el-tag>
-                  <el-tag :type="item.status === '有效' ? 'success' : 'info'" size="small">
-                    {{ item.status }}
-                  </el-tag>
-                </div>
+              </div>
+              
+              <p class="policy-summary">{{ item.summary }}</p>
+              
+              <div class="policy-footer">
+                <span class="document-number">发文序号：{{ item.documentNumber }}</span>
+                <el-button type="primary" size="small" @click.stop="viewDetail(item)">查看原文</el-button>
               </div>
             </div>
           </div>
@@ -168,12 +173,12 @@
         </div>
 
         <!-- 分页 -->
-        <div v-if="policies.length > 0" class="pagination-section">
+        <div v-if="filteredResults.length > 0" class="pagination-section">
           <el-pagination
             v-model:current-page="pagination.currentPage"
             v-model:page-size="pagination.pageSize"
             :page-sizes="[10, 20, 50]"
-            :total="pagination.total"
+            :total="filteredResults.length"
             layout="total, sizes, prev, pager, next, jumper"
           />
         </div>
@@ -183,7 +188,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, ArrowUp, ArrowDown, Document, OfficeBuilding, Calendar, User } from '@element-plus/icons-vue'
 import { policies as policyData } from '@/data/mockData'
@@ -211,12 +216,50 @@ const pagination = reactive({
   total: 4
 })
 
+const filteredResults = computed(() => {
+  let results = [...policies.value]
+
+  if (searchForm.keyword) {
+    const keyword = searchForm.keyword.toLowerCase()
+    results = results.filter(
+      (item) =>
+        item.title.toLowerCase().includes(keyword) ||
+        item.publisher.toLowerCase().includes(keyword) ||
+        item.summary.toLowerCase().includes(keyword) ||
+        item.subjectCategory.toLowerCase().includes(keyword)
+    )
+  }
+
+  if (searchForm.policyType) {
+    results = results.filter((item) => item.category === searchForm.policyType)
+  }
+
+  if (searchForm.level) {
+    // 根据发布层级过滤，这里简化处理
+    results = results.filter((item) => item.publisher.includes(searchForm.level === '国家' ? '国家' : searchForm.level === 'province' ? '省' : searchForm.level === 'city' ? '市' : '县'))
+  }
+
+  if (searchForm.status) {
+    results = results.filter((item) => item.status === (searchForm.status === 'valid' ? '有效' : searchForm.status === 'expired' ? '失效' : '即将生效'))
+  }
+
+  // 排序
+  if (sortBy.value === 'time-desc') {
+    results.sort((a, b) => new Date(b.publishTime) - new Date(a.publishTime))
+  } else {
+    results.sort((a, b) => new Date(a.publishTime) - new Date(b.publishTime))
+  }
+
+  return results
+})
+
 const toggleFilter = () => {
   showFilter.value = !showFilter.value
 }
 
 const handleSearch = () => {
   console.log('搜索政策：', searchForm)
+  pagination.currentPage = 1
 }
 
 const resetFilter = () => {
@@ -228,14 +271,20 @@ const resetFilter = () => {
     status: ''
   })
   dateRange.value = []
+  pagination.currentPage = 1
 }
 
 const handleSort = () => {
   console.log('排序方式：', sortBy.value)
+  pagination.currentPage = 1
 }
 
 const viewDetail = (item) => {
-  router.push(`/policy/detail/${item.id}`)
+  if (item.url) {
+    window.open(item.url, '_blank')
+  } else {
+    router.push(`/policy/detail/${item.id}`)
+  }
 }
 
 const handleHotClick = (item) => {
@@ -245,12 +294,12 @@ const handleHotClick = (item) => {
 
 const getStatusType = (category) => {
   const typeMap = {
-    '重点扶持': 'success',
-    '优惠政策': 'warning',
-    '资金支持': 'primary',
-    '税收优惠': 'info'
+    '重点扶持': 'danger',
+    '优惠政策': 'danger',
+    '资金支持': 'danger',
+    '税收优惠': 'danger'
   }
-  return typeMap[category] || ''
+  return typeMap[category] || 'danger'
 }
 </script>
 
@@ -419,8 +468,8 @@ const getStatusType = (category) => {
 }
 
 .policy-icon {
-  width: 56px;
-  height: 56px;
+  width: 80px;
+  height: 80px;
   background: rgba(32, 78, 156, 0.08);
   border-radius: 12px;
   display: flex;
@@ -428,26 +477,44 @@ const getStatusType = (category) => {
   justify-content: center;
   color: #204E9C;
   flex-shrink: 0;
+  margin: auto 0;
 }
 
 .policy-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  padding-left: 8px;
+}
+
+.policy-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .policy-title {
+  flex: 1;
   font-size: 18px;
   font-weight: 600;
   color: #1F2937;
-  margin: 0 0 12px 0;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.policy-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .policy-summary {
   font-size: 14px;
   color: #6B7280;
   line-height: 1.6;
-  margin: 0 0 16px 0;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -456,16 +523,29 @@ const getStatusType = (category) => {
 
 .policy-meta {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
 }
 
 .meta-left {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
+}
+
+.policy-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #F3F4F6;
+  margin-top: 8px;
+}
+
+.document-number {
+  font-size: 14px;
+  color: #6B7280;
 }
 
 .meta-item {

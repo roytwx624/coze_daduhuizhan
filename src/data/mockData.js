@@ -98,39 +98,63 @@ export const calendarData = {
 export const policies = [
   {
     id: 1,
-    title: '关于促进会展业高质量发展的若干措施',
-    publisher: '商务部',
-    publishTime: '2026-01-15',
+    title: '关于对《北京市会展业高质量发展三年行动方案》公开征求意见的公告',
+    publisher: '北京市商务局',
+    publishTime: '2025-12-17',
     category: '重点扶持',
-    summary: '为促进会展业高质量发展，推动国际经贸交流合作，商务部出台相关扶持措施...',
-    status: '有效'
+    summary: '北京市商务局就《北京市会展业高质量发展三年行动方案》公开征求意见，旨在推动会展业高质量发展。',
+    status: '有效',
+    documentNumber: '京商服贸字〔2025〕12号',
+    subjectCategory: '会展规划',
+    url: 'https://sw.beijing.gov.cn/zmhd/dczjj/202512/t20251217_4347628.html'
   },
   {
     id: 2,
-    title: '会展场馆建设补贴政策实施细则',
-    publisher: '北京市发改委',
-    publishTime: '2026-01-10',
+    title: '北京市人民政府关于印发《北京市推动总部企业高质量发展的若干措施》的通知',
+    publisher: '北京市人民政府',
+    publishTime: '2025-06-18',
     category: '优惠政策',
-    summary: '为完善会展基础设施，提升会展服务能力，北京市出台场馆建设补贴政策...',
-    status: '有效'
+    summary: '北京市人民政府印发《北京市推动总部企业高质量发展的若干措施》，旨在促进总部企业高质量发展。',
+    status: '有效',
+    documentNumber: '京政发〔2025〕6号',
+    subjectCategory: '企业发展',
+    url: 'https://sw.beijing.gov.cn/zwxx/2024zcwj/202506/t20250618_4116556.html'
   },
   {
     id: 3,
-    title: '国际展会参展费用补助办法',
-    publisher: '北京市财政局',
-    publishTime: '2026-01-05',
+    title: '北京市商务局关于申报2025年促进我市会展业发展奖励项目的通知',
+    publisher: '北京市商务局',
+    publishTime: '2025-05-06',
     category: '资金支持',
-    summary: '为鼓励企业参与国际展会，拓展海外市场，北京市制定参展费用补助办法...',
-    status: '有效'
+    summary: '北京市商务局发布2025年促进会展业发展奖励项目申报通知，支持会展业发展。',
+    status: '有效',
+    documentNumber: '京商服贸字〔2025〕5号',
+    subjectCategory: '资金补贴',
+    url: 'https://sw.beijing.gov.cn/zwxx/2024zcwj/202505/t20250506_4082609.html'
   },
   {
     id: 4,
-    title: '会展企业税收优惠政策通知',
-    publisher: '国家税务总局',
-    publishTime: '2025-12-28',
-    category: '税收优惠',
-    summary: '为支持会展业发展，减轻企业负担，国家税务总局出台税收优惠政策...',
-    status: '有效'
+    title: '北京市人民政府关于印发《北京市深化改革提振消费专项行动方案》的通知',
+    publisher: '北京市人民政府',
+    publishTime: '2025-07-09',
+    category: '优惠政策',
+    summary: '北京市人民政府印发《北京市深化改革提振消费专项行动方案》，旨在深化改革提振消费。',
+    status: '有效',
+    documentNumber: '京政发〔2025〕7号',
+    subjectCategory: '消费促进',
+    url: 'https://sw.beijing.gov.cn/zwxx/2024zcwj/202507/t20250709_4145247.html'
+  },
+  {
+    id: 5,
+    title: '北京市商务局关于2025年度支持外贸企业提升国际化经营能力项目申报指南的通知',
+    publisher: '北京市商务局',
+    publishTime: '2025-01-16',
+    category: '资金支持',
+    summary: '北京市商务局发布2025年度支持外贸企业提升国际化经营能力项目申报指南。',
+    status: '有效',
+    documentNumber: '京商外贸字〔2025〕1号',
+    subjectCategory: '外贸支持',
+    url: 'https://sw.beijing.gov.cn/zwxx/2024zcwj/202501/t20250116_3990814.html'
   }
 ]
 
@@ -325,59 +349,48 @@ export const venues = [
 export const biddingInfo = [
   {
     id: 1,
-    title: '2026北京国际汽车展览会搭建工程招标',
-    organization: '北京国际汽车展览会组委会',
-    publishTime: '2026-01-12',
-    deadline: '2026-01-28',
-    budget: '500-800万元',
-    budgetAmount: 650.5872,
-    scope: '展会搭建',
-    type: '搭建',
-    orgType: '其他',
+    title: '《京津冀庙会文化展》展览设计与制作项目',
+    organization: '首都博物馆',
+    publishTime: '2025-11-12',
+    deadline: '2025-12-03',
+    budget: '146.02901万元',
+    budgetAmount: 146.02901,
+    scope: '展览设计与制作',
+    type: '设计与制作',
+    orgType: '政府机构',
     region: '北京',
-    status: '招标中'
+    status: '已结束',
+    url: 'http://www.ccgp-beijing.gov.cn/xxgg/sjxxgg/zbgg/2025/11/478ca14754644d90b2b319a3c54971d4.htm'
   },
   {
     id: 2,
-    title: '2026国际医疗器械展宣传推广服务采购',
-    organization: '中国医疗器械行业协会',
-    publishTime: '2026-01-15',
-    deadline: '2026-02-05',
-    budget: '200-300万元',
-    budgetAmount: 246.02901,
-    scope: '宣传推广服务',
-    type: '宣传推广',
-    orgType: '企业',
+    title: '服贸会体育专题展（第一包：展会服务）',
+    organization: '北京市商务局',
+    publishTime: '2026-01-12',
+    deadline: '2026-02-02',
+    budget: '617万元',
+    budgetAmount: 617.0,
+    scope: '展会服务',
+    type: '展会服务',
+    orgType: '政府机构',
     region: '北京',
-    status: '招标中'
+    status: '招标中',
+    url: 'http://www.ccgp-beijing.gov.cn/xxgg/sjxxgg/zbgg/2026/1/11bdde292dca4509a4c80b7dc6c72a7e.htm'
   },
   {
     id: 3,
-    title: '2026智能制造博览会物流运输服务',
-    organization: '北京智能制造促进中心',
-    publishTime: '2026-01-20',
-    deadline: '2026-01-30',
-    budget: '100-150万元',
-    budgetAmount: 128.7536,
-    scope: '物流运输',
-    type: '物流运输',
+    title: '“共享大市场 出口中国”北京国际精品荟项目',
+    organization: '北京市商务局',
+    publishTime: '2026-01-06',
+    deadline: '2026-01-19',
+    budget: '95.125078万元',
+    budgetAmount: 95.125078,
+    scope: '展会策划与执行',
+    type: '展会服务',
     orgType: '政府机构',
     region: '北京',
-    status: '招标中'
-  },
-  {
-    id: 4,
-    title: '2026国际旅游交易会展位搭建项目',
-    organization: '国家文化和旅游部',
-    publishTime: '2025-12-10',
-    deadline: '2025-12-31',
-    budget: '300-500万元',
-    budgetAmount: 380.4562,
-    scope: '展会搭建',
-    type: '搭建',
-    orgType: '政府机构',
-    region: '北京',
-    status: '已结束'
+    status: '已结束',
+    url: 'http://www.ccgp-beijing.gov.cn/xxgg/sjxxgg/zbgg/2026/1/bed6a4cbb3984dd593f9f60490e3cfcb.htm'
   }
 ]
 

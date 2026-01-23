@@ -159,7 +159,8 @@ const goToSettings = () => {
   min-height: 100vh;
   background: #f9fafb;
   padding: 40px 0;
-  margin-top: 80px;
+  /* 移除margin-top，使用padding-top确保内容从header底部开始且不被遮挡 */
+  padding-top: 120px;
 }
 
 .center-header {
