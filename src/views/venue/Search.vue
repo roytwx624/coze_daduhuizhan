@@ -190,7 +190,13 @@ const initMap = () => {
         
         const marker = new AMap.Marker({
           position: position,
-          title: venue.name
+          title: venue.name,
+          icon: new AMap.Icon({
+            size: new AMap.Size(25, 34),
+            image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
+            imageSize: new AMap.Size(135, 40),
+            imageOffset: new AMap.Pixel(-9, -3)
+          })
         })
         
         marker.on('click', () => {
@@ -284,6 +290,11 @@ const selectVenue = (venue) => {
   if (isPanelCollapsed.value) {
     isPanelCollapsed.value = false
   }
+  
+  // 地图定位到对应坐标
+  if (map && venue.coordinates && venue.coordinates.length === 2) {
+    map.setZoomAndCenter(15, [venue.coordinates[0], venue.coordinates[1]])
+  }
 }
 
 // 查看详情
@@ -349,7 +360,7 @@ const getMarkerPosition = (venue) => {
   border-radius: 8px; /* Added border radius */
 
   &.collapsed {
-    transform: translateX(-440px); /* Adjusted for margin */
+    transform: translateX(-400px); /* Adjusted for margin */
     
     .panel-toggle {
       right: -32px;
@@ -511,7 +522,7 @@ const getMarkerPosition = (venue) => {
         
         .el-icon {
           font-size: 14px;
-          color: #9CA3AF;
+          color: #3B82F6;
         }
       }
     }
