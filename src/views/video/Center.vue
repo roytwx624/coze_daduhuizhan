@@ -9,7 +9,6 @@
             直播推荐
           </h2>
           <div class="section-actions">
-            <el-tag type="danger" effect="dark" class="live-tag">正在直播</el-tag>
             <el-link type="primary" @click="viewMoreLive">查看更多 &gt;</el-link>
           </div>
         </div>
@@ -23,14 +22,9 @@
             <div class="card-cover">
               <img :src="item.cover" :alt="item.title" />
               <div class="live-overlay">
-                <el-tag type="danger" effect="dark" size="large">正在直播</el-tag>
                 <el-tag v-if="item.memberOnly" type="warning" effect="dark" size="small" class="member-tag">
                   会员专享
                 </el-tag>
-              </div>
-              <div class="viewer-count">
-                <el-icon><View /></el-icon>
-                {{ formatNumber(item.viewerCount) }}人在线
               </div>
             </div>
             <div class="card-content">
@@ -106,14 +100,16 @@
                 <el-icon><VideoPlay /></el-icon>
                 {{ item.duration }}
               </div>
-              <div class="views">
-                <el-icon><View /></el-icon>
-                {{ formatNumber(item.views) }}次观看
-              </div>
             </div>
             <div class="card-content">
               <h3 class="card-title">{{ item.title }}</h3>
               <p class="card-exhibition">{{ item.exhibitionName }}</p>
+              <div class="card-meta">
+                 <div class="views-count">
+                  <el-icon><View /></el-icon>
+                  {{ formatNumber(item.views) }}次观看
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -134,12 +130,31 @@ import {
   VideoPlay 
 } from '@element-plus/icons-vue'
 import { videos } from '@/data/mockData'
+import exhibition1 from '@/assets/images/exhibition/20260122-111812.430-1.jpg'
+import exhibition2 from '@/assets/images/exhibition/20260122-111812.430-2.jpg'
+import exhibition3 from '@/assets/images/exhibition/20260122-111812.430-3.jpg'
+import exhibition4 from '@/assets/images/exhibition/插画展.png'
 
 const router = useRouter()
 
-const liveList = ref(videos.live)
-const upcomingList = ref(videos.upcoming.map(item => ({ ...item, booked: false })))
-const replayList = ref(videos.replay)
+const exhibitionImages = [exhibition1, exhibition2, exhibition3, exhibition4]
+
+const liveList = ref([...videos.live, ...videos.live].map((item, index) => ({ 
+    ...item, 
+    id: item.id + (index >= videos.live.length ? 100 : 0), // Ensure unique IDs
+    cover: exhibitionImages[index % 4]
+  })))
+const upcomingList = ref([...videos.upcoming, ...videos.upcoming].map((item, index) => ({ 
+    ...item, 
+    id: item.id + (index >= videos.upcoming.length ? 100 : 0), // Ensure unique IDs
+    booked: false,
+    cover: exhibitionImages[index % 4]
+  })))
+  const replayList = ref([...videos.replay, ...videos.replay].map((item, index) => ({
+    ...item,
+    id: item.id + (index >= videos.replay.length ? 100 : 0), // Ensure unique IDs
+    cover: exhibitionImages[index % 4]
+  })))
 
 // 进入直播
 const enterLive = (item) => {
@@ -391,19 +406,19 @@ const viewMoreReplay = () => {
   backdrop-filter: blur(10px);
 }
 
-.views {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
+.card-meta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.views-count {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  backdrop-filter: blur(10px);
+  gap: 4px;
+  font-size: 12px;
+  color: #9CA3AF;
 }
 
 .card-content {

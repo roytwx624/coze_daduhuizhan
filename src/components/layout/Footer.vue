@@ -60,15 +60,11 @@
       <!-- 底部版权信息 -->
       <div class="footer-bottom">
         <div class="copyright">
-          <p>© 2026 大都会展数智平台 版权所有</p>
-          <p>京ICP备12345678号-1 | 增值电信业务经营许可证：京B2-20261234</p>
-        </div>
-        <div class="footer-links">
-          <a href="#">网站地图</a>
-          <span>|</span>
-          <a href="#">友情链接</a>
-          <span>|</span>
-          <a href="#">免责声明</a>
+          <span>© 2026 大都会展数智平台 版权所有</span>
+          <span class="divider">|</span>
+          <span>京ICP备12345678号-1</span>
+          <span class="divider">|</span>
+          <span>增值电信业务经营许可证：京B2-20261234</span>
         </div>
       </div>
     </div>
@@ -114,16 +110,17 @@ import { Phone, Message, Location } from '@element-plus/icons-vue'
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #9CA3AF;
+    color: white;
     font-size: 14px;
     transition: color 0.3s ease;
 
     &:hover {
-      color: white;
+      opacity: 0.8;
     }
 
     .el-icon {
-      color: #2563EB;
+      color: white;
+      opacity: 0.9;
     }
   }
 }
@@ -137,12 +134,12 @@ import { Phone, Message, Location } from '@element-plus/icons-vue'
   }
 
   a {
-    color: #9CA3AF;
+    color: white;
     font-size: 14px;
     transition: all 0.3s ease;
 
     &:hover {
-      color: #2563EB;
+      opacity: 0.8;
       padding-left: 8px;
     }
   }
@@ -152,7 +149,7 @@ import { Phone, Message, Location } from '@element-plus/icons-vue'
   .qrcode-box {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
   }
 
@@ -173,8 +170,9 @@ import { Phone, Message, Location } from '@element-plus/icons-vue'
 
   .qrcode-text {
     font-size: 13px;
-    color: #9CA3AF;
-    text-align: center;
+    color: white;
+    text-align: left;
+    margin-left: 4px;
   }
 }
 
@@ -187,10 +185,15 @@ import { Phone, Message, Location } from '@element-plus/icons-vue'
 }
 
 .copyright {
-  p {
-    font-size: 13px;
-    color: #6B7280;
-    margin: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: white;
+  font-size: 13px;
+
+  .divider {
+    color: rgba(255, 255, 255, 0.3);
   }
 }
 

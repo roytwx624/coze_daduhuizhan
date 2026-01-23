@@ -9,7 +9,6 @@
       </router-view>
     </main>
     <Footer />
-    <FloatingWindow />
   </div>
 </template>
 
@@ -17,7 +16,6 @@
 import { onMounted } from 'vue'
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import FloatingWindow from '@/components/common/FloatingWindow.vue'
 
 onMounted(() => {
   document.title = '大都会展数智平台 - 专业展会信息平台'

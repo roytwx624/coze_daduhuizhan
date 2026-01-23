@@ -37,7 +37,7 @@
             <div class="stat-divider"></div>
             <div class="stat-item">
               <div class="stat-number">{{ calendarData.stats.totalVenues }}</div>
-              <div class="stat-label">涉及场馆</div>
+              <div class="stat-label">覆盖场馆</div>
             </div>
           </div>
           <div class="calendar-grid">
@@ -383,6 +383,16 @@ const generateCalendarDays = () => {
       isEmpty: false
     })
   }
+
+  // Calculate remaining cells to fill the last row (7 columns)
+  const totalCells = days.length
+  const remainingCells = 7 - (totalCells % 7)
+  if (remainingCells < 7) {
+    for (let i = 0; i < remainingCells; i++) {
+      days.push({ day: '', date: `next-${i}`, isEmpty: true, events: [] })
+    }
+  }
+
   calendarDays.value = days
 }
 
