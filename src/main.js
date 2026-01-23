@@ -9,6 +9,11 @@ import App from './App.vue'
 import router from './router'
 import './styles/index.scss'
 
+// 高德地图安全密钥配置 (必须在加载地图之前设置)
+window._AMapSecurityConfig = {
+  securityJsCode: '473441a0055f60fe0465ad8e053469be',
+}
+
 const app = createApp(App)
 const pinia = createPinia()
 
