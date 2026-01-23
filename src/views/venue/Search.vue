@@ -193,9 +193,9 @@ const initMap = () => {
           title: venue.name,
           icon: new AMap.Icon({
             size: new AMap.Size(25, 34),
-            image: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
-            imageSize: new AMap.Size(135, 40),
-            imageOffset: new AMap.Pixel(-9, -3)
+            image: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+            imageSize: new AMap.Size(25, 34),
+            imageOffset: new AMap.Pixel(0, 0)
           })
         })
         
@@ -360,7 +360,7 @@ const getMarkerPosition = (venue) => {
   border-radius: 8px; /* Added border radius */
 
   &.collapsed {
-    transform: translateX(-400px); /* Adjusted for margin */
+    transform: translateX(-410px); /* Adjusted for margin */
     
     .panel-toggle {
       right: -32px;
