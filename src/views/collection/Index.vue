@@ -106,7 +106,16 @@
               <el-icon :size="32"><Document /></el-icon>
             </div>
             <div class="item-content">
-              <h3 class="item-title">{{ item.title }}</h3>
+              <div class="item-header">
+                <h3 class="item-title">{{ item.title }}</h3>
+                <el-tag v-if="!item.isFree" type="warning" effect="dark" size="small" class="member-tag">
+                  会员专享
+                </el-tag>
+                <el-tag v-else type="success" effect="dark" size="small" class="free-tag">
+                  免费
+                </el-tag>
+              </div>
+              
               <div class="item-meta">
                 <span class="meta-item">
                   <el-icon><Tickets /></el-icon>
@@ -117,22 +126,19 @@
                   {{ item.author }}
                 </span>
                 <span class="meta-item">
-                  <el-icon><FolderOpened /></el-icon>
-                  {{ item.industry }}
-                </span>
-                <span class="meta-item">
                   <el-icon><Calendar /></el-icon>
                   {{ item.publishTime }}
                 </span>
               </div>
+              
               <div class="item-footer">
-                <div class="download-count">
+                <div class="download-info">
                   <el-icon><Download /></el-icon>
                   {{ formatNumber(item.downloads) }} 次下载
                 </div>
-                <el-tag :type="item.isFree ? 'success' : 'info'" size="small">
-                  {{ item.isFree ? '免费' : '付费' }}
-                </el-tag>
+                <el-button type="primary" size="small" @click.stop="downloadCollection(item)">
+                  下载
+                </el-button>
               </div>
             </div>
           </div>
@@ -239,6 +245,12 @@ const formatNumber = (num) => {
     return (num / 10000).toFixed(1) + '万'
   }
   return num.toString()
+}
+
+const downloadCollection = (item) => {
+  console.log('下载文集：', item.title)
+  // 这里可以添加实际的下载逻辑
+  alert(`开始下载：${item.title}`)
 }
 </script>
 
@@ -391,17 +403,18 @@ const formatNumber = (num) => {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  background: white;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateX(4px);
     border-color: #204E9C;
+    transform: translateY(-2px);
   }
 }
 
 .item-icon {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   background: rgba(32, 78, 156, 0.08);
   border-radius: 12px;
   display: flex;
@@ -409,6 +422,8 @@ const formatNumber = (num) => {
   justify-content: center;
   color: #204E9C;
   flex-shrink: 0;
+  font-size: 40px;
+  margin: auto 0;
 }
 
 .item-content {
@@ -417,17 +432,26 @@ const formatNumber = (num) => {
   flex-direction: column;
 }
 
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .item-title {
   font-size: 18px;
   font-weight: 600;
   color: #1F2937;
-  margin: 0 0 16px 0;
+  margin: 0;
+  flex: 1;
+  margin-right: 16px;
 }
 
 .item-meta {
   display: flex;
   gap: 24px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
@@ -439,7 +463,8 @@ const formatNumber = (num) => {
   color: #6B7280;
 
   .el-icon {
-    color: #9CA3AF;
+    color: #204E9C;
+    font-size: 16px;
   }
 }
 
@@ -447,11 +472,11 @@ const formatNumber = (num) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 16px;
   border-top: 1px solid #F3F4F6;
 }
 
-.download-count {
+.download-info {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -460,7 +485,49 @@ const formatNumber = (num) => {
 
   .el-icon {
     color: #204E9C;
+    font-size: 16px;
   }
+}
+
+:deep(.el-button) {
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+}
+
+/* 会员专享标签样式 - 与视频中心保持一致 */
+:deep(.member-tag) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  min-width: 80px;
+  justify-content: center;
+  background: linear-gradient(135deg, #FBBF24, #F59E0B);
+  color: white;
+  font-weight: 600;
+  border-radius: 20px 0 20px 0;
+  border: none;
+  padding: 4px 12px;
+  font-size: 13px;
+}
+
+/* 免费标签样式 - 与会员专享标签呼应设计 */
+:deep(.free-tag) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  min-width: 80px;
+  justify-content: center;
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: white;
+  font-weight: 600;
+  border-radius: 20px 0 20px 0;
+  border: none;
+  padding: 4px 12px;
+  font-size: 13px;
 }
 
 .empty-results {
