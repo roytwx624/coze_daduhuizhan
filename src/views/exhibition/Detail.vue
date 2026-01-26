@@ -109,6 +109,9 @@
           </div>
           <div class="exhibitor-list">
             <div class="exhibitor-item" v-for="(exhibitor, index) in exhibitors" :key="index">
+              <div class="exhibitor-icon">
+                <el-icon :size="24"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M512 64C264.58 64 64 264.58 64 512s200.58 448 448 448 448-200.58 448-448S759.42 64 512 64zm0 820c-206.36 0-374-167.64-374-374s167.64-374 374-374 374 167.64 374 374-167.64 374-374 374z"></path><path fill="currentColor" d="M512 140c-205.94 0-372 166.06-372 372s166.06 372 372 372 372-166.06 372-372S717.94 140 512 140zm0 678.82c-170.16 0-308.82-138.66-308.82-308.82S341.84 201.18 512 201.18 820.82 339.84 820.82 510 682.16 818.82 512 818.82z"></path><path fill="currentColor" d="M512 268c-134.72 0-244 109.28-244 244s109.28 244 244 244 244-109.28 244-244-109.28-244-244-244zm0 424.96c-100.43 0-181.96-81.53-181.96-181.96S411.57 348.04 512 348.04s181.96 81.53 181.96 181.96-81.53 181.96-181.96 181.96z"></path></svg></el-icon>
+              </div>
               <div class="exhibitor-name">{{ exhibitor.name }}</div>
               <div class="exhibitor-booth">
                 <span class="booth-label">展位：</span>
@@ -182,8 +185,8 @@ import {
 // 右上角按钮数据
 const topButtons = ref([
   { icon: Star, name: '关注', key: 'follow' },
-  { icon: Monitor, name: '访问官网', key: 'website' },
-  { icon: Share, name: '分享', key: 'share' }
+  { icon: Share, name: '分享', key: 'share' },
+  { icon: Monitor, name: '访问官网', key: 'website' }
 ])
 
 // 标签数据
@@ -598,8 +601,8 @@ const downloadItems = ref([
 .exhibitor-item {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 16px 20px;
+    align-items: center;
+    padding: 20px 16px;
     background-color: #f5f7fa;
     border-radius: 8px;
     transition: all 0.3s ease;
@@ -609,11 +612,17 @@ const downloadItems = ref([
       transform: translateY(-1px);
     }
 
+    .exhibitor-icon {
+      margin-bottom: 12px;
+      color: #409eff;
+    }
+
     .exhibitor-name {
       font-size: 16px;
       font-weight: 600;
       color: #303133;
       margin-bottom: 8px;
+      text-align: center;
     }
 
     .exhibitor-booth {
@@ -622,6 +631,7 @@ const downloadItems = ref([
       gap: 8px;
       color: #606266;
       font-size: 14px;
+      text-align: center;
 
       .booth-label {
         font-weight: 600;
