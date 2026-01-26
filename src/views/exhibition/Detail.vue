@@ -77,7 +77,7 @@
               <p class="card-desc">{{ card.desc }}</p>
             </div>
             <el-button type="primary" size="small" plain>
-              {{ card.name === '获取分享链接' ? '分享' : card.name }}
+              {{ card.name === '获取报名分享链接' ? '分享' : card.name }}
             </el-button>
           </div>
         </div>
@@ -198,13 +198,13 @@ const buttonCards = ref([
   { 
     icon: EditPen, 
     name: '参展留资', 
-    desc: '填写参展信息，获取展会最新动态', 
+    desc: '提交参展意向信息', 
     key: 'register'
   },
   { 
     icon: Ticket, 
     name: '观众预登记', 
-    desc: '提前登记，快速入场，享受专属福利', 
+    desc: '提前登记，快速入场', 
     key: 'preRegister'
   },
   { 
@@ -215,8 +215,8 @@ const buttonCards = ref([
   },
   { 
     icon: Share, 
-    name: '获取分享链接', 
-    desc: '分享展会信息给朋友，共同参与盛会', 
+    name: '获取报名分享链接', 
+    desc: '分享报名链接给亲友，获取礼券', 
     key: 'shareLink'
   }
 ])
