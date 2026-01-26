@@ -8,6 +8,17 @@
     <div class="container">
       <!-- 基础信息 -->
       <div class="base-info-section">
+        <div class="top-actions">
+          <el-button 
+            v-for="btn in topButtons" 
+            :key="btn.key"
+            type="primary" 
+            size="small"
+            :icon="btn.icon"
+          >
+            {{ btn.name }}
+          </el-button>
+        </div>
         <div class="info-header">
           <div class="logo-section">
             <img src="@/assets/images/exhibition_logo/29c8ec5114f2db4d1cb1189e46fc885b.jpeg" alt="展会logo" class="exhibition-logo" />
@@ -45,43 +56,19 @@
         </div>
       </div>
 
-      <!-- 功能模块 -->
-      <div class="function-section">
-        <div class="function-grid">
-          <div class="function-item">
-            <el-button type="primary" size="large">
-              <el-icon><Star /></el-icon>
-              关注
-            </el-button>
-          </div>
-          <div class="function-item">
-            <el-button type="primary" size="large">
-              <el-icon><EditPen /></el-icon>
-              参展留资
-            </el-button>
-          </div>
-          <div class="function-item">
-            <el-button type="primary" size="large">
-              <el-icon><Ticket /></el-icon>
-              观众预登记
-            </el-button>
-          </div>
-          <div class="function-item">
-            <el-button type="primary" size="large">
-              <el-icon><Monitor /></el-icon>
-              访问官网
-            </el-button>
-          </div>
-          <div class="function-item">
-            <el-button type="primary" size="large">
-              <el-icon><Share /></el-icon>
-              获取分享链接
-            </el-button>
-          </div>
-          <div class="function-item">
-            <el-button type="primary" size="large">
-              <el-icon><Ticket /></el-icon>
-              领取免费地铁票
+      <!-- 按钮卡片模块 -->
+      <div class="button-cards-section">
+        <div class="cards-grid">
+          <div class="button-card" v-for="card in buttonCards" :key="card.key">
+            <div class="card-icon">
+              <el-icon :size="32"><component :is="card.icon" /></el-icon>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">{{ card.name }}</h3>
+              <p class="card-desc">{{ card.desc }}</p>
+            </div>
+            <el-button type="primary" size="small" plain>
+              {{ card.name }}
             </el-button>
           </div>
         </div>
@@ -180,6 +167,35 @@ import {
   Download 
 } from '@element-plus/icons-vue'
 
+// 右上角按钮数据
+const topButtons = ref([
+  { icon: Star, name: '关注', key: 'follow' },
+  { icon: Monitor, name: '访问官网', key: 'website' },
+  { icon: Share, name: '获取分享链接', key: 'share' }
+])
+
+// 按钮卡片数据
+const buttonCards = ref([
+  { 
+    icon: EditPen, 
+    name: '参展留资', 
+    desc: '填写参展信息，获取展会最新动态', 
+    key: 'register'
+  },
+  { 
+    icon: Ticket, 
+    name: '观众预登记', 
+    desc: '提前登记，快速入场，享受专属福利', 
+    key: 'preRegister'
+  },
+  { 
+    icon: Ticket, 
+    name: '领取免费地铁票', 
+    desc: '参展观众专享，免费领取地铁票', 
+    key: 'getTicket'
+  }
+])
+
 // 展会资讯数据
 const exhibitionNews = ref([
   {
@@ -252,6 +268,29 @@ const downloadItems = ref([
   padding: 30px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
+  position: relative;
+}
+
+.top-actions {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  display: flex;
+  gap: 12px;
+}
+
+.top-actions :deep(.el-button) {
+  height: 32px;
+  padding: 0 16px;
+  font-size: 14px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .info-header {
@@ -404,6 +443,62 @@ const downloadItems = ref([
     margin-left: auto;
     font-weight: 500;
   }
+}
+
+.button-cards-section {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.button-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 1px solid #ebeef5;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    background-color: #ecf5ff;
+    border-color: #409eff;
+  }
+}
+
+.card-icon {
+  margin-bottom: 16px;
+  color: #409eff;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: #606266;
+  margin-bottom: 16px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.function-section {
+  display: none;
 }
 
 .combined-section {
