@@ -1057,7 +1057,7 @@ const getStatusClass = (status) => {
 
 .policy-meta {
         display: flex;
-        justify-content: space-between; /* Move date to the right */
+        justify-content: flex-start;
         align-items: center;
         gap: 24px;
         margin-top: auto; /* Ensure it stays at the bottom if content is short */
