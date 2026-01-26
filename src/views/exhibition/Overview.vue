@@ -252,361 +252,367 @@ const contractorTop10 = ref([
 
 
 const initCharts = () => {
-  // 1. 历年新增展会
-  if (trendChartRef.value) {
-    trendChart = echarts.init(trendChartRef.value)
-    trendChart.setOption({
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        borderColor: '#eee',
-        borderWidth: 1,
-        textStyle: { color: '#333' }
-      },
-      legend: {
-        data: ['会展数', '新增会展比例'],
-        top: 0,
-        left: 'center'
-      },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: ['2022', '2023', '2024', '2025', '2026'],
-        axisLine: { lineStyle: { color: '#E5E7EB' } },
-        axisLabel: { color: '#6B7280' }
-      },
-      yAxis: [
-        {
-          type: 'value',
-          name: '会展数',
-          min: 0,
-          max: 3000,
-          splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } },
-          axisLabel: { formatter: '{value}' }
+  // 确保所有图表都能正确初始化
+  try {
+    // 1. 历年新增展会
+    if (trendChartRef.value) {
+      trendChart = echarts.init(trendChartRef.value)
+      trendChart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          borderColor: '#eee',
+          borderWidth: 1,
+          textStyle: { color: '#333' }
         },
-        {
-          type: 'value',
-          name: '新增会展比例',
-          min: 0,
-          max: 35,
-          splitLine: { show: false },
-          axisLabel: { formatter: '{value}%' }
-        }
-      ],
-      series: [
-        {
-          name: '会展数',
-          type: 'bar',
-          data: [564, 2683, 2175, 1963, 696],
-          itemStyle: { color: '#3B82F6' }
+        legend: {
+          data: ['会展数', '新增会展比例'],
+          top: 0,
+          left: 'center'
         },
-        {
-          name: '新增会展比例',
-          type: 'line',
-          yAxisIndex: 1,
-          data: [5.57, 34.70, 16.08, 18.70, 6.98],
-          itemStyle: { color: '#10B981' },
-          lineStyle: { width: 3 },
-          symbol: 'circle',
-          symbolSize: 8,
-          label: {
-            show: true,
-            position: 'top',
-            formatter: '{c}%'
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: ['2022', '2023', '2024', '2025', '2026'],
+          axisLine: { lineStyle: { color: '#E5E7EB' } },
+          axisLabel: { color: '#6B7280' }
+        },
+        yAxis: [
+          {
+            type: 'value',
+            name: '会展数',
+            min: 0,
+            max: 3000,
+            splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } },
+            axisLabel: { formatter: '{value}' }
+          },
+          {
+            type: 'value',
+            name: '新增会展比例',
+            min: 0,
+            max: 35,
+            splitLine: { show: false },
+            axisLabel: { formatter: '{value}%' }
           }
-        }
-      ]
-    })
-  }
-
-  // 2. 行业分布
-  if (industryChartRef.value) {
-    industryChart = echarts.init(industryChartRef.value)
-    industryChart.setOption({
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)'
-      },
-      legend: {
-        bottom: '0%',
-        left: 'center',
-        icon: 'circle'
-      },
-      series: [
-        {
-          name: '热门行业分布',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['50%', '45%'],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 2
+        ],
+        series: [
+          {
+            name: '会展数',
+            type: 'bar',
+            data: [564, 2683, 2175, 1963, 696],
+            itemStyle: { color: '#3B82F6' }
           },
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: {
+          {
+            name: '新增会展比例',
+            type: 'line',
+            yAxisIndex: 1,
+            data: [5.57, 34.70, 16.08, 18.70, 6.98],
+            itemStyle: { color: '#10B981' },
+            lineStyle: { width: 3 },
+            symbol: 'circle',
+            symbolSize: 8,
             label: {
               show: true,
-              fontSize: '16',
-              fontWeight: 'bold'
+              position: 'top',
+              formatter: '{c}%'
             }
-          },
-          labelLine: {
-            show: true
-          },
-          data: [
-            { value: 794, name: '食品饮料', itemStyle: { color: '#3B82F6' } },
-            { value: 526, name: '机械工业', itemStyle: { color: '#10B981' } },
-            { value: 485, name: '交通工具', itemStyle: { color: '#F59E0B' } },
-            { value: 476, name: '房产家居', itemStyle: { color: '#8B5CF6' } },
-            { value: 416, name: '建材五金', itemStyle: { color: '#EC4899' } },
-            { value: 343, name: '农林牧渔', itemStyle: { color: '#60A5FA' } },
-            { value: 260, name: '医疗保健', itemStyle: { color: '#34D399' } },
-            { value: 230, name: '美容美发', itemStyle: { color: '#FBBF24' } },
-            { value: 227, name: '能源矿产', itemStyle: { color: '#A78BFA' } },
-            { value: 223, name: '文化教育', itemStyle: { color: '#F472B6' } }
-          ]
-        }
-      ]
-    })
-  }
+          }
+        ]
+      })
+    }
 
-  // 3. 地域分布
-  if (regionChartRef.value) {
-    regionChart = echarts.init(regionChartRef.value)
-    regionChart.setOption({
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' }
-      },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '15%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: ['广东', '上海', '北京', '山东', '浙江', '江苏', '四川', '河南', '福建', '陕西'],
-        axisTick: { alignWithLabel: true },
-        axisLabel: {
-          rotate: 45,
-          fontSize: 12
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: '数量 (个)',
-        splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } }
-      },
-      series: [
-        {
-          name: '展会数量',
-          type: 'bar',
-          data: [1448, 1174, 577, 540, 506, 434, 321, 319, 251, 213],
-          itemStyle: {
-            borderRadius: [4, 4, 0, 0],
-            color: '#3B82F6'
-          },
-          barWidth: '60%'
-        }
-      ]
-    })
-  }
-
-  // 4. 规模占比
-  if (scaleChartRef.value) {
-    scaleChart = echarts.init(scaleChartRef.value)
-    scaleChart.setOption({
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)'
-      },
-      legend: {
-        orient: 'vertical',
-        left: 'left',
-        top: 'center'
-      },
-      series: [
-        {
-          name: '会展面积统计',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: {
+    // 2. 行业分布
+    if (industryChartRef.value) {
+      industryChart = echarts.init(industryChartRef.value)
+      industryChart.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c} ({d}%)'
+        },
+        legend: {
+          bottom: '0%',
+          left: 'center',
+          icon: 'circle'
+        },
+        series: [
+          {
+            name: '热门行业分布',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '45%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
             label: {
-              show: true,
-              fontSize: '16',
-              fontWeight: 'bold'
-            }
-          },
-          labelLine: {
-            show: true
-          },
-          data: [
-            { value: 25, name: '5千平方米以下', itemStyle: { color: '#F56C6C' } },
-            { value: 30, name: '5千到2万平方米', itemStyle: { color: '#3B82F6' } },
-            { value: 40, name: '2万到10万平方米', itemStyle: { color: '#67C23A' } },
-            { value: 15, name: '10万平方米以上', itemStyle: { color: '#E6A23C' } }
-          ]
-        }
-      ]
-    })
-  }
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '16',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: true
+            },
+            data: [
+              { value: 794, name: '食品饮料', itemStyle: { color: '#3B82F6' } },
+              { value: 526, name: '机械工业', itemStyle: { color: '#10B981' } },
+              { value: 485, name: '交通工具', itemStyle: { color: '#F59E0B' } },
+              { value: 476, name: '房产家居', itemStyle: { color: '#8B5CF6' } },
+              { value: 416, name: '建材五金', itemStyle: { color: '#EC4899' } },
+              { value: 343, name: '农林牧渔', itemStyle: { color: '#60A5FA' } },
+              { value: 260, name: '医疗保健', itemStyle: { color: '#34D399' } },
+              { value: 230, name: '美容美发', itemStyle: { color: '#FBBF24' } },
+              { value: 227, name: '能源矿产', itemStyle: { color: '#A78BFA' } },
+              { value: 223, name: '文化教育', itemStyle: { color: '#F472B6' } }
+            ]
+          }
+        ]
+      })
+    }
 
-  // 5. 举办周期（饼图）
-  if (periodChartRef.value) {
-    periodChart = echarts.init(periodChartRef.value)
-    periodChart.setOption({
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c}场 ({d}%)'
-      },
-      legend: {
-        bottom: '0%',
-        left: 'center',
-        icon: 'circle'
-      },
-      series: [
-        {
-          name: '举办周期',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['50%', '45%'],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: {
+    // 3. 地域分布
+    if (regionChartRef.value) {
+      regionChart = echarts.init(regionChartRef.value)
+      regionChart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: ['广东', '上海', '北京', '山东', '浙江', '江苏', '四川', '河南', '福建', '陕西'],
+          axisTick: { alignWithLabel: true },
+          axisLabel: {
+            rotate: 45,
+            fontSize: 12
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: '数量 (个)',
+          splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } }
+        },
+        series: [
+          {
+            name: '展会数量',
+            type: 'bar',
+            data: [1448, 1174, 577, 540, 506, 434, 321, 319, 251, 213],
+            itemStyle: {
+              borderRadius: [4, 4, 0, 0],
+              color: '#3B82F6'
+            },
+            barWidth: '60%'
+          }
+        ]
+      })
+    }
+
+    // 4. 规模占比
+    if (scaleChartRef.value) {
+      scaleChart = echarts.init(scaleChartRef.value)
+      scaleChart.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          top: 'center'
+        },
+        series: [
+          {
+            name: '会展面积统计',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '45%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
             label: {
-              show: true,
-              fontSize: '16',
-              fontWeight: 'bold'
-            }
-          },
-          labelLine: {
-            show: true
-          },
-          data: [
-            { value: 6382 + 5, name: '一年一届', itemStyle: { color: '#3B82F6' } },
-            { value: 903, name: '一年两届', itemStyle: { color: '#10B981' } },
-            { value: 157, name: '一年三届', itemStyle: { color: '#F59E0B' } },
-            { value: 142, name: '两年一届', itemStyle: { color: '#8B5CF6' } },
-            { value: 2, name: '四年一届', itemStyle: { color: '#EC4899' } },
-            { value: 2 + 1, name: '三年一届', itemStyle: { color: '#6B7280' } }
-          ]
-        }
-      ]
-    })
-  }
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '16',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: true
+            },
+            data: [
+              { value: 25, name: '5千平方米以下', itemStyle: { color: '#F56C6C' } },
+              { value: 30, name: '5千到2万平方米', itemStyle: { color: '#3B82F6' } },
+              { value: 40, name: '2万到10万平方米', itemStyle: { color: '#67C23A' } },
+              { value: 15, name: '10万平方米以上', itemStyle: { color: '#E6A23C' } }
+            ]
+          }
+        ]
+      })
+    }
 
-  // 6. 月度展会数量变化
-  if (monthlyChartRef.value) {
-    monthlyChart = echarts.init(monthlyChartRef.value)
-    monthlyChart.setOption({
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' }
-      },
-      legend: {
-        data: ['华东', '华南', '西南', '华北', '西北', '华中', '东北'],
-        top: 0,
-        left: 'center'
-      },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        top: '15%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-        axisLine: { lineStyle: { color: '#E5E7EB' } },
-        axisLabel: { color: '#6B7280' }
-      },
-      yAxis: {
-        type: 'value',
-        name: '数量 (场)',
-        splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } }
-      },
-      series: [
-        {
-          name: '华东',
-          type: 'bar',
-          stack: 'total',
-          data: [30, 50, 200, 180, 170, 120, 90, 180, 150, 130, 100, 50],
-          itemStyle: { color: '#3B82F6' }
+    // 5. 举办周期（饼图）
+    if (periodChartRef.value) {
+      periodChart = echarts.init(periodChartRef.value)
+      periodChart.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c}场 ({d}%)'
         },
-        {
-          name: '华南',
-          type: 'bar',
-          stack: 'total',
-          data: [20, 40, 50, 60, 50, 30, 30, 40, 50, 50, 40, 30],
-          itemStyle: { color: '#10B981' }
+        legend: {
+          bottom: '0%',
+          left: 'center',
+          icon: 'circle'
         },
-        {
-          name: '西南',
-          type: 'bar',
-          stack: 'total',
-          data: [10, 20, 30, 40, 30, 20, 20, 30, 20, 30, 20, 10],
-          itemStyle: { color: '#F59E0B' }
+        series: [
+          {
+            name: '举办周期',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '45%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '16',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: true
+            },
+            data: [
+              { value: 6382 + 5, name: '一年一届', itemStyle: { color: '#3B82F6' } },
+              { value: 903, name: '一年两届', itemStyle: { color: '#10B981' } },
+              { value: 157, name: '一年三届', itemStyle: { color: '#F59E0B' } },
+              { value: 142, name: '两年一届', itemStyle: { color: '#8B5CF6' } },
+              { value: 2, name: '四年一届', itemStyle: { color: '#EC4899' } },
+              { value: 2 + 1, name: '三年一届', itemStyle: { color: '#6B7280' } }
+            ]
+          }
+        ]
+      })
+    }
+
+    // 6. 月度展会数量变化
+    if (monthlyChartRef.value) {
+      monthlyChart = echarts.init(monthlyChartRef.value)
+      monthlyChart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
         },
-        {
-          name: '华北',
-          type: 'bar',
-          stack: 'total',
-          data: [20, 30, 40, 50, 40, 30, 30, 40, 30, 40, 30, 20],
-          itemStyle: { color: '#EF4444' }
+        legend: {
+          data: ['华东', '华南', '西南', '华北', '西北', '华中', '东北'],
+          top: 0,
+          left: 'center'
         },
-        {
-          name: '西北',
-          type: 'bar',
-          stack: 'total',
-          data: [10, 10, 20, 30, 20, 10, 10, 20, 20, 20, 10, 10],
-          itemStyle: { color: '#8B5CF6' }
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          top: '15%',
+          containLabel: true
         },
-        {
-          name: '华中',
-          type: 'bar',
-          stack: 'total',
-          data: [10, 20, 30, 40, 30, 20, 20, 30, 30, 30, 20, 10],
-          itemStyle: { color: '#EC4899' }
+        xAxis: {
+          type: 'category',
+          data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          axisLine: { lineStyle: { color: '#E5E7EB' } },
+          axisLabel: { color: '#6B7280' }
         },
-        {
-          name: '东北',
-          type: 'bar',
-          stack: 'total',
-          data: [10, 10, 20, 30, 20, 10, 10, 20, 20, 20, 10, 10],
-          itemStyle: { color: '#6B7280' }
-        }
-      ]
-    })
+        yAxis: {
+          type: 'value',
+          name: '数量 (场)',
+          splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } }
+        },
+        series: [
+          {
+            name: '华东',
+            type: 'bar',
+            stack: 'total',
+            data: [30, 50, 200, 180, 170, 120, 90, 180, 150, 130, 100, 50],
+            itemStyle: { color: '#3B82F6' }
+          },
+          {
+            name: '华南',
+            type: 'bar',
+            stack: 'total',
+            data: [20, 40, 50, 60, 50, 30, 30, 40, 50, 50, 40, 30],
+            itemStyle: { color: '#10B981' }
+          },
+          {
+            name: '西南',
+            type: 'bar',
+            stack: 'total',
+            data: [10, 20, 30, 40, 30, 20, 20, 30, 20, 30, 20, 10],
+            itemStyle: { color: '#F59E0B' }
+          },
+          {
+            name: '华北',
+            type: 'bar',
+            stack: 'total',
+            data: [20, 30, 40, 50, 40, 30, 30, 40, 30, 40, 30, 20],
+            itemStyle: { color: '#EF4444' }
+          },
+          {
+            name: '西北',
+            type: 'bar',
+            stack: 'total',
+            data: [10, 10, 20, 30, 20, 10, 10, 20, 20, 20, 10, 10],
+            itemStyle: { color: '#8B5CF6' }
+          },
+          {
+            name: '华中',
+            type: 'bar',
+            stack: 'total',
+            data: [10, 20, 30, 40, 30, 20, 20, 30, 30, 30, 20, 10],
+            itemStyle: { color: '#EC4899' }
+          },
+          {
+            name: '东北',
+            type: 'bar',
+            stack: 'total',
+            data: [10, 10, 20, 30, 20, 10, 10, 20, 20, 20, 10, 10],
+            itemStyle: { color: '#6B7280' }
+          }
+        ]
+      })
+    }
+  } catch (error) {
+    console.error('图表初始化失败:', error)
   }
 }
 
@@ -640,9 +646,9 @@ onUnmounted(() => {
   padding: 0 0 80px;
   background-color: #F9FAFB;
   min-height: 100vh;
-  /* 添加padding-top确保内容不被header遮挡 */
-  padding-top: 80px;
-  margin-top: -80px;
+  /* 移除负margin，确保banner从header底部开始 */
+  padding-top: 0;
+  margin-top: 0;
 }
 
 /* Banner样式 */
