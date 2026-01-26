@@ -1,9 +1,18 @@
 <template>
   <div class="venue-overview">
-    <div class="container">
-      <div class="page-header">
-        <h2>场馆概览</h2>
+    <!-- Banner区域 -->
+    <div class="banner">
+      <div class="container">
+        <div class="banner-content">
+          <h2>场馆概览</h2>
+          <p class="banner-description">
+            整合多维度场馆数据，通过可视化图表清晰呈现场馆总量、地域分布、面积结构及热门场馆等核心指标，帮助平台用户快速了解场馆资源分布，为展会规划、场馆选择提供数据支撑，提升决策精准度与效率。
+          </p>
+        </div>
       </div>
+    </div>
+    
+    <div class="container">
 
       <!-- 核心指标 -->
       <div class="stats-cards">
@@ -377,29 +386,74 @@ const handleResize = () => {
 
 <style lang="scss" scoped>
 .venue-overview {
-  padding: 40px 0 80px;
+  padding: 0 0 80px;
   background-color: #F9FAFB;
   min-height: 100vh;
 }
 
-.page-header {
-  text-align: center;
+/* Banner样式 */
+.banner {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  padding: 60px 0;
   margin-bottom: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  /* 添加margin-top确保banner从header底部开始 */
+  margin-top: 80px;
+}
 
-  h2 {
-    font-size: 32px;
-    font-weight: 700;
-    color: #1F2937;
-    margin-bottom: 12px;
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+  opacity: 0.5;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.banner h2 {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.banner-description {
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    padding: 40px 20px;
   }
-
-  .subtitle {
+  
+  .banner h2 {
+    font-size: 32px;
+  }
+  
+  .banner-description {
     font-size: 16px;
-    color: #6B7280;
-    max-width: 800px;
-    margin: 0 auto;
   }
 }
+
+/* page-header样式已被banner替换，不再需要 */
 
 .stats-cards {
   display: grid;
