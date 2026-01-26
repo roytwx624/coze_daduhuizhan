@@ -87,30 +87,34 @@
         </div>
       </div>
 
-      <!-- 展会资讯 -->
-      <div class="news-section">
-        <h2 class="section-title">展会资讯</h2>
-        <div class="news-list">
-          <div class="news-item" v-for="(news, index) in exhibitionNews" :key="index">
-            <h3 class="news-title">{{ news.title }}</h3>
-            <p class="news-desc">{{ news.desc }}</p>
-            <div class="news-meta">
-              <el-icon><Clock /></el-icon>
-              <span>{{ news.time }}</span>
+      <!-- 展会资讯与展商名录 -->
+      <div class="combined-section">
+        <!-- 展会资讯 -->
+        <div class="news-section">
+          <h2 class="section-title">展会资讯</h2>
+          <div class="news-list">
+            <div class="news-item" v-for="(news, index) in exhibitionNews" :key="index">
+              <h3 class="news-title">{{ news.title }}</h3>
+              <p class="news-desc">{{ news.desc }}</p>
+              <div class="news-meta">
+                <el-icon><Clock /></el-icon>
+                <span>{{ news.time }}</span>
+                <span class="news-source">来源：{{ news.source }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- 展商名录 -->
-      <div class="exhibitor-section">
-        <h2 class="section-title">展商名录</h2>
-        <div class="exhibitor-list">
-          <div class="exhibitor-item" v-for="(exhibitor, index) in exhibitors" :key="index">
-            <div class="exhibitor-name">{{ exhibitor.name }}</div>
-            <div class="exhibitor-booth">
-              <span class="booth-label">展位：</span>
-              <span class="booth-value">{{ exhibitor.booth }}</span>
+        <!-- 展商名录 -->
+        <div class="exhibitor-section">
+          <h2 class="section-title">展商名录</h2>
+          <div class="exhibitor-list">
+            <div class="exhibitor-item" v-for="(exhibitor, index) in exhibitors" :key="index">
+              <div class="exhibitor-name">{{ exhibitor.name }}</div>
+              <div class="exhibitor-booth">
+                <span class="booth-label">展位：</span>
+                <span class="booth-value">{{ exhibitor.booth }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -124,6 +128,10 @@
             <div class="download-info">
               <el-icon class="download-icon"><Document /></el-icon>
               <span class="download-name">{{ item.name }}</span>
+              <div class="download-meta">
+                <span class="download-format">{{ item.format }}</span>
+                <span class="download-size">{{ item.size }}</span>
+              </div>
             </div>
             <el-button type="primary" size="small">
               <el-icon><Download /></el-icon>
@@ -149,13 +157,6 @@
             <div class="traffic-desc">
               <p>1. 乘坐大桥六线、申江线、方川线等公交至上海新国际博览中心站</p>
               <p>2. 乘坐机场三线、机场六线至龙阳路地铁站，换乘其他交通工具至上海新国际博览中心</p>
-            </div>
-          </div>
-          <div class="traffic-item">
-            <h3 class="traffic-title">其他公共交通方式</h3>
-            <div class="traffic-desc">
-              <p>1. 磁悬浮：从浦东国际机场乘坐磁悬浮至龙阳路站，换乘其他交通工具至上海新国际博览中心</p>
-              <p>2. 出租车：直接乘坐出租车至上海新国际博览中心，地址为上海市浦东新区龙阳路2345号</p>
             </div>
           </div>
         </div>
@@ -184,17 +185,20 @@ const exhibitionNews = ref([
   {
     title: '第三十七届制冷展即将盛大开幕',
     desc: '第三十七届制冷展将于2026年4月8日在上海新国际博览中心盛大开幕，展会将展示最新的制冷、空调、暖通、热泵及通风设备技术和产品。',
-    time: '2026-03-20 14:30'
+    time: '2026-03-20 14:30',
+    source: '官方发布'
   },
   {
     title: '制冷展参展商名录正式发布',
     desc: '第三十七届制冷展参展商名录已正式发布，共有来自全球20多个国家和地区的500多家企业参展。',
-    time: '2026-03-15 10:15'
+    time: '2026-03-15 10:15',
+    source: '官方发布'
   },
   {
     title: '制冷展观众预登记通道已开启',
     desc: '第三十七届制冷展观众预登记通道已正式开启，预登记观众可享受快速入场、免费午餐等福利。',
-    time: '2026-03-01 09:00'
+    time: '2026-03-01 09:00',
+    source: '官方发布'
   }
 ])
 
@@ -212,9 +216,9 @@ const exhibitors = ref([
 
 // 资料下载数据
 const downloadItems = ref([
-  { name: '展会导览图' },
-  { name: '展商手册' },
-  { name: '会刊' }
+  { name: '展会导览图', format: 'PDF', size: '2.5MB' },
+  { name: '展商手册', format: 'PDF', size: '15.8MB' },
+  { name: '会刊', format: 'PDF', size: '32.1MB' }
 ])
 </script>
 
@@ -391,10 +395,22 @@ const downloadItems = ref([
   .news-meta {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     color: #909399;
     font-size: 14px;
   }
+
+  .news-source {
+    margin-left: auto;
+    font-weight: 500;
+  }
+}
+
+.combined-section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 30px;
 }
 
 .exhibitor-section {
@@ -402,12 +418,12 @@ const downloadItems = ref([
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
+  margin-bottom: 0;
 }
 
 .exhibitor-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
@@ -473,21 +489,42 @@ const downloadItems = ref([
   }
 
   .download-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
 
-    .download-icon {
-      font-size: 24px;
-      color: #409eff;
-    }
+      .download-icon {
+        font-size: 24px;
+        color: #409eff;
+      }
 
-    .download-name {
-      font-size: 16px;
-      color: #303133;
-      font-weight: 500;
+      .download-name {
+        font-size: 16px;
+        color: #303133;
+        font-weight: 500;
+      }
+
+      .download-meta {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        font-size: 14px;
+        color: #909399;
+      }
+
+      .download-format {
+        padding: 2px 8px;
+        background-color: #ecf5ff;
+        color: #409eff;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+
+      .download-size {
+        font-size: 13px;
+      }
     }
-  }
 }
 
 .traffic-section {
