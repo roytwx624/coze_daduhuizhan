@@ -32,6 +32,12 @@ const routes = [
     meta: { title: '展会概览' }
   },
   {
+    path: '/exhibition/detail/:id',
+    name: 'ExhibitionDetail',
+    component: () => import('@/views/exhibition/Detail.vue'),
+    meta: { title: '展会详情' }
+  },
+  {
     path: '/video',
     name: 'VideoCenter',
     component: () => import('@/views/video/Center.vue'),
