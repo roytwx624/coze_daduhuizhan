@@ -58,6 +58,7 @@
 
       <!-- 按钮卡片模块 -->
       <div class="button-cards-section">
+        <h2 class="section-title">快捷功能</h2>
         <div class="cards-grid">
           <div class="button-card" v-for="card in buttonCards" :key="card.key">
             <div class="card-icon">
@@ -68,7 +69,7 @@
               <p class="card-desc">{{ card.desc }}</p>
             </div>
             <el-button type="primary" size="small" plain>
-              {{ card.name }}
+              {{ card.name === '获取分享链接' ? '分享' : card.name }}
             </el-button>
           </div>
         </div>
@@ -103,6 +104,9 @@
                 <span class="booth-value">{{ exhibitor.booth }}</span>
               </div>
             </div>
+          </div>
+          <div class="section-footer">
+            <el-button type="primary" size="small" plain>查看更多展商</el-button>
           </div>
         </div>
       </div>
@@ -193,6 +197,12 @@ const buttonCards = ref([
     name: '领取免费地铁票', 
     desc: '参展观众专享，免费领取地铁票', 
     key: 'getTicket'
+  },
+  { 
+    icon: Share, 
+    name: '获取分享链接', 
+    desc: '分享展会信息给朋友，共同参与盛会', 
+    key: 'shareLink'
   }
 ])
 
@@ -455,7 +465,7 @@ const downloadItems = ref([
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -523,37 +533,38 @@ const downloadItems = ref([
 }
 
 .exhibitor-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background-color: #f5f7fa;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #ecf5ff;
-    transform: translateY(-1px);
-  }
-
-  .exhibitor-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: #303133;
-  }
-
-  .exhibitor-booth {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #606266;
-    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 20px;
+    background-color: #f5f7fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 
-    .booth-label {
+    &:hover {
+      background-color: #ecf5ff;
+      transform: translateY(-1px);
+    }
+
+    .exhibitor-name {
+      font-size: 16px;
       font-weight: 600;
+      color: #303133;
+      margin-bottom: 8px;
+    }
+
+    .exhibitor-booth {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #606266;
+      font-size: 14px;
+
+      .booth-label {
+        font-weight: 600;
+      }
     }
   }
-}
 
 .download-section {
   background-color: #fff;
