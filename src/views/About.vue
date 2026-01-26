@@ -1,17 +1,16 @@
 <template>
   <div class="about-page">
-    <!-- 平台定位 -->
-    <section class="platform-section">
+    <!-- 平台定位 - 改为banner样式 -->
+    <div class="banner">
       <div class="container">
-        <div class="section-content">
-          <div class="content-text">
-            <div class="text-block">
-              <p>大都会展将围绕会展全产业链，以展会全流程数字服务与价值创造为主线，围绕会展数字化服务、高效运营和数据价值，依托业务探索新型商业模式，沉淀并积累基于数据价值的核心竞争力，打造“一站式”会展生态服务及数据聚合平台，构建“内容+平台+服务”全链条竞争优势，打造会展行业“数字门户”。</p>
-            </div>
-          </div>
+        <div class="banner-content">
+          <h2>大都会展数智平台</h2>
+          <p class="banner-description">
+            大都会展将围绕会展全产业链，以展会全流程数字服务与价值创造为主线，围绕会展数字化服务、高效运营和数据价值，依托业务探索新型商业模式，沉淀并积累基于数据价值的核心竞争力，打造“一站式”会展生态服务及数据聚合平台，构建“内容+平台+服务”全链条竞争优势，打造会展行业“数字门户”。
+          </p>
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- 核心数据 -->
     <section class="stats-section">
@@ -97,27 +96,50 @@ const stats = ref([
   padding-bottom: 80px;
 }
 
-// 平台定位
-.platform-section {
+// Banner样式
+.banner {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
   padding: 60px 0;
-  background: white;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
-.section-content {
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+  opacity: 0.5;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
+  text-align: center;
 }
 
-.content-text {
-  .text-block {
-    p {
-      font-size: 18px;
-      line-height: 1.8;
-      color: #204E9C;
-      margin-bottom: 0;
-      text-align: justify;
-    }
-  }
+.banner h2 {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.banner-description {
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0.9;
+  font-weight: 300;
 }
 
 // 核心数据
@@ -203,10 +225,16 @@ const stats = ref([
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
-  align-items: center;
+  align-items: stretch;
 }
 
 .contact-info {
+  background: #F9FAFB;
+  padding: 32px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+
   h2 {
     font-size: 32px;
     font-weight: 700;
@@ -215,6 +243,11 @@ const stats = ref([
   }
 
   .info-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     p {
       font-size: 16px;
       line-height: 2;
@@ -232,10 +265,21 @@ const stats = ref([
 }
 
 .contact-image {
+  background: #F9FAFB;
+  padding: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+
   img {
     width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 }
 
@@ -253,6 +297,18 @@ const stats = ref([
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .banner {
+    padding: 40px 20px;
+  }
+  
+  .banner h2 {
+    font-size: 32px;
+  }
+  
+  .banner-description {
+    font-size: 16px;
   }
 }
 </style>
