@@ -96,12 +96,12 @@ const handleLogin = () => {
 <style lang="scss" scoped>
 .login-page {
   width: 100%;
-  min-height: calc(100vh - 380px); /* 减去header和footer的高度 */
+  min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background: linear-gradient(135deg, #1E88E5 0%, #2196F3 50%, #4FC3F7 100%);
-  padding: 40px 20px;
+  padding: 120px 20px 40px;
   overflow: hidden;
   position: relative;
   margin: 0 auto;
