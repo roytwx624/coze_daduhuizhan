@@ -523,7 +523,7 @@ const handleResize = () => {
 
 .charts-section {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-bottom: 32px;
 }
