@@ -47,10 +47,10 @@
 
       <!-- 图表区域 -->
       <div class="charts-section">
-        <!-- 左侧：趋势图 -->
+        <!-- 左侧：历年新增展会 -->
         <div class="chart-card large">
           <div class="card-header">
-            <h3>展会月度举办趋势</h3>
+            <h3>历年新增展会</h3>
           </div>
           <div class="chart-container" ref="trendChartRef"></div>
         </div>
@@ -111,7 +111,7 @@ let scaleChart = null
 
 
 const initCharts = () => {
-  // 1. 趋势图
+  // 1. 历年新增展会
   if (trendChartRef.value) {
     trendChart = echarts.init(trendChartRef.value)
     trendChart.setOption({
@@ -122,6 +122,11 @@ const initCharts = () => {
         borderWidth: 1,
         textStyle: { color: '#333' }
       },
+      legend: {
+        data: ['会展数', '新增会展比例'],
+        top: 0,
+        left: 'center'
+      },
       grid: {
         left: '3%',
         right: '4%',
@@ -130,34 +135,49 @@ const initCharts = () => {
       },
       xAxis: {
         type: 'category',
-        boundaryGap: false,
-        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+        data: ['2022', '2023', '2024', '2025', '2026'],
         axisLine: { lineStyle: { color: '#E5E7EB' } },
         axisLabel: { color: '#6B7280' }
       },
-      yAxis: {
-        type: 'value',
-        name: '展会数量',
-        splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } },
-        axisLine: { show: false },
-        axisLabel: { color: '#6B7280' }
-      },
+      yAxis: [
+        {
+          type: 'value',
+          name: '会展数',
+          min: 0,
+          max: 3000,
+          splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } },
+          axisLabel: { formatter: '{value}' }
+        },
+        {
+          type: 'value',
+          name: '新增会展比例',
+          min: 0,
+          max: 35,
+          splitLine: { show: false },
+          axisLabel: { formatter: '{value}%' }
+        }
+      ],
       series: [
         {
-          name: '展会数量',
+          name: '会展数',
+          type: 'bar',
+          data: [564, 2683, 2175, 1963, 696],
+          itemStyle: { color: '#3B82F6' }
+        },
+        {
+          name: '新增会展比例',
           type: 'line',
-          smooth: true,
+          yAxisIndex: 1,
+          data: [5.57, 34.70, 16.08, 18.70, 6.98],
+          itemStyle: { color: '#10B981' },
+          lineStyle: { width: 3 },
           symbol: 'circle',
           symbolSize: 8,
-          itemStyle: { color: '#2563EB', borderColor: '#fff', borderWidth: 2 },
-          lineStyle: { width: 3, color: '#2563EB' },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgba(37, 99, 235, 0.2)' },
-              { offset: 1, color: 'rgba(37, 99, 235, 0)' }
-            ])
-          },
-          data: [120, 85, 340, 450, 380, 410, 320, 280, 460, 480, 350, 180]
+          label: {
+            show: true,
+            position: 'top',
+            formatter: '{c}%'
+          }
         }
       ]
     })
@@ -168,46 +188,52 @@ const initCharts = () => {
     industryChart = echarts.init(industryChartRef.value)
     industryChart.setOption({
       tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' }
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)'
       },
-      grid: {
-        left: '15%',
-        right: '4%',
-        bottom: '3%',
-        top: '3%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'value',
-        splitLine: { show: false }
-      },
-      yAxis: {
-        type: 'category',
-        data: ['文化教育', '能源矿产', '美容美发', '医疗保健', '农林牧渔', '建材五金', '房产家居', '交通工具', '机械工业', '食品饮料'],
-        axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: {
-          fontSize: 12,
-          color: '#4B5563'
-        }
+      legend: {
+        bottom: '0%',
+        left: 'center',
+        icon: 'circle'
       },
       series: [
         {
-          name: '展会数量',
-          type: 'bar',
-          data: [223, 227, 230, 260, 343, 416, 476, 485, 526, 794],
+          name: '热门行业分布',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          center: ['50%', '45%'],
+          avoidLabelOverlap: false,
           itemStyle: {
-            borderRadius: [0, 4, 4, 0],
-            color: '#3B82F6'
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
           },
           label: {
-            show: true,
-            position: 'right',
-            fontSize: 12,
-            color: '#6B7280'
+            show: false,
+            position: 'center'
           },
-          barWidth: '60%'
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: true
+          },
+          data: [
+            { value: 794, name: '食品饮料', itemStyle: { color: '#3B82F6' } },
+            { value: 526, name: '机械工业', itemStyle: { color: '#10B981' } },
+            { value: 485, name: '交通工具', itemStyle: { color: '#F59E0B' } },
+            { value: 476, name: '房产家居', itemStyle: { color: '#8B5CF6' } },
+            { value: 416, name: '建材五金', itemStyle: { color: '#EC4899' } },
+            { value: 343, name: '农林牧渔', itemStyle: { color: '#60A5FA' } },
+            { value: 260, name: '医疗保健', itemStyle: { color: '#34D399' } },
+            { value: 230, name: '美容美发', itemStyle: { color: '#FBBF24' } },
+            { value: 227, name: '能源矿产', itemStyle: { color: '#A78BFA' } },
+            { value: 223, name: '文化教育', itemStyle: { color: '#F472B6' } }
+          ]
         }
       ]
     })
@@ -295,10 +321,10 @@ const initCharts = () => {
             show: true
           },
           data: [
-            { value: 25, name: '5千以下', itemStyle: { color: '#F56C6C' } },
-            { value: 30, name: '5千到2万', itemStyle: { color: '#3B82F6' } },
-            { value: 40, name: '2万到10万', itemStyle: { color: '#67C23A' } },
-            { value: 15, name: '10万以上', itemStyle: { color: '#E6A23C' } }
+            { value: 25, name: '5千平方米以下', itemStyle: { color: '#F56C6C' } },
+            { value: 30, name: '5千到2万平方米', itemStyle: { color: '#3B82F6' } },
+            { value: 40, name: '2万到10万平方米', itemStyle: { color: '#67C23A' } },
+            { value: 15, name: '10万平方米以上', itemStyle: { color: '#E6A23C' } }
           ]
         }
       ]
