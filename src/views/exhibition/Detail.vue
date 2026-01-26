@@ -57,7 +57,7 @@
               <el-tag v-for="tag in industryTags" :key="tag" class="industry-tag">{{ tag }}</el-tag>
             </div>
             <div class="tag-group">
-              <span class="tag-label">热门展会标签：</span>
+              <span class="tag-label">其他标签：</span>
               <el-tag v-for="tag in popularTags" :key="tag" class="popular-tag">{{ tag }}</el-tag>
             </div>
           </div>
@@ -188,7 +188,7 @@ const topButtons = ref([
 
 // 标签数据
 const industryTags = ref(['制冷设备', '空调系统', '暖通技术', '热泵设备', '通风系统'])
-const popularTags = ref(['国际展会', '专业展览', '行业盛会', '技术交流', '新品发布'])
+const popularTags = ref(['国家级展会', '热门展会', 'UFI认证', '第三十七届'])
 
 // 按钮卡片数据
 const buttonCards = ref([
@@ -397,16 +397,15 @@ const downloadItems = ref([
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
+      
+      // 确保标签和标题对齐
       .tag-label {
         font-weight: 600;
         color: #303133;
         font-size: 16px;
         white-space: nowrap;
+        width: 80px; // 固定宽度确保对齐
+        text-align: right;
       }
 
       .industry-tag,
@@ -560,6 +559,7 @@ const downloadItems = ref([
   font-weight: 600;
   color: #303133;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .card-desc {
