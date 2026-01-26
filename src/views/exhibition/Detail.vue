@@ -93,9 +93,14 @@
               <h3 class="news-title">{{ news.title }}</h3>
               <p class="news-desc">{{ news.desc }}</p>
               <div class="news-meta">
-                <el-icon><Clock /></el-icon>
-                <span>{{ news.time }}</span>
-                <span class="news-source">来源：{{ news.source }}</span>
+                <div class="news-source">
+                  <el-icon><User /></el-icon>
+                  来源：{{ news.source }}
+                </div>
+                <div class="news-time">
+                  <el-icon><Clock /></el-icon>
+                  {{ news.time }}
+                </div>
               </div>
             </div>
           </div>
@@ -110,7 +115,7 @@
           <div class="exhibitor-list">
             <div class="exhibitor-item" v-for="(exhibitor, index) in exhibitors" :key="index">
               <div class="exhibitor-icon">
-                <el-icon :size="24"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M512 64C264.58 64 64 264.58 64 512s200.58 448 448 448 448-200.58 448-448S759.42 64 512 64zm0 820c-206.36 0-374-167.64-374-374s167.64-374 374-374 374 167.64 374 374-167.64 374-374 374z"></path><path fill="currentColor" d="M512 140c-205.94 0-372 166.06-372 372s166.06 372 372 372 372-166.06 372-372S717.94 140 512 140zm0 678.82c-170.16 0-308.82-138.66-308.82-308.82S341.84 201.18 512 201.18 820.82 339.84 820.82 510 682.16 818.82 512 818.82z"></path><path fill="currentColor" d="M512 268c-134.72 0-244 109.28-244 244s109.28 244 244 244 244-109.28 244-244-109.28-244-244-244zm0 424.96c-100.43 0-181.96-81.53-181.96-181.96S411.57 348.04 512 348.04s181.96 81.53 181.96 181.96-81.53 181.96-181.96 181.96z"></path></svg></el-icon>
+                <el-icon :size="24"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M128 192v640h768V192H128zm128 576H256V320h64v448zm192 0h-64V320h64v448zm192 0h-64V320h64v448z"></path></svg></el-icon>
               </div>
               <div class="exhibitor-name">{{ exhibitor.name }}</div>
               <div class="exhibitor-booth">
@@ -179,13 +184,14 @@ import {
   Share, 
   Clock, 
   Document, 
-  Download 
+  Download, 
+  User 
 } from '@element-plus/icons-vue'
 
 // 右上角按钮数据
 const topButtons = ref([
   { icon: Star, name: '关注', key: 'follow' },
-  { icon: Share, name: '分享', key: 'share' },
+  { icon: Share, name: '获取报名分享链接', key: 'share' },
   { icon: Monitor, name: '访问官网', key: 'website' }
 ])
 
@@ -447,6 +453,8 @@ const downloadItems = ref([
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid #409eff;
+  display: inline-block;
+  width: 100%;
 }
 
 .section-header {
@@ -461,10 +469,17 @@ const downloadItems = ref([
   color: #409eff;
   text-decoration: none;
   transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   
   &:hover {
     color: #66b1ff;
-    text-decoration: underline;
+  }
+  
+  &::after {
+    content: '>';
+    font-size: 16px;
   }
 }
 
@@ -509,13 +524,21 @@ const downloadItems = ref([
   .news-meta {
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: space-between;
     color: #909399;
     font-size: 14px;
   }
 
+  .news-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .news-source {
-    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-weight: 500;
   }
 }
