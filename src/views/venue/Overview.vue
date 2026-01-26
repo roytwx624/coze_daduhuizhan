@@ -74,13 +74,13 @@
           </div>
           <div class="chart-container" ref="areaChartRef"></div>
         </div>
-        <div class="chart-card">
+        <div class="chart-card" style="grid-column: span 3;">
           <div class="card-header">
             <h3>热门场馆办展情况</h3>
           </div>
           <div class="chart-container" ref="cityChartRef"></div>
         </div>
-        <div class="chart-card">
+        <div class="chart-card" style="grid-column: span 3;">
           <div class="card-header">
             <h3>城市场馆数量分布</h3>
           </div>
