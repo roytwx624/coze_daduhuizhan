@@ -98,10 +98,10 @@ const handleLogin = () => {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #1E88E5 0%, #2196F3 50%, #4FC3F7 100%);
-  padding: 120px 20px 40px;
+  padding: 80px 20px;
   overflow: hidden;
   position: relative;
   margin: 0 auto;
