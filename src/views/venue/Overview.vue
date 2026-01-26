@@ -58,21 +58,21 @@
       <div class="charts-section">
         <div class="chart-card">
           <div class="card-header">
-            <h3>场馆区域面积分布</h3>
+            <h3>区域场馆面积分布</h3>
           </div>
           <div class="chart-container" ref="regionChartRef"></div>
-        </div>
-        <div class="chart-card">
-          <div class="card-header">
-            <h3>热门场馆办展情况</h3>
-          </div>
-          <div class="chart-container" ref="cityChartRef"></div>
         </div>
         <div class="chart-card">
           <div class="card-header">
             <h3>区域场馆数量分布</h3>
           </div>
           <div class="chart-container" ref="regionCountChartRef"></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header">
+            <h3>热门场馆办展情况</h3>
+          </div>
+          <div class="chart-container" ref="cityChartRef"></div>
         </div>
         <div class="chart-card">
           <div class="card-header">
@@ -316,12 +316,12 @@ const initCharts = () => {
     areaChart.setOption({
       tooltip: {
         trigger: 'item',
-        formatter: '{b}: {c} (平方米) ({d}%)'
+        formatter: '{b}: {c} ({d}%)'
       },
       legend: {
         orient: 'horizontal',
         bottom: '5%',
-        data: ['5万以上', '3万到4万', '2万以下', '2万到3万', '4万到5万']
+        data: ['五万平方米以上', '3万平方米～4万平方米', '2万平方米以下', '2万平方米～3万平方米', '4万平方米～5万平方米']
       },
       series: [
         {
@@ -349,11 +349,11 @@ const initCharts = () => {
             show: true
           },
           data: [
-            { value: 150, name: '5万以上', itemStyle: { color: '#3B82F6' } },
-            { value: 80, name: '3万到4万', itemStyle: { color: '#67C23A' } },
-            { value: 120, name: '2万以下', itemStyle: { color: '#E6A23C' } },
-            { value: 90, name: '2万到3万', itemStyle: { color: '#F56C6C' } },
-            { value: 60, name: '4万到5万', itemStyle: { color: '#409EFF' } }
+            { value: 150, name: '五万平方米以上', itemStyle: { color: '#3B82F6' } },
+            { value: 80, name: '3万平方米～4万平方米', itemStyle: { color: '#67C23A' } },
+            { value: 120, name: '2万平方米以下', itemStyle: { color: '#E6A23C' } },
+            { value: 90, name: '2万平方米～3万平方米', itemStyle: { color: '#F56C6C' } },
+            { value: 60, name: '4万平方米～5万平方米', itemStyle: { color: '#409EFF' } }
           ]
         }
       ]
