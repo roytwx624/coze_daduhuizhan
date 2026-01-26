@@ -169,6 +169,7 @@
                   <el-icon><HomeFilled /></el-icon>
                   {{ policy.publisher }}
                 </span>
+                <span class="document-number">发文序号：{{ policy.documentNumber }}</span>
               </div>
             </div>
             <div class="policy-date-styled">
@@ -1052,24 +1053,29 @@ const getStatusClass = (status) => {
 }
 
 .policy-meta {
-    display: flex;
-    justify-content: space-between; /* Move date to the right */
-    align-items: center;
-    gap: 24px;
-    margin-top: auto; /* Ensure it stays at the bottom if content is short */
+        display: flex;
+        justify-content: space-between; /* Move date to the right */
+        align-items: center;
+        gap: 24px;
+        margin-top: auto; /* Ensure it stays at the bottom if content is short */
 
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 13px;
-      color: #9CA3AF;
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 13px;
+          color: #9CA3AF;
 
-      .el-icon {
-        color: #2563EB;
+          .el-icon {
+            color: #2563EB;
+          }
+        }
+
+        .document-number {
+          font-size: 13px;
+          color: #6B7280;
+        }
       }
-    }
-  }
 
   .policy-date-styled {
     display: flex;
