@@ -82,32 +82,7 @@
         </div>
       </div>
 
-      <!-- 热门展会列表 -->
-      <div class="exhibitions-list-section">
-        <div class="card-header">
-          <h3>热门展会推荐</h3>
-          <el-button link type="primary" @click="$router.push('/exhibition/search')">查看更多 <el-icon><ArrowRight /></el-icon></el-button>
-        </div>
-        <el-table :data="hotExhibitions" style="width: 100%" stripe>
-          <el-table-column label="排名" width="80" align="center">
-            <template #default="scope">
-              <span class="rank-badge" :class="{ top: scope.$index < 3 }">{{ scope.$index + 1 }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="name" label="展会名称" min-width="250">
-            <template #default="scope">
-              <div class="exhibition-name-cell">
-                <span class="name-text">{{ scope.row.name }}</span>
-                <el-tag size="small" v-if="scope.row.isHot" type="danger" effect="plain">HOT</el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="area" label="展览面积 (㎡)" width="150" align="right" />
-          <el-table-column prop="industry" label="所属行业" width="150" align="center" />
-          <el-table-column prop="city" label="举办城市" width="120" align="center" />
-          <el-table-column prop="date" label="举办时间" width="200" align="right" />
-        </el-table>
-      </div>
+
     </div>
   </div>
 </template>
@@ -133,13 +108,7 @@ let industryChart = null
 let regionChart = null
 let scaleChart = null
 
-const hotExhibitions = [
-  { name: '第136届中国进出口商品交易会（广交会）', area: '1,550,000', industry: '综合', city: '广州', date: '2026-04-15 ~ 2026-05-05', isHot: true },
-  { name: '2026 中国国际工业博览会', area: '300,000', industry: '工业制造', city: '上海', date: '2026-09-19 ~ 2026-09-23', isHot: true },
-  { name: '2026 北京国际汽车展览会', area: '220,000', industry: '汽车交通', city: '北京', date: '2026-04-25 ~ 2026-05-04', isHot: true },
-  { name: '2026 中国家电及消费电子博览会 (AWE)', area: '150,000', industry: '消费电子', city: '上海', date: '2026-03-12 ~ 2026-03-15', isHot: false },
-  { name: '第88届中国国际医疗器械博览会 (CMEF)', area: '320,000', industry: '医疗健康', city: '深圳', date: '2026-10-28 ~ 2026-10-31', isHot: false },
-]
+
 
 const initCharts = () => {
   // 1. 趋势图
@@ -199,47 +168,46 @@ const initCharts = () => {
     industryChart = echarts.init(industryChartRef.value)
     industryChart.setOption({
       tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)'
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' }
       },
-      legend: {
-        bottom: '0%',
-        left: 'center',
-        icon: 'circle'
+      grid: {
+        left: '15%',
+        right: '4%',
+        bottom: '3%',
+        top: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        splitLine: { show: false }
+      },
+      yAxis: {
+        type: 'category',
+        data: ['文化教育', '能源矿产', '美容美发', '医疗保健', '农林牧渔', '建材五金', '房产家居', '交通工具', '机械工业', '食品饮料'],
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: {
+          fontSize: 12,
+          color: '#4B5563'
+        }
       },
       series: [
         {
-          name: '行业分布',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['50%', '45%'],
-          avoidLabelOverlap: false,
+          name: '展会数量',
+          type: 'bar',
+          data: [223, 227, 230, 260, 343, 416, 476, 485, 526, 794],
           itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 2
+            borderRadius: [0, 4, 4, 0],
+            color: '#3B82F6'
           },
           label: {
-            show: false,
-            position: 'center'
+            show: true,
+            position: 'right',
+            fontSize: 12,
+            color: '#6B7280'
           },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: '20',
-              fontWeight: 'bold'
-            }
-          },
-          labelLine: {
-            show: false
-          },
-          data: [
-            { value: 1048, name: '工业制造', itemStyle: { color: '#3B82F6' } },
-            { value: 735, name: '汽车交通', itemStyle: { color: '#10B981' } },
-            { value: 580, name: '消费电子', itemStyle: { color: '#F59E0B' } },
-            { value: 484, name: '医疗健康', itemStyle: { color: '#8B5CF6' } },
-            { value: 300, name: '建筑建材', itemStyle: { color: '#EC4899' } }
-          ]
+          barWidth: '60%'
         }
       ]
     })
@@ -256,39 +224,33 @@ const initCharts = () => {
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        bottom: '15%',
         containLabel: true
       },
       xAxis: {
-        type: 'value',
-        splitLine: { show: false },
-        axisLabel: { show: false }
+        type: 'category',
+        data: ['广东', '上海', '北京', '山东', '浙江', '江苏', '四川', '河南', '福建', '陕西'],
+        axisTick: { alignWithLabel: true },
+        axisLabel: {
+          rotate: 45,
+          fontSize: 12
+        }
       },
       yAxis: {
-        type: 'category',
-        data: ['武汉', '成都', '重庆', '杭州', '南京', '深圳', '广州', '北京', '上海'],
-        axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: { color: '#4B5563' }
+        type: 'value',
+        name: '数量 (个)',
+        splitLine: { lineStyle: { type: 'dashed', color: '#E5E7EB' } }
       },
       series: [
         {
           name: '展会数量',
           type: 'bar',
-          data: [120, 132, 145, 160, 180, 240, 280, 310, 350],
-          label: {
-            show: true,
-            position: 'right',
-            color: '#6B7280'
-          },
+          data: [1448, 1174, 577, 540, 506, 434, 321, 319, 251, 213],
           itemStyle: {
-            borderRadius: [0, 4, 4, 0],
-            color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
-              { offset: 0, color: '#3B82F6' },
-              { offset: 1, color: '#93C5FD' }
-            ])
+            borderRadius: [4, 4, 0, 0],
+            color: '#3B82F6'
           },
-          barWidth: 16
+          barWidth: '60%'
         }
       ]
     })
@@ -299,42 +261,44 @@ const initCharts = () => {
     scaleChart = echarts.init(scaleChartRef.value)
     scaleChart.setOption({
       tooltip: {
-        trigger: 'item'
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)'
       },
-      radar: {
-        indicator: [
-          { name: '特大型 (>10万㎡)', max: 100 },
-          { name: '大型 (5-10万㎡)', max: 100 },
-          { name: '中大型 (3-5万㎡)', max: 100 },
-          { name: '中型 (1-3万㎡)', max: 100 },
-          { name: '小型 (<1万㎡)', max: 100 }
-        ],
-        splitNumber: 4,
-        axisName: {
-          color: '#6B7280'
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#E5E7EB'
-          }
-        },
-        splitArea: {
-          areaStyle: {
-            color: ['#F9FAFB', '#F3F4F6', '#F9FAFB', '#F3F4F6']
-          }
-        }
+      legend: {
+        orient: 'vertical',
+        left: 'left',
+        top: 'center'
       },
       series: [
         {
-          name: '展会规模分布',
-          type: 'radar',
-          data: [
-            {
-              value: [15, 25, 40, 60, 30],
-              name: '2026年',
-              itemStyle: { color: '#2563EB' },
-              areaStyle: { color: 'rgba(37, 99, 235, 0.2)' }
+          name: '会展面积统计',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold'
             }
+          },
+          labelLine: {
+            show: true
+          },
+          data: [
+            { value: 25, name: '5千以下', itemStyle: { color: '#F56C6C' } },
+            { value: 30, name: '5千到2万', itemStyle: { color: '#3B82F6' } },
+            { value: 40, name: '2万到10万', itemStyle: { color: '#67C23A' } },
+            { value: 15, name: '10万以上', itemStyle: { color: '#E6A23C' } }
           ]
         }
       ]
