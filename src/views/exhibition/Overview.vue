@@ -1,8 +1,16 @@
 <template>
   <div class="exhibition-overview">
     <div class="container">
-      <div class="page-header">
-        <h2>展会概览</h2>
+      <!-- Banner区域 -->
+      <div class="banner">
+        <div class="container">
+          <div class="banner-content">
+            <h2>展会概览</h2>
+            <p class="banner-description">
+              整合多维度宏观展会数据，通过可视化图表清晰呈现展会总量、地域分布、行业结构及周期变化等核心指标，帮助平台用户快速把握行业趋势与优质资源，为参展规划、资源对接提供数据支撑，提升决策精准度与效率。
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- 核心指标 -->
@@ -628,29 +636,68 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .exhibition-overview {
-  padding: 80px 0 80px;
+  padding: 0 0 80px;
   background-color: #F9FAFB;
   min-height: 100vh;
 }
 
-.page-header {
-  text-align: center;
-  margin-top: 20px;
+/* Banner样式 */
+.banner {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  padding: 60px 0;
   margin-bottom: 40px;
-  padding-top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
 
-  h2 {
-    font-size: 32px;
-    font-weight: 700;
-    color: #1F2937;
-    margin-bottom: 12px;
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+  opacity: 0.5;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.banner h2 {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.banner-description {
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    padding: 40px 20px;
   }
-
-  .subtitle {
+  
+  .banner h2 {
+    font-size: 32px;
+  }
+  
+  .banner-description {
     font-size: 16px;
-    color: #6B7280;
-    max-width: 800px;
-    margin: 0 auto;
   }
 }
 
