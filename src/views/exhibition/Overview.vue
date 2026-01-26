@@ -1,17 +1,18 @@
 <template>
   <div class="exhibition-overview">
-    <div class="container">
-      <!-- Banner区域 -->
-      <div class="banner">
-        <div class="container">
-          <div class="banner-content">
-            <h2>展会概览</h2>
-            <p class="banner-description">
-              整合多维度宏观展会数据，通过可视化图表清晰呈现展会总量、地域分布、行业结构及周期变化等核心指标，帮助平台用户快速把握行业趋势与优质资源，为参展规划、资源对接提供数据支撑，提升决策精准度与效率。
-            </p>
-          </div>
+    <!-- Banner区域 - 移出container外部，使其背景覆盖整个宽度 -->
+    <div class="banner">
+      <div class="container">
+        <div class="banner-content">
+          <h2>展会概览</h2>
+          <p class="banner-description">
+            整合多维度宏观展会数据，通过可视化图表清晰呈现展会总量、地域分布、行业结构及周期变化等核心指标，帮助平台用户快速把握行业趋势与优质资源，为参展规划、资源对接提供数据支撑，提升决策精准度与效率。
+          </p>
         </div>
       </div>
+    </div>
+    
+    <div class="container">
 
       <!-- 核心指标 -->
       <div class="stats-cards">
@@ -639,6 +640,9 @@ onUnmounted(() => {
   padding: 0 0 80px;
   background-color: #F9FAFB;
   min-height: 100vh;
+  /* 添加padding-top确保内容不被header遮挡 */
+  padding-top: 80px;
+  margin-top: -80px;
 }
 
 /* Banner样式 */
