@@ -169,7 +169,10 @@
                   <el-icon><HomeFilled /></el-icon>
                   {{ policy.publisher }}
                 </span>
-                <span class="document-number">发文序号：{{ policy.documentNumber }}</span>
+                <span class="meta-item">
+                  <el-icon><DocumentCopy /></el-icon>
+                  {{ policy.documentNumber }}
+                </span>
               </div>
             </div>
             <div class="policy-date-styled">
