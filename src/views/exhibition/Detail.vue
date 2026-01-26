@@ -39,10 +39,7 @@
         </div>
         
         <div class="info-content">
-          <div class="info-row">
-            <div class="info-label">展会行业分类：</div>
-            <div class="info-value">制冷、空调、暖通、热泵及通风设备</div>
-          </div>
+          <!-- 展会行业分类已隐藏 -->
           <div class="info-row">
             <div class="info-label">主办单位：</div>
             <div class="info-value">中国制冷学会、中国制冷空调工业协会、北京国际展览中心有限公司、上海市制冷学会、上海冷冻空调行业协会</div>
@@ -51,6 +48,17 @@
             <div class="info-label">展会简介：</div>
             <div class="info-value description">
               中国制冷展全称为“国际制冷、空调、供暖、通风及食品冷冻加工展览会”，始创于1987年，由中国国际贸易促进委员会北京市分会、中国制冷学会、中国制冷空调工业协会共同主办，是获得国际展览业协会（UFI）、美国商务部和中国展览馆协会认证的全球制冷暖通空调行业专业展会。展会采取北京、上海两地交替举办的模式，2024年展会选址中国国际展览中心（顺义馆），2025年展会移师上海新国际博览中心。
+            </div>
+          </div>
+          <!-- 标签区域 -->
+          <div class="tags-section">
+            <div class="tag-group">
+              <span class="tag-label">行业标签：</span>
+              <el-tag v-for="tag in industryTags" :key="tag" class="industry-tag">{{ tag }}</el-tag>
+            </div>
+            <div class="tag-group">
+              <span class="tag-label">热门展会标签：</span>
+              <el-tag v-for="tag in popularTags" :key="tag" class="popular-tag">{{ tag }}</el-tag>
             </div>
           </div>
         </div>
@@ -95,7 +103,10 @@
 
         <!-- 展商名录 -->
         <div class="exhibitor-section">
-          <h2 class="section-title">展商名录</h2>
+          <div class="section-header">
+            <h2 class="section-title">展商名录</h2>
+            <a href="#" class="view-more-text">查看更多展商</a>
+          </div>
           <div class="exhibitor-list">
             <div class="exhibitor-item" v-for="(exhibitor, index) in exhibitors" :key="index">
               <div class="exhibitor-name">{{ exhibitor.name }}</div>
@@ -105,17 +116,14 @@
               </div>
             </div>
           </div>
-          <div class="section-footer">
-            <el-button type="primary" size="small" plain>查看更多展商</el-button>
-          </div>
         </div>
       </div>
 
       <!-- 资料下载 -->
       <div class="download-section">
         <h2 class="section-title">资料下载</h2>
-        <div class="download-list">
-          <div class="download-item" v-for="(item, index) in downloadItems" :key="index">
+        <div class="download-cards">
+          <div class="download-card" v-for="(item, index) in downloadItems" :key="index">
             <div class="download-info">
               <el-icon class="download-icon"><Document /></el-icon>
               <span class="download-name">{{ item.name }}</span>
@@ -175,8 +183,12 @@ import {
 const topButtons = ref([
   { icon: Star, name: '关注', key: 'follow' },
   { icon: Monitor, name: '访问官网', key: 'website' },
-  { icon: Share, name: '获取分享链接', key: 'share' }
+  { icon: Share, name: '分享', key: 'share' }
 ])
+
+// 标签数据
+const industryTags = ref(['制冷设备', '空调系统', '暖通技术', '热泵设备', '通风系统'])
+const popularTags = ref(['国际展会', '专业展览', '行业盛会', '技术交流', '新品发布'])
 
 // 按钮卡片数据
 const buttonCards = ref([
@@ -372,6 +384,38 @@ const downloadItems = ref([
       }
     }
   }
+
+  // 标签区域样式
+  .tags-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ebeef5;
+
+    .tag-group {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .tag-label {
+        font-weight: 600;
+        color: #303133;
+        font-size: 16px;
+        white-space: nowrap;
+      }
+
+      .industry-tag,
+      .popular-tag {
+        margin-right: 8px;
+        margin-bottom: 8px;
+      }
+    }
+  }
 }
 
 .function-section {
@@ -401,6 +445,25 @@ const downloadItems = ref([
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid #409eff;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.view-more-text {
+  font-size: 14px;
+  color: #409eff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: #66b1ff;
+    text-decoration: underline;
+  }
 }
 
 .news-section {
@@ -574,61 +637,64 @@ const downloadItems = ref([
   margin-bottom: 30px;
 }
 
-.download-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.download-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-.download-item {
+.download-card {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  padding: 20px;
+  padding: 24px;
   border: 1px solid #ebeef5;
-  border-radius: 8px;
+  border-radius: 12px;
   transition: all 0.3s ease;
+  height: 180px;
 
   &:hover {
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
+    border-color: #409eff;
   }
 
   .download-info {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 8px;
+      gap: 12px;
+      flex: 1;
 
       .download-icon {
-        font-size: 24px;
+        font-size: 32px;
         color: #409eff;
       }
 
       .download-name {
-        font-size: 16px;
+        font-size: 18px;
         color: #303133;
-        font-weight: 500;
+        font-weight: 600;
       }
 
       .download-meta {
         display: flex;
-        gap: 12px;
+        gap: 16px;
         align-items: center;
         font-size: 14px;
         color: #909399;
       }
 
       .download-format {
-        padding: 2px 8px;
+        padding: 3px 12px;
         background-color: #ecf5ff;
         color: #409eff;
-        border-radius: 4px;
-        font-size: 12px;
+        border-radius: 6px;
+        font-size: 13px;
       }
 
       .download-size {
-        font-size: 13px;
+        font-size: 14px;
       }
     }
 }
