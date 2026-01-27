@@ -16,7 +16,7 @@
             size="small"
             :icon="btn.icon"
           >
-            {{ btn.name }}
+            {{ btn.name === '获取报名分享链接' ? '分享' : btn.name }}
           </el-button>
         </div>
         <div class="info-header">
@@ -77,7 +77,7 @@
               <p class="card-desc">{{ card.desc }}</p>
             </div>
             <el-button type="primary" size="small" plain>
-              {{ card.name === '获取报名分享链接' ? '分享' : card.name }}
+              {{ card.name === '获取报名分享链接' ? '获取报名分享链接' : card.name }}
             </el-button>
           </div>
         </div>
@@ -90,16 +90,23 @@
           <h2 class="section-title">展会资讯</h2>
           <div class="news-list">
             <div class="news-item" v-for="(news, index) in exhibitionNews" :key="index">
-              <h3 class="news-title">{{ news.title }}</h3>
-              <p class="news-desc">{{ news.desc }}</p>
-              <div class="news-meta">
-                <div class="news-source">
-                  <el-icon><User /></el-icon>
-                  来源：{{ news.source }}
+              <div class="news-icon">
+                <el-icon :size="28"><Document /></el-icon>
+              </div>
+              <div class="news-content">
+                <div class="news-header">
+                  <h3 class="news-title">{{ news.title }}</h3>
                 </div>
-                <div class="news-time">
-                  <el-icon><Clock /></el-icon>
-                  {{ news.time }}
+                <p class="news-desc">{{ news.desc }}</p>
+                <div class="news-meta">
+                  <div class="news-source">
+                    <el-icon><User /></el-icon>
+                    来源：{{ news.source }}
+                  </div>
+                  <div class="news-date-styled">
+                    <span class="day">{{ news.time.split('-')[2].split(' ')[0] }}</span>
+                    <span class="ym">{{ news.time.split('-')[0] }}.{{ news.time.split('-')[1] }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -115,7 +122,7 @@
           <div class="exhibitor-list">
             <div class="exhibitor-item" v-for="(exhibitor, index) in exhibitors" :key="index">
               <div class="exhibitor-icon">
-                <el-icon :size="24"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M128 192v640h768V192H128zm128 576H256V320h64v448zm192 0h-64V320h64v448zm192 0h-64V320h64v448z"></path></svg></el-icon>
+                <el-icon :size="24"><OfficeBuilding /></el-icon>
               </div>
               <div class="exhibitor-name">{{ exhibitor.name }}</div>
               <div class="exhibitor-booth">
@@ -185,7 +192,8 @@ import {
   Clock, 
   Document, 
   Download, 
-  User 
+  User, 
+  OfficeBuilding 
 } from '@element-plus/icons-vue'
 
 // 右上角按钮数据
@@ -251,7 +259,7 @@ const exhibitionNews = ref([
 
 // 展商名录数据
 const exhibitors = ref([
-  { name: '珠海爱迪生节能科技股份有限公司', booth: 'W4D53' },
+  { name: '爱迪生节能科技股份有限公司', booth: 'W4D53' },
   { name: '珠海格力电器股份有限公司', booth: 'W2D25,E1F31,E4F31' },
   { name: '珠海三友环境技术有限公司', booth: 'W3B41' },
   { name: '郑州炜盛电子科技有限公司', booth: 'W1C35' },
@@ -328,7 +336,7 @@ const downloadItems = ref([
   display: flex;
   gap: 24px;
   margin-bottom: 24px;
-  align-items: center;
+  align-items: flex-start; // 与h1保持对齐
 
   .logo-section {
     width: 120px;
@@ -336,6 +344,7 @@ const downloadItems = ref([
     border-radius: 8px;
     overflow: hidden;
     background-color: #f0f2f5;
+    margin-top: 4px; // 微调与h1对齐
 
     .exhibition-logo {
       width: 100%;
@@ -403,9 +412,10 @@ const downloadItems = ref([
     .tag-group {
       margin-bottom: 12px;
       display: flex;
-      align-items: center;
+      align-items: flex-end; // 文字和标签都在div底部展示
       flex-wrap: wrap;
       gap: 12px;
+      min-height: 32px; // 确保对齐效果
       
       // 确保标签和标题对齐
       .tag-label {
@@ -415,12 +425,13 @@ const downloadItems = ref([
         white-space: nowrap;
         width: 80px; // 固定宽度确保对齐
         text-align: right;
+        margin-bottom: 0;
       }
 
       .industry-tag,
       .popular-tag {
         margin-right: 8px;
-        margin-bottom: 8px;
+        margin-bottom: 0;
       }
     }
   }
@@ -460,8 +471,10 @@ const downloadItems = ref([
 .section-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
+  position: relative;
+  top: -4px; /* 上移与h2对齐 */
 }
 
 .view-more-text {
@@ -472,6 +485,8 @@ const downloadItems = ref([
   display: flex;
   align-items: center;
   gap: 4px;
+  min-width: 100px; /* 增加宽度确保文字在一行展示 */
+  width: fit-content;
   
   &:hover {
     color: #66b1ff;
@@ -498,41 +513,72 @@ const downloadItems = ref([
 }
 
 .news-item {
-  padding: 20px;
-  border: 1px solid #ebeef5;
-  border-radius: 8px;
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+    border-color: #204E9C;
+  }
+
+  .news-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(32, 78, 156, 0.08);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #204E9C;
+    flex-shrink: 0;
+    margin: auto 0;
+  }
+
+  .news-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .news-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .news-title {
+    flex: 1;
     font-size: 18px;
     font-weight: 600;
-    color: #303133;
-    margin-bottom: 12px;
+    color: #1F2937;
+    margin: 0;
+    line-height: 1.4;
   }
 
   .news-desc {
-    color: #606266;
+    color: #6B7280;
     line-height: 1.6;
-    margin-bottom: 12px;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .news-meta {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    justify-content: space-between;
-    color: #909399;
-    font-size: 14px;
-  }
-
-  .news-time {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 24px;
   }
 
   .news-source {
@@ -540,6 +586,44 @@ const downloadItems = ref([
     align-items: center;
     gap: 8px;
     font-weight: 500;
+    color: #6B7280;
+  }
+
+  .news-date {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6B7280;
+  }
+
+  // 日期样式，与政策卡片保持一致
+  .news-date-styled {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(32, 78, 156, 0.08);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-left: auto;
+
+    .day {
+      font-size: 24px;
+      font-weight: 700;
+      color: #204E9C;
+      line-height: 1;
+    }
+
+    .ym {
+      font-size: 12px;
+      color: #6B7280;
+      margin-top: 4px;
+    }
+  }
+
+  .news-source .el-icon {
+    color: #204E9C;
   }
 }
 
@@ -695,9 +779,10 @@ const downloadItems = ref([
   .download-info {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: 12px;
       flex: 1;
+      text-align: center;
 
       .download-icon {
         font-size: 32px;
@@ -716,6 +801,7 @@ const downloadItems = ref([
         align-items: center;
         font-size: 14px;
         color: #909399;
+        justify-content: center;
       }
 
       .download-format {
