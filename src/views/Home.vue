@@ -13,30 +13,42 @@
 
     <!-- 展会日历 -->
     <section class="calendar-section">
-      <div class="container">
+      <div class="content-wrapper">
         <div class="section-header calendar-header">
           <div class="header-left">
             <h2>展会日历</h2>
           </div>
-          <div class="month-switcher">
-            <el-button circle size="small" @click="prevMonth">
-              <el-icon><ArrowLeft /></el-icon>
-            </el-button>
-            <span class="current-date">{{ currentYear }}年{{ currentMonth }}月</span>
-            <el-button circle size="small" @click="nextMonth">
-              <el-icon><ArrowRight /></el-icon>
-            </el-button>
+          <div class="calendar-controls">
+            <div class="city-selector">
+              <el-select v-model="selectedCity" placeholder="选择城市" size="small">
+                <el-option
+                  v-for="city in availableCities"
+                  :key="city.value"
+                  :label="city.label"
+                  :value="city.value"
+                />
+              </el-select>
+            </div>
+            <div class="month-switcher">
+              <el-button circle size="small" @click="prevMonth">
+                <el-icon><ArrowLeft /></el-icon>
+              </el-button>
+              <span class="current-date">{{ currentYear }}年{{ currentMonth }}月</span>
+              <el-button circle size="small" @click="nextMonth">
+                <el-icon><ArrowRight /></el-icon>
+              </el-button>
+            </div>
           </div>
         </div>
         <div class="calendar-content">
           <div class="calendar-stats">
             <div class="stat-item">
-              <div class="stat-number">{{ calendarData.stats.totalExhibitions }}</div>
+              <div class="stat-number">{{ totalExhibitions }}</div>
               <div class="stat-label">本月累计展会</div>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
-              <div class="stat-number">{{ calendarData.stats.totalVenues }}</div>
+              <div class="stat-number">{{ totalVenues }}</div>
               <div class="stat-label">覆盖场馆</div>
             </div>
           </div>
@@ -74,11 +86,11 @@
                     <div class="event-tags">
                       <div class="tag-item">
                         <el-icon><Place /></el-icon>
-                        <span>国家会议中心</span>
+                        <span>{{ event.venue }}</span>
                       </div>
                       <div class="tag-item">
-                        <el-icon><CollectionTag /></el-icon>
-                        <span>电子科技</span>
+                        <el-icon><Location /></el-icon>
+                        <span>{{ event.city }}</span>
                       </div>
                     </div>
                   </div>
@@ -92,7 +104,7 @@
 
     <!-- 展会推荐 -->
     <section class="exhibition-section">
-      <div class="container">
+      <div class="content-wrapper">
         <div class="section-header">
           <h2>展会推荐</h2>
           <p class="section-desc">精选优质展会，不容错过</p>
@@ -148,7 +160,7 @@
 
     <!-- 展会政策 -->
     <section class="policy-section">
-      <div class="container">
+      <div class="content-wrapper">
         <div class="section-header">
           <h2>展会政策</h2>
           <p class="section-desc">最新政策动态，助力展会发展</p>
@@ -189,7 +201,7 @@
 
     <!-- 核心功能 -->
     <section class="core-section">
-      <div class="container">
+      <div class="content-wrapper">
         <div class="digital-map-entry">
           <div class="map-visual">
             <el-icon :size="60"><Monitor /></el-icon>
@@ -221,7 +233,7 @@
 
     <!-- 快捷服务 -->
     <section class="service-section">
-      <div class="container">
+      <div class="content-wrapper">
         <div class="section-header">
           <h2>快捷服务</h2>
           <p class="section-desc">一站式服务，便捷高效</p>
@@ -249,7 +261,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   Calendar, 
@@ -336,12 +348,160 @@ const bannerList = ref([
   }
 ])
 
+// 城市选择数据
+const cities = ref([
+  { value: 'all', label: '全国' },
+  { value: 'beijing', label: '北京' },
+  { value: 'shanghai', label: '上海' },
+  { value: 'guangzhou', label: '广州' },
+  { value: 'shenzhen', label: '深圳' },
+  { value: 'hangzhou', label: '杭州' },
+  { value: 'chengdu', label: '成都' },
+  { value: 'wuhan', label: '武汉' }
+])
+const selectedCity = ref('all')
+
+// 动态城市选项，只包含当月有展会的城市
+const availableCities = computed(() => {
+  const year = currentYear.value
+  const month = String(currentMonth.value).padStart(2, '0')
+  const citySet = new Set()
+  
+  // 收集当月所有展会的城市
+  Object.keys(calendarData.events).forEach(dateStr => {
+    if (dateStr.startsWith(`${year}-${month}`)) {
+      calendarData.events[dateStr].forEach(event => {
+        if (event.city) {
+          citySet.add(event.city)
+        }
+      })
+    }
+  })
+  
+  // 构建城市选项列表
+  const cityOptions = [{ value: 'all', label: '全国' }]
+  const cityMap = {
+    '北京市': { value: 'beijing', label: '北京' },
+    '上海市': { value: 'shanghai', label: '上海' },
+    '广州市': { value: 'guangzhou', label: '广州' },
+    '深圳市': { value: 'shenzhen', label: '深圳' },
+    '杭州市': { value: 'hangzhou', label: '杭州' },
+    '成都市': { value: 'chengdu', label: '成都' },
+    '武汉市': { value: 'wuhan', label: '武汉' },
+    '哈尔滨市': { value: 'harbin', label: '哈尔滨' },
+    '西安市': { value: 'xian', label: '西安' },
+    '昆明市': { value: 'kunming', label: '昆明' },
+    '乌鲁木齐市': { value: 'urumqi', label: '乌鲁木齐' },
+    '重庆市': { value: 'chongqing', label: '重庆' },
+    '济南市': { value: 'jinan', label: '济南' },
+    '温州市': { value: 'wenzhou', label: '温州' },
+    '台州市': { value: 'taizhou', label: '台州' }
+  }
+  
+  // 添加当月有展会的城市
+  citySet.forEach(cityName => {
+    if (cityMap[cityName]) {
+      cityOptions.push(cityMap[cityName])
+    }
+  })
+  
+  return cityOptions
+})
+
 // 日历数据
 const calendarDays = ref([])
 const selectedDay = reactive({ date: '', events: [] })
 const currentDate = ref(new Date(2026, 0, 1))
 const currentYear = computed(() => currentDate.value.getFullYear())
 const currentMonth = computed(() => currentDate.value.getMonth() + 1)
+
+// 动态统计数据
+const totalExhibitions = computed(() => {
+  const year = currentYear.value
+  const month = String(currentMonth.value).padStart(2, '0')
+  let count = 0
+  
+  Object.keys(calendarData.events).forEach(dateStr => {
+    if (dateStr.startsWith(`${year}-${month}`)) {
+      let events = calendarData.events[dateStr]
+      
+      // 根据选中的城市筛选展会
+      if (selectedCity.value !== 'all') {
+        const cityMap = {
+          'beijing': '北京市',
+          'shanghai': '上海市',
+          'guangzhou': '广州市',
+          'shenzhen': '深圳市',
+          'hangzhou': '杭州市',
+          'chengdu': '成都市',
+          'wuhan': '武汉市',
+          'harbin': '哈尔滨市',
+          'xian': '西安市',
+          'kunming': '昆明市',
+          'urumqi': '乌鲁木齐市',
+          'chongqing': '重庆市',
+          'jinan': '济南市',
+          'wenzhou': '温州市',
+          'taizhou': '台州市'
+        }
+        const cityName = cityMap[selectedCity.value]
+        if (cityName) {
+          events = events.filter(event => event.city === cityName)
+        }
+      }
+      
+      count += events.length
+    }
+  })
+  
+  return count
+})
+
+const totalVenues = computed(() => {
+  const year = currentYear.value
+  const month = String(currentMonth.value).padStart(2, '0')
+  const venueSet = new Set()
+  
+  Object.keys(calendarData.events).forEach(dateStr => {
+    if (dateStr.startsWith(`${year}-${month}`)) {
+      let events = calendarData.events[dateStr]
+      
+      // 根据选中的城市筛选展会
+      if (selectedCity.value !== 'all') {
+        const cityMap = {
+          'beijing': '北京市',
+          'shanghai': '上海市',
+          'guangzhou': '广州市',
+          'shenzhen': '深圳市',
+          'hangzhou': '杭州市',
+          'chengdu': '成都市',
+          'wuhan': '武汉市',
+          'harbin': '哈尔滨市',
+          'xian': '西安市',
+          'kunming': '昆明市',
+          'urumqi': '乌鲁木齐市',
+          'chongqing': '重庆市',
+          'jinan': '济南市',
+          'wenzhou': '温州市',
+          'taizhou': '台州市'
+        }
+        const cityName = cityMap[selectedCity.value]
+        if (cityName) {
+          events = events.filter(event => event.city === cityName)
+        }
+      }
+      
+      // 添加实际场馆
+      events.forEach(event => {
+        if (event.venue) {
+          venueSet.add(event.venue)
+        }
+      })
+    }
+  })
+  
+  return venueSet.size
+})
 
 const prevMonth = () => {
   currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1)
@@ -379,7 +539,33 @@ const generateCalendarDays = () => {
 
   for (let i = 1; i <= daysInMonth; i++) {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`
-    const events = calendarData.events[dateStr] || []
+    let events = calendarData.events[dateStr] || []
+    
+    // 根据选中的城市筛选展会
+    if (selectedCity.value !== 'all') {
+      const cityMap = {
+        'beijing': '北京市',
+        'shanghai': '上海市',
+        'guangzhou': '广州市',
+        'shenzhen': '深圳市',
+        'hangzhou': '杭州市',
+        'chengdu': '成都市',
+        'wuhan': '武汉市',
+        'harbin': '哈尔滨市',
+        'xian': '西安市',
+        'kunming': '昆明市',
+        'urumqi': '乌鲁木齐市',
+        'chongqing': '重庆市',
+        'jinan': '济南市',
+        'wenzhou': '温州市',
+        'taizhou': '台州市'
+      }
+      const cityName = cityMap[selectedCity.value]
+      if (cityName) {
+        events = events.filter(event => event.city === cityName)
+      }
+    }
+    
     days.push({
       day: i,
       date: dateStr,
@@ -402,6 +588,17 @@ const generateCalendarDays = () => {
 }
 
 generateCalendarDays()
+
+// 监听城市选择变化，重新生成日历数据
+watch(selectedCity, () => {
+  generateCalendarDays()
+})
+
+// 监听月份变化，重置城市选择为全国
+watch([currentYear, currentMonth], () => {
+  selectedCity.value = 'all'
+  generateCalendarDays()
+})
 
 const showEvents = (day) => {
   selectedDay.date = day.date
@@ -517,6 +714,32 @@ const getStatusClass = (status) => {
       
       &::after {
         display: none;
+      }
+    }
+  }
+
+  .calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .city-selector {
+    :deep(.el-select) {
+      width: 120px;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border: none;
+      background: white;
+      
+      :deep(.el-input__wrapper) {
+        border-radius: 20px;
+        box-shadow: none;
+        border: 1px solid #E5E7EB;
+        
+        &:hover {
+          border-color: #2563EB;
+        }
       }
     }
   }
@@ -1019,6 +1242,7 @@ const getStatusClass = (status) => {
   color: #2563EB;
   font-size: 32px;
   flex-shrink: 0;
+  margin: auto 0;
 }
 
 .policy-content {

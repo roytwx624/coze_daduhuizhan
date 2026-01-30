@@ -60,8 +60,29 @@ button, input, textarea, select {
 
 .content-wrapper {
   width: 100%;
-  max-width: $content-max-width;
   margin: 0 auto;
+  padding: 0 $spacing-lg;
+  
+  // 响应式宽度设置
+  @media (min-width: 1024px) {
+    max-width: 960px;
+  }
+  
+  @media (min-width: 1280px) {
+    max-width: 1100px;
+  }
+  
+  @media (min-width: 1440px) {
+    max-width: 1200px;
+  }
+  
+  @media (min-width: 1600px) {
+    max-width: 1300px;
+  }
+  
+  @media (min-width: 1920px) {
+    max-width: 1440px;
+  }
 }
 
 // 卡片样式

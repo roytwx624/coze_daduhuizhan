@@ -103,11 +103,11 @@
                     <el-icon><User /></el-icon>
                     来源：{{ news.source }}
                   </div>
-                  <div class="news-date-styled">
-                    <span class="day">{{ news.time.split('-')[2].split(' ')[0] }}</span>
-                    <span class="ym">{{ news.time.split('-')[0] }}.{{ news.time.split('-')[1] }}</span>
-                  </div>
                 </div>
+              </div>
+              <div class="news-date-styled">
+                <span class="day">{{ news.time.split('-')[2].split(' ')[0] }}</span>
+                <span class="ym">{{ news.time.split('-')[0] }}.{{ news.time.split('-')[1] }}</span>
               </div>
             </div>
           </div>
@@ -116,8 +116,10 @@
         <!-- 展商名录 -->
         <div class="exhibitor-section">
           <div class="section-header">
-            <h2 class="section-title">展商名录</h2>
-            <a href="#" class="view-more-text">查看更多展商</a>
+            <h2 class="section-title">
+              展商名录
+              <a href="#" class="view-more-text">查看更多展商</a>
+            </h2>
           </div>
           <div class="exhibitor-list">
             <div class="exhibitor-item" v-for="(exhibitor, index) in exhibitors" :key="index">
@@ -464,17 +466,14 @@ const downloadItems = ref([
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid #409eff;
-  display: inline-block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   margin-bottom: 20px;
-  position: relative;
-  top: -4px; /* 上移与h2对齐 */
 }
 
 .view-more-text {
@@ -545,6 +544,34 @@ const downloadItems = ref([
     display: flex;
     flex-direction: column;
     gap: 16px;
+    padding-left: 8px;
+  }
+
+  .news-date-styled {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-left: 20px;
+    border-left: 1px solid #E5E7EB;
+    margin-left: 12px;
+    min-width: 80px;
+
+    .day {
+      font-size: 32px;
+      font-weight: 700;
+      color: #204E9C;
+      line-height: 1;
+      font-family: 'DIN Alternate', sans-serif;
+      margin-bottom: 4px;
+    }
+
+    .ym {
+      font-size: 13px;
+      color: #6B7280;
+      font-weight: 500;
+    }
   }
 
   .news-header {
@@ -596,31 +623,7 @@ const downloadItems = ref([
     color: #6B7280;
   }
 
-  // 日期样式，与政策卡片保持一致
-  .news-date-styled {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(32, 78, 156, 0.08);
-    border-radius: 8px;
-    padding: 8px 12px;
-    margin-left: auto;
 
-    .day {
-      font-size: 24px;
-      font-weight: 700;
-      color: #204E9C;
-      line-height: 1;
-    }
-
-    .ym {
-      font-size: 12px;
-      color: #6B7280;
-      margin-top: 4px;
-    }
-  }
 
   .news-source .el-icon {
     color: #204E9C;
@@ -713,15 +716,45 @@ const downloadItems = ref([
     background-color: #f5f7fa;
     border-radius: 8px;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ebeef5;
+
+    // 背景装饰细节
+    &::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(64, 158, 255, 0.1) 0%, rgba(64, 158, 255, 0) 70%);
+      border-radius: 50%;
+      z-index: 0;
+      transition: all 0.3s ease;
+    }
 
     &:hover {
       background-color: #ecf5ff;
       transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(64, 158, 255, 0.1);
+      border-color: #409eff;
+
+      &::before {
+        transform: scale(1.2);
+      }
+
+      .exhibitor-icon {
+        transform: scale(1.1);
+      }
     }
 
     .exhibitor-icon {
       margin-bottom: 12px;
       color: #409eff;
+      z-index: 1;
+      position: relative;
+      transition: all 0.3s ease;
     }
 
     .exhibitor-name {
@@ -730,6 +763,8 @@ const downloadItems = ref([
       color: #303133;
       margin-bottom: 8px;
       text-align: center;
+      z-index: 1;
+      position: relative;
     }
 
     .exhibitor-booth {
@@ -739,6 +774,8 @@ const downloadItems = ref([
       color: #606266;
       font-size: 14px;
       text-align: center;
+      z-index: 1;
+      position: relative;
 
       .booth-label {
         font-weight: 600;
