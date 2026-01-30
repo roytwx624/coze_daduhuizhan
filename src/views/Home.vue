@@ -727,18 +727,29 @@ const getStatusClass = (status) => {
   .city-selector {
     :deep(.el-select) {
       width: 120px;
-      border-radius: 20px;
+      border-radius: 30px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       border: none;
       background: white;
       
       :deep(.el-input__wrapper) {
-        border-radius: 20px;
+        border-radius: 30px;
         box-shadow: none;
         border: 1px solid #E5E7EB;
+        padding: 6px 16px;
         
         &:hover {
           border-color: #2563EB;
+        }
+        
+        :deep(.el-input__inner) {
+          font-size: 14px;
+          font-weight: 500;
+          color: #1F2937;
+        }
+        
+        :deep(.el-select__caret) {
+          color: #6B7280;
         }
       }
     }
