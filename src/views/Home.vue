@@ -395,7 +395,10 @@ const availableCities = computed(() => {
     '重庆市': { value: 'chongqing', label: '重庆' },
     '济南市': { value: 'jinan', label: '济南' },
     '温州市': { value: 'wenzhou', label: '温州' },
-    '台州市': { value: 'taizhou', label: '台州' }
+    '台州市': { value: 'taizhou', label: '台州' },
+    '合肥市': { value: 'hefei', label: '合肥' },
+    '南安市': { value: 'nanan', label: '南安' },
+    '抚州市': { value: 'fuzhou', label: '抚州' }
   }
   
   // 添加当月有展会的城市
@@ -411,7 +414,8 @@ const availableCities = computed(() => {
 // 日历数据
 const calendarDays = ref([])
 const selectedDay = reactive({ date: '', events: [] })
-const currentDate = ref(new Date(2026, 0, 1))
+// 设置默认日期为当前实际日期
+const currentDate = ref(new Date())
 const currentYear = computed(() => currentDate.value.getFullYear())
 const currentMonth = computed(() => currentDate.value.getMonth() + 1)
 
@@ -442,7 +446,10 @@ const totalExhibitions = computed(() => {
           'chongqing': '重庆市',
           'jinan': '济南市',
           'wenzhou': '温州市',
-          'taizhou': '台州市'
+          'taizhou': '台州市',
+          'hefei': '合肥市',
+          'nanan': '南安市',
+          'fuzhou': '抚州市'
         }
         const cityName = cityMap[selectedCity.value]
         if (cityName) {
@@ -483,7 +490,10 @@ const totalVenues = computed(() => {
           'chongqing': '重庆市',
           'jinan': '济南市',
           'wenzhou': '温州市',
-          'taizhou': '台州市'
+          'taizhou': '台州市',
+          'hefei': '合肥市',
+          'nanan': '南安市',
+          'fuzhou': '抚州市'
         }
         const cityName = cityMap[selectedCity.value]
         if (cityName) {
@@ -558,7 +568,10 @@ const generateCalendarDays = () => {
         'chongqing': '重庆市',
         'jinan': '济南市',
         'wenzhou': '温州市',
-        'taizhou': '台州市'
+        'taizhou': '台州市',
+        'hefei': '合肥市',
+        'nanan': '南安市',
+        'fuzhou': '抚州市'
       }
       const cityName = cityMap[selectedCity.value]
       if (cityName) {
