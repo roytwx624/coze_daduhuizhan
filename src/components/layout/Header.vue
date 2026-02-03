@@ -54,7 +54,7 @@
                 <transition name="dropdown">
                   <ul v-show="showPolicyMenu" class="dropdown-menu">
                     <li><router-link to="/policy/search">政策搜索</router-link></li>
-                    <li><router-link to="/policy/apply">一站式报批</router-link></li>
+                    <li><router-link to="/policy/apply">大型活动报批</router-link></li>
                   </ul>
                 </transition>
               </li>

@@ -1,12 +1,8 @@
 <template>
   <div class="policy-apply-page">
     <div class="container">
-      <div class="page-header">
-        <h1>一站式申报</h1>
-        <p>便捷高效的政策申报通道</p>
-      </div>
       <div class="content-placeholder">
-        <el-empty description="申报功能即将上线，敬请期待" />
+        <el-empty description="大型活动报批功能即将上线，敬请期待" />
       </div>
     </div>
   </div>
@@ -14,7 +10,7 @@
 
 <style lang="scss" scoped>
 .policy-apply-page {
-  padding: 40px 0;
+  padding: 120px 0 64px;
   min-height: 60vh;
 }
 
@@ -22,22 +18,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
-}
-
-.page-header {
-  text-align: center;
-  margin-bottom: 40px;
-
-  h1 {
-    font-size: 32px;
-    color: #1F2937;
-    margin-bottom: 12px;
-  }
-
-  p {
-    font-size: 16px;
-    color: #6B7280;
-  }
 }
 
 .content-placeholder {

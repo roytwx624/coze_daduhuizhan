@@ -141,6 +141,7 @@
             v-for="item in searchResults"
             :key="item.id"
             class="exhibition-item"
+            @click="navigateToDetail(item.id)"
           >
             <div class="item-logo">
               <img :src="item.poster" :alt="item.name" />
@@ -152,7 +153,7 @@
                   :type="item.followed ? '' : 'primary'"
                   :icon="item.followed ? 'StarFilled' : 'Star'"
                   size="small"
-                  @click="toggleFollow(item)"
+                  @click.stop="toggleFollow(item)"
                 >
                   {{ item.followed ? '已关注' : '关注' }}
                 </el-button>
@@ -274,9 +275,20 @@ const pagination = reactive({
 // 处理搜索
 const handleSearch = () => {
   console.log('搜索：', searchForm)
+  
   // 实际项目中这里会调用API
-  // 这里仅做演示
+  // 这里实现本地筛选逻辑
+  let filteredResults = [...exhibitions]
+  
+  // 关键词搜索
   if (searchForm.keyword) {
+    const keyword = searchForm.keyword.toLowerCase()
+    filteredResults = filteredResults.filter(item => 
+      item.name.toLowerCase().includes(keyword) || 
+      item.description.toLowerCase().includes(keyword) ||
+      item.industry.toLowerCase().includes(keyword)
+    )
+    
     // 添加到历史搜索
     if (!historySearch.value.includes(searchForm.keyword)) {
       historySearch.value.unshift(searchForm.keyword)
@@ -285,6 +297,39 @@ const handleSearch = () => {
       }
     }
   }
+  
+  // 行业分类筛选
+  if (searchForm.industry) {
+    filteredResults = filteredResults.filter(item => item.industry === searchForm.industry)
+  }
+  
+  // 城市筛选
+  if (searchForm.city) {
+    filteredResults = filteredResults.filter(item => item.venue.includes(searchForm.city))
+  }
+  
+  // 展会规模筛选
+  if (searchForm.scale) {
+    filteredResults = filteredResults.filter(item => {
+      if (searchForm.scale === 'large') {
+        return item.area >= 50000
+      } else if (searchForm.scale === 'medium') {
+        return item.area >= 10000 && item.area < 50000
+      } else if (searchForm.scale === 'small') {
+        return item.area < 10000
+      }
+      return true
+    })
+  }
+  
+  // 展会级别筛选
+  if (searchForm.level) {
+    filteredResults = filteredResults.filter(item => item.level === searchForm.level)
+  }
+  
+  // 更新搜索结果
+  searchResults.value = filteredResults
+  pagination.total = filteredResults.length
 }
 
 // 历史搜索点击
@@ -334,6 +379,11 @@ const toggleFollow = (item) => {
 const handleHotClick = (item) => {
   searchForm.keyword = item.name
   handleSearch()
+}
+
+// 跳转到详情页
+const navigateToDetail = (id) => {
+  router.push(`/exhibition/detail/${id}`)
 }
 
 // 分页处理

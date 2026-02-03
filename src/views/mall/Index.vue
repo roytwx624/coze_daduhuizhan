@@ -1,10 +1,7 @@
 <template>
   <div class="mall-page">
     <div class="container">
-      <div class="page-header">
-        <h1>线上商城</h1>
-        <p>精选展会周边与行业好物</p>
-      </div>
+    
       <div class="content-placeholder">
         <el-empty description="商城正在建设中，敬请期待" />
       </div>
@@ -14,7 +11,7 @@
 
 <style lang="scss" scoped>
 .mall-page {
-  padding: 40px 0;
+  padding: 120px 0 64px;
   min-height: 60vh;
 }
 
