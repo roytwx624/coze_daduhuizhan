@@ -72,7 +72,7 @@
               <div v-if="day.events.length > 0" class="event-count">{{ day.events.length }}</div>
               
               <!-- 悬停展示展会列表 -->
-              <div v-if="day.events.length > 0" class="day-events-popover">
+              <div v-if="day.events.length > 0" class="day-events-popover" :class="{ 'four-columns': day.events.length > 4 }">
                 <div class="popover-header">
                   <span class="date">{{ day.date }}</span>
                   <span class="count">共 {{ day.events.length }} 场展会</span>
@@ -977,7 +977,8 @@ const getStatusClass = (status) => {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
-  width: 320px;
+  min-width: 300px;
+  max-width: 1000px;
   background: white;
   border-radius: 12px;
   padding: 16px;
@@ -1020,57 +1021,90 @@ const getStatusClass = (status) => {
     }
   }
 
+  .popover-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
   .mini-event-card {
-    padding: 10px;
+    padding: 8px;
     background: #F9FAFB;
     border-radius: 8px;
-    margin-bottom: 8px;
     border-left: 3px solid #2563EB;
-    
-    &:last-child {
-      margin-bottom: 0;
-    }
 
     .event-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #1F2937;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      line-height: 1.2;
 
       .icon {
         color: #2563EB;
+        font-size: 12px;
       }
     }
 
     .event-tags {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 12px;
-      margin-top: 4px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      margin-top: 2px;
     }
 
     .tag-item {
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-size: 12px;
+      gap: 3px;
+      font-size: 11px;
       color: #6B7280;
 
       .el-icon {
         color: #9CA3AF;
+        font-size: 10px;
       }
     }
 
     .industry-badge {
-      font-size: 11px;
-      padding: 2px 8px;
+      font-size: 10px;
+      padding: 1px 6px;
       background: #F3F4F6;
       color: #4B5563;
-      border-radius: 4px;
+      border-radius: 3px;
+    }
+  }
+
+  &.four-columns {
+    width: 1000px;
+
+    .popover-content {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .mini-event-card {
+      padding: 6px;
+
+      .event-name {
+        font-size: 12px;
+        margin-bottom: 4px;
+
+        .icon {
+          font-size: 11px;
+        }
+      }
+
+      .tag-item {
+        font-size: 10px;
+
+        .el-icon {
+          font-size: 9px;
+        }
+      }
     }
   }
 }
