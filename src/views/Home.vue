@@ -398,7 +398,13 @@ const availableCities = computed(() => {
     '台州市': { value: 'taizhou', label: '台州' },
     '合肥市': { value: 'hefei', label: '合肥' },
     '南安市': { value: 'nanan', label: '南安' },
-    '抚州市': { value: 'fuzhou', label: '抚州' }
+    '抚州市': { value: 'fuzhou', label: '抚州' },
+    '常州市': { value: 'changzhou', label: '常州' },
+    '中山市': { value: 'zhongshan', label: '中山' },
+    '沈阳市': { value: 'shenyang', label: '沈阳' },
+    '郑州市': { value: 'zhengzhou', label: '郑州' },
+    '东莞市': { value: 'dongguan', label: '东莞' },
+    '南京市': { value: 'nanjing', label: '南京' }
   }
   
   // 添加当月有展会的城市
@@ -449,7 +455,13 @@ const totalExhibitions = computed(() => {
           'taizhou': '台州市',
           'hefei': '合肥市',
           'nanan': '南安市',
-          'fuzhou': '抚州市'
+          'fuzhou': '抚州市',
+          'changzhou': '常州市',
+          'zhongshan': '中山市',
+          'shenyang': '沈阳市',
+          'zhengzhou': '郑州市',
+          'dongguan': '东莞市',
+          'nanjing': '南京市'
         }
         const cityName = cityMap[selectedCity.value]
         if (cityName) {
@@ -493,7 +505,12 @@ const totalVenues = computed(() => {
           'taizhou': '台州市',
           'hefei': '合肥市',
           'nanan': '南安市',
-          'fuzhou': '抚州市'
+          'fuzhou': '抚州市',
+          'changzhou': '常州市',
+          'zhongshan': '中山市',
+          'shenyang': '沈阳市',
+          'zhengzhou': '郑州市',
+          'dongguan': '东莞市'
         }
         const cityName = cityMap[selectedCity.value]
         if (cityName) {
@@ -552,32 +569,37 @@ const generateCalendarDays = () => {
     let events = calendarData.events[dateStr] || []
     
     // 根据选中的城市筛选展会
-    if (selectedCity.value !== 'all') {
-      const cityMap = {
-        'beijing': '北京市',
-        'shanghai': '上海市',
-        'guangzhou': '广州市',
-        'shenzhen': '深圳市',
-        'hangzhou': '杭州市',
-        'chengdu': '成都市',
-        'wuhan': '武汉市',
-        'harbin': '哈尔滨市',
-        'xian': '西安市',
-        'kunming': '昆明市',
-        'urumqi': '乌鲁木齐市',
-        'chongqing': '重庆市',
-        'jinan': '济南市',
-        'wenzhou': '温州市',
-        'taizhou': '台州市',
-        'hefei': '合肥市',
-        'nanan': '南安市',
-        'fuzhou': '抚州市'
+      if (selectedCity.value !== 'all') {
+        const cityMap = {
+          'beijing': '北京市',
+          'shanghai': '上海市',
+          'guangzhou': '广州市',
+          'shenzhen': '深圳市',
+          'hangzhou': '杭州市',
+          'chengdu': '成都市',
+          'wuhan': '武汉市',
+          'harbin': '哈尔滨市',
+          'xian': '西安市',
+          'kunming': '昆明市',
+          'urumqi': '乌鲁木齐市',
+          'chongqing': '重庆市',
+          'jinan': '济南市',
+          'wenzhou': '温州市',
+          'taizhou': '台州市',
+          'hefei': '合肥市',
+          'nanan': '南安市',
+          'fuzhou': '抚州市',
+          'changzhou': '常州市',
+          'zhongshan': '中山市',
+          'shenyang': '沈阳市',
+          'zhengzhou': '郑州市',
+          'dongguan': '东莞市'
+        }
+        const cityName = cityMap[selectedCity.value]
+        if (cityName) {
+          events = events.filter(event => event.city === cityName)
+        }
       }
-      const cityName = cityMap[selectedCity.value]
-      if (cityName) {
-        events = events.filter(event => event.city === cityName)
-      }
-    }
     
     days.push({
       day: i,
