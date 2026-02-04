@@ -614,9 +614,142 @@ export const biddingInfo = [
 ]
 
 // 服务数据
+import venueManagementSystem from '@/assets/images/service/venue_management_system.png'
+import comprehensiveServiceSystem from '@/assets/images/service/comprehensive_service_system.jpg'
+import badgeManagementSystem from '@/assets/images/service/badge_management_system.png'
+import gateVerificationChannel from '@/assets/images/service/gate_verification_channel.png'
+import pvcBadgeChipCard from '@/assets/images/service/pvc_badge_chip_card.png'
+import exhibitionOrganizerPlatform from '@/assets/images/service/exhibition_organizer_platform.jpg'
+import customDevelopmentService from '@/assets/images/service/custom_development_service.png'
+import aiRealTimeTranslation from '@/assets/images/service/ai_real_time_translation.jpg'
+import exhibitionInterpretationService from '@/assets/images/service/exhibition_interpretation_service.png'
+import exhibitionProtocolReception from '@/assets/images/service/exhibition_protocol_reception.jpg'
+import logistics from '@/assets/images/service/logistics.png'
+import building from '@/assets/images/service/building.jpg'
+
 export const services = [
   {
     id: 1,
+    name: '场馆管理系统',
+    type: '信息系统服务',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 150000,
+    unit: '元/套',
+    rating: 4.9,
+    orders: 28,
+    period: '7-14天',
+    region: '全国',
+    certified: true,
+    tags: ['信息系统服务', '场馆管理'],
+    poster: venueManagementSystem
+  },
+  {
+    id: 2,
+    name: '综合服务系统',
+    type: '信息系统服务',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 120000,
+    unit: '元/套',
+    rating: 4.8,
+    orders: 22,
+    period: '7-14天',
+    region: '全国',
+    certified: true,
+    tags: ['综合服务', '平台系统'],
+    poster: comprehensiveServiceSystem
+  },
+  {
+    id: 3,
+    name: '证件管理系统',
+    type: '信息系统服务',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 80000,
+    unit: '元/套',
+    rating: 4.7,
+    orders: 19,
+    period: '5-10天',
+    region: '全国',
+    certified: true,
+    tags: ['证件管理', '安全服务'],
+    poster: badgeManagementSystem
+  },
+  {
+    id: 4,
+    name: '闸机验证通道',
+    type: '安防设备',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 30000,
+    unit: '元/通道',
+    rating: 4.6,
+    orders: 15,
+    period: '5-10天',
+    region: '全国',
+    certified: true,
+    tags: ['安防设备', '人脸识别'],
+    poster: gateVerificationChannel
+  },
+  {
+    id: 5,
+    name: 'PVC证件（芯片卡）',
+    type: '证件制作',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 15,
+    unit: '元/张',
+    rating: 4.5,
+    orders: 14,
+    period: '3-5天',
+    region: '全国',
+    certified: true,
+    tags: ['证件制作', '智能卡'],
+    poster: pvcBadgeChipCard
+  },
+  {
+    id: 6,
+    name: '会展主承办平台',
+    type: '信息系统服务',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 100000,
+    unit: '元/套',
+    rating: 4.8,
+    orders: 12,
+    period: '7-14天',
+    region: '全国',
+    certified: true,
+    tags: ['会展管理', '平台系统'],
+    poster: exhibitionOrganizerPlatform
+  },
+  {
+    id: 7,
+    name: '定制化开发服务',
+    type: '软件开发',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 50000,
+    unit: '元/项',
+    rating: 4.7,
+    orders: 10,
+    period: '14-30天',
+    region: '全国',
+    certified: true,
+    tags: ['软件开发', '定制服务'],
+    poster: customDevelopmentService
+  },
+  {
+    id: 8,
+    name: 'AI实时翻译系统',
+    type: '翻译服务',
+    provider: '北京北辰会展信息服务有限公司',
+    price: 20000,
+    unit: '元/套',
+    rating: 4.9,
+    orders: 8,
+    period: '5-10天',
+    region: '全国',
+    certified: true,
+    tags: ['AI服务', '翻译服务'],
+    poster: aiRealTimeTranslation
+  },
+  {
+    id: 9,
     name: '特装展位设计与搭建',
     type: '展位搭建',
     provider: '北京创意展览服务有限公司',
@@ -626,10 +759,12 @@ export const services = [
     orders: 256,
     period: '3-7天',
     region: '北京',
-    certified: true
+    certified: true,
+    tags: [],
+    poster: building
   },
   {
-    id: 2,
+    id: 10,
     name: '国际展会翻译服务',
     type: '翻译服务',
     provider: '北京同声传译公司',
@@ -639,10 +774,12 @@ export const services = [
     orders: 189,
     period: '≤3天',
     region: '北京',
-    certified: true
+    certified: true,
+    tags: [],
+    poster: exhibitionInterpretationService
   },
   {
-    id: 3,
+    id: 11,
     name: '展会物流仓储服务',
     type: '物流运输',
     provider: '顺丰速运（会展专享）',
@@ -652,10 +789,12 @@ export const services = [
     orders: 342,
     period: '3-7天',
     region: '全国',
-    certified: true
+    certified: true,
+    tags: [],
+    poster: logistics
   },
   {
-    id: 4,
+    id: 12,
     name: '展会礼仪接待服务',
     type: '礼仪接待',
     provider: '北京雅致礼仪服务公司',
@@ -665,7 +804,9 @@ export const services = [
     orders: 156,
     period: '≤3天',
     region: '北京',
-    certified: false
+    certified: false,
+    tags: [],
+    poster: exhibitionProtocolReception
   }
 ]
 

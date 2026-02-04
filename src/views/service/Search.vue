@@ -1,195 +1,271 @@
 <template>
   <div class="service-search-page">
-    <div class="search-section">
-      <div class="search-bar">
-        <input
-          v-model="searchKeyword"
-          type="text"
-          placeholder="输入服务名称、服务商名称或关键词..."
-          @keyup.enter="handleSearch"
-        />
-        <button class="search-btn" @click="handleSearch">
-          <i class="icon">🔍</i> 搜索
-        </button>
+    <div class="container">
+      <!-- 搜索区域 -->
+      <div class="search-section">
+        <div class="search-box">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="输入服务名称、服务商名称或关键词..."
+            size="large"
+            clearable
+            @keyup.enter="handleSearch"
+          >
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+            <template #append>
+              <el-button type="primary" @click="handleSearch">搜索</el-button>
+            </template>
+          </el-input>
+        </div>
+        
+        <!-- 热门搜索 -->
+        <div v-if="hotSearches.length > 0" class="history-search">
+          <span class="history-label">热门搜索：</span>
+          <el-tag
+            v-for="(item, index) in hotSearches"
+            :key="index"
+            class="history-tag"
+            @click="handleHotSearchClick(item)"
+          >
+            {{ item }}
+          </el-tag>
+        </div>
       </div>
 
+      <!-- 筛选区域 -->
       <div class="filter-section">
-        <div class="filter-column">
-          <h3 class="filter-title">基础筛选</h3>
-          <div class="filter-group">
-            <label>服务类型</label>
-            <el-select v-model="filters.serviceType" placeholder="选择服务类型" clearable>
-              <el-option label="全部" value="" />
-              <el-option label="展位搭建" value="展位搭建" />
-              <el-option label="物流运输" value="物流运输" />
-              <el-option label="宣传推广" value="宣传推广" />
-              <el-option label="礼仪接待" value="礼仪接待" />
-              <el-option label="翻译服务" value="翻译服务" />
-              <el-option label="设备租赁" value="设备租赁" />
-              <el-option label="餐饮服务" value="餐饮服务" />
-            </el-select>
-          </div>
-          <div class="filter-group">
-            <label>服务区域</label>
-            <el-cascader
-              v-model="filters.region"
-              :options="regionOptions"
-              placeholder="选择地区"
-              clearable
-            />
-          </div>
-          <div class="filter-group">
-            <label>价格区间</label>
-            <div class="price-range">
-              <el-input v-model="filters.minPrice" placeholder="最低价" type="number" />
-              <span>-</span>
-              <el-input v-model="filters.maxPrice" placeholder="最高价" type="number" />
-            </div>
-          </div>
-        </div>
+        <el-collapse v-model="activeFilter" class="filter-collapse">
+          <el-collapse-item title="高级筛选" name="1">
+            <div class="filter-content">
+              <!-- 服务类型 -->
+              <div class="filter-item">
+                <label>服务类型：</label>
+                <div class="filter-options">
+                  <el-select v-model="filters.serviceType" placeholder="选择服务类型" clearable style="width: 200px">
+                    <el-option label="全部" value="" />
+                    <el-option label="展位搭建" value="展位搭建" />
+                    <el-option label="物流运输" value="物流运输" />
+                    <el-option label="宣传推广" value="宣传推广" />
+                    <el-option label="礼仪接待" value="礼仪接待" />
+                    <el-option label="翻译服务" value="翻译服务" />
+                    <el-option label="设备租赁" value="设备租赁" />
+                    <el-option label="餐饮服务" value="餐饮服务" />
+                  </el-select>
+                </div>
+              </div>
 
-        <div class="filter-column">
-          <h3 class="filter-title">进阶筛选</h3>
-          <div class="filter-group">
-            <label>服务商资质</label>
-            <el-select v-model="filters.qualification" placeholder="选择资质" clearable>
-              <el-option label="全部" value="" />
-              <el-option label="平台认证" value="平台认证" />
-              <el-option label="未认证" value="未认证" />
-            </el-select>
-          </div>
-          <div class="filter-group">
-            <label>用户评分</label>
-            <el-select v-model="filters.rating" placeholder="选择评分" clearable>
-              <el-option label="全部" value="" />
-              <el-option label="≥3星" value="3" />
-              <el-option label="≥4星" value="4" />
-              <el-option label="5星" value="5" />
-            </el-select>
-          </div>
-          <div class="filter-group">
-            <label>成交数量</label>
-            <el-select v-model="filters.orderCount" placeholder="选择成交数" clearable>
-              <el-option label="全部" value="" />
-              <el-option label="≥10单" value="10" />
-              <el-option label="≥50单" value="50" />
-              <el-option label="≥100单" value="100" />
-            </el-select>
-          </div>
-          <div class="filter-group">
-            <label>服务周期</label>
-            <el-select v-model="filters.serviceCycle" placeholder="选择周期" clearable>
-              <el-option label="全部" value="" />
-              <el-option label="≤3天" value="3" />
-              <el-option label="3-7天" value="7" />
-              <el-option label="≥7天" value="30" />
-            </el-select>
-          </div>
-        </div>
+              <!-- 服务区域 -->
+              <div class="filter-item">
+                <label>服务区域：</label>
+                <div class="filter-options">
+                  <el-cascader
+                    v-model="filters.region"
+                    :options="regionOptions"
+                    placeholder="选择地区"
+                    clearable
+                    style="width: 200px"
+                  />
+                </div>
+              </div>
 
-        <button class="reset-btn" @click="resetFilters">重置筛选</button>
-      </div>
-    </div>
+              <!-- 价格区间 -->
+              <div class="filter-item">
+                <label>价格区间：</label>
+                <div class="filter-options">
+                  <div class="price-range">
+                    <el-input v-model="filters.minPrice" placeholder="最低价" type="number" style="width: 100px" />
+                    <span>-</span>
+                    <el-input v-model="filters.maxPrice" placeholder="最高价" type="number" style="width: 100px" />
+                  </div>
+                </div>
+              </div>
 
-    <div class="results-section">
-      <div class="results-header">
-        <span class="total-count">共找到 <strong>{{ filteredResults.length }}</strong> 个服务</span>
-        <div class="sort-options">
-          <el-select v-model="sortBy" @change="sortResults" class="sort-select">
-            <el-option label="综合排序" value="default" />
-            <el-option label="价格从低到高" value="price_asc" />
-            <el-option label="价格从高到低" value="price_desc" />
-            <el-option label="评分从高到低" value="rating" />
-            <el-option label="成交数量" value="orders" />
-          </el-select>
-        </div>
-      </div>
+              <!-- 服务商资质 -->
+              <div class="filter-item">
+                <label>服务商资质：</label>
+                <div class="filter-options">
+                  <el-select v-model="filters.qualification" placeholder="选择资质" clearable style="width: 200px">
+                    <el-option label="全部" value="" />
+                    <el-option label="平台认证" value="平台认证" />
+                    <el-option label="未认证" value="未认证" />
+                  </el-select>
+                </div>
+              </div>
 
-      <div class="results-grid" v-if="filteredResults.length > 0">
-        <div
-          v-for="item in filteredResults"
-          :key="item.id"
-          class="service-card"
-          @mouseenter="showCollectBtn = item.id"
-          @mouseleave="showCollectBtn = null"
-        >
-          <div class="card-header">
-            <div class="service-icon">{{ item.icon }}</div>
-            <div class="qualification-badge" v-if="item.qualification === '平台认证'">
-              {{ item.qualification }}
-            </div>
-          </div>
+              <!-- 用户评分 -->
+              <div class="filter-item">
+                <label>用户评分：</label>
+                <div class="filter-options">
+                  <el-select v-model="filters.rating" placeholder="选择评分" clearable style="width: 200px">
+                    <el-option label="全部" value="" />
+                    <el-option label="≥3星" value="3" />
+                    <el-option label="≥4星" value="4" />
+                    <el-option label="5星" value="5" />
+                  </el-select>
+                </div>
+              </div>
 
-          <h3 class="service-name" v-html="highlightKeyword(item.name)"></h3>
+              <!-- 成交数量 -->
+              <div class="filter-item">
+                <label>成交数量：</label>
+                <div class="filter-options">
+                  <el-select v-model="filters.orderCount" placeholder="选择成交数" clearable style="width: 200px">
+                    <el-option label="全部" value="" />
+                    <el-option label="≥10单" value="10" />
+                    <el-option label="≥50单" value="50" />
+                    <el-option label="≥100单" value="100" />
+                  </el-select>
+                </div>
+              </div>
 
-          <div class="service-info">
-            <div class="info-item">
-              <i class="icon">🏢</i>
-              <span class="provider-name">{{ item.provider }}</span>
-            </div>
-            <div class="info-item">
-              <i class="icon">📋</i>
-              <span class="service-type">{{ item.type }}</span>
-            </div>
-          </div>
+              <!-- 服务周期 -->
+              <div class="filter-item">
+                <label>服务周期：</label>
+                <div class="filter-options">
+                  <el-select v-model="filters.serviceCycle" placeholder="选择周期" clearable style="width: 200px">
+                    <el-option label="全部" value="" />
+                    <el-option label="≤3天" value="3" />
+                    <el-option label="3-7天" value="7" />
+                    <el-option label="≥7天" value="30" />
+                  </el-select>
+                </div>
+              </div>
 
-          <div class="service-tags">
-            <el-tag v-for="tag in item.tags" :key="tag" size="small" type="info">
-              {{ tag }}
-            </el-tag>
-          </div>
-
-          <div class="card-stats">
-            <div class="stat-item">
-              <div class="stat-label">评分</div>
-              <div class="stat-value rating">
-                <span>{{ item.rating }}</span>
-                <i class="star">⭐</i>
+              <div class="filter-actions">
+                <el-button @click="resetFilters">重置筛选</el-button>
+                <el-button type="primary" @click="handleSearch">应用筛选</el-button>
               </div>
             </div>
-            <div class="stat-item">
-              <div class="stat-label">成交</div>
-              <div class="stat-value">{{ item.orderCount }}单</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">周期</div>
-              <div class="stat-value">{{ item.cycle }}</div>
-            </div>
-          </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
 
-          <div class="card-footer">
-            <div class="price-section">
-              <span class="price-label">参考价</span>
-              <span class="price-value">¥{{ item.price }}</span>
+      <!-- 搜索结果 -->
+      <div class="results-section">
+        <div class="results-header">
+          <div class="results-count">
+            共找到 <span class="count-number">{{ filteredResults.length }}</span> 个服务
+          </div>
+          <div class="results-sort">
+            <span>排序方式：</span>
+            <el-select v-model="sortBy" size="small" @change="sortResults" placeholder="请选择排序方式">
+              <el-option label="综合排序" value="default" />
+              <el-option label="价格从低到高" value="price_asc" />
+              <el-option label="价格从高到低" value="price_desc" />
+              <el-option label="评分从高到低" value="rating" />
+              <el-option label="成交数量" value="orders" />
+            </el-select>
+          </div>
+        </div>
+
+        <!-- 结果列表 -->
+        <div v-if="filteredResults.length > 0" class="service-grid">
+          <div
+            v-for="item in paginatedResults"
+            :key="item.id"
+            class="service-card"
+          >
+            <div class="card-image">
+              <img :src="item.poster || defaultServiceImage" :alt="item.name" />
             </div>
-            <div class="action-buttons">
-              <button class="collect-btn" @click.stop="collectService(item)">
-                <i :class="isCollected(item.id) ? 'icon-filled' : 'icon'">❤️</i>
-              </button>
-              <button class="chat-btn" @click.stop="startChat(item)">
-                <i class="icon">💬</i> 洽谈
-              </button>
+            <div class="card-content">
+              <div class="card-header">
+                <h3 class="service-name">{{ item.name }}</h3>
+              </div>
+              <div class="service-meta">
+                <div class="service-tags">
+                  <el-tag 
+                    v-for="tag in item.tags" 
+                    :key="tag" 
+                    size="small" 
+                    type="info"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                  <el-tag size="small" type="info" v-if="item.type">{{ item.type }}</el-tag>
+                </div>
+                <div class="meta-item">
+                  <el-icon><OfficeBuilding /></el-icon>
+                  {{ item.provider }}
+                  <span class="provider-rating">
+                    <el-icon><Star /></el-icon>
+                    {{ item.rating }}
+                  </span>
+                </div>
+              </div>
+              <div class="service-stats">
+                <div class="stat-item" style="display: none;">
+                  <el-icon><Star /></el-icon>
+                  {{ item.rating }}
+                </div>
+                <div class="stat-item">
+                  <el-icon><ShoppingCart /></el-icon>
+                  <span>成交量：{{ item.orders }}</span>
+                </div>
+                <div class="stat-item">
+                  <el-icon><Clock /></el-icon>
+                  <span>交付时间：{{ item.period }}</span>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="price-section">
+                  <span class="price-value">{{ item.price === '咨询报价' ? '' : '¥' }}{{ item.price }}</span>
+                  <span class="price-unit">{{ item.unit }}</span>
+                </div>
+                <div class="action-buttons">
+                  <el-button
+                    :type="isCollected(item.id) ? '' : 'primary'"
+                    :icon="isCollected(item.id) ? 'StarFilled' : 'Star'"
+                    size="small"
+                    @click.stop="collectService(item)"
+                  >
+                    {{ isCollected(item.id) ? '已收藏' : '收藏' }}
+                  </el-button>
+                  <el-button type="primary" @click.stop="startChat(item)" size="small">
+                    <el-icon><ChatLineSquare /></el-icon>
+                    洽谈
+                  </el-button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="empty-result" v-else>
-        <div class="empty-icon">🔧</div>
-        <h3>暂无相关服务</h3>
-        <p>调整筛选条件或尝试其他关键词</p>
-        <div class="recommendations">
-          <h4>为您推荐</h4>
-          <div class="recommendation-list">
-            <div
-              v-for="item in recommendedServices"
-              :key="item.id"
-              class="recommendation-item"
-            >
-              <span class="item-name">{{ item.name }}</span>
-              <span class="item-price">¥{{ item.price }}</span>
+        <!-- 无结果 -->
+        <div v-else class="empty-results">
+          <el-empty description="未找到相关服务">
+            <template #image>
+              <el-icon :size="100" color="#9CA3AF"><Search /></el-icon>
+            </template>
+            <div class="empty-suggestions">
+              <h4>热门服务推荐</h4>
+              <div class="hot-services">
+                <el-tag
+                  v-for="item in recommendedServices"
+                  :key="item.id"
+                  class="hot-tag"
+                  @click="selectRecommendedService(item)"
+                >
+                  {{ item.name }}
+                </el-tag>
+              </div>
             </div>
-          </div>
+          </el-empty>
+        </div>
+
+        <!-- 分页 -->
+        <div v-if="filteredResults.length > 0" class="pagination-section">
+          <el-pagination
+            v-model:current-page="pagination.currentPage"
+            v-model:page-size="pagination.pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="filteredResults.length"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
         </div>
       </div>
     </div>
@@ -218,7 +294,7 @@
             :rows="3"
             placeholder="输入消息内容..."
           />
-          <button class="send-btn" @click="sendMessage">发送</button>
+          <el-button type="primary" @click="sendMessage">发送</el-button>
         </div>
       </div>
     </el-dialog>
@@ -226,20 +302,31 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { Search, OfficeBuilding, Document, Star, ShoppingCart, Clock, ChatLineSquare } from '@element-plus/icons-vue'
 import { services } from '@/data/mockData'
 
 const router = useRouter()
 
 const searchKeyword = ref('')
 const sortBy = ref('default')
-const showCollectBtn = ref(null)
+const activeFilter = ref('1')
 const chatVisible = ref(false)
 const selectedService = ref(null)
 const chatMessage = ref('')
 const chatMessages = ref([])
 const collectedServices = ref([])
+
+// 热门搜索
+const hotSearches = ref(['展位搭建', '翻译服务', '物流运输', '宣传推广', '礼仪接待', '设备租赁'])
+
+// 分页
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 12,
+  total: 0
+})
 
 const filters = ref({
   serviceType: '',
@@ -285,10 +372,12 @@ const regionOptions = [
 
 const serviceData = ref([])
 const recommendedServices = ref([])
+const defaultServiceImage = 'https://via.placeholder.com/200x150?text=服务图片'
 
 onMounted(() => {
   serviceData.value = services || []
-  recommendedServices.value = services.slice(0, 2) || []
+  recommendedServices.value = services.slice(0, 4) || []
+  pagination.total = services.length
 })
 
 const filteredResults = computed(() => {
@@ -314,15 +403,15 @@ const filteredResults = computed(() => {
   }
 
   if (filters.value.minPrice) {
-    results = results.filter((item) => item.priceValue >= parseFloat(filters.value.minPrice))
+    results = results.filter((item) => item.price >= parseFloat(filters.value.minPrice))
   }
 
   if (filters.value.maxPrice) {
-    results = results.filter((item) => item.priceValue <= parseFloat(filters.value.maxPrice))
+    results = results.filter((item) => item.price <= parseFloat(filters.value.maxPrice))
   }
 
   if (filters.value.qualification) {
-    results = results.filter((item) => item.qualification === filters.value.qualification)
+    results = results.filter((item) => item.certified === (filters.value.qualification === '平台认证'))
   }
 
   if (filters.value.rating) {
@@ -332,35 +421,48 @@ const filteredResults = computed(() => {
 
   if (filters.value.orderCount) {
     const minOrders = parseInt(filters.value.orderCount)
-    results = results.filter((item) => item.orderCount >= minOrders)
+    results = results.filter((item) => item.orders >= minOrders)
   }
 
   if (filters.value.serviceCycle) {
-    results = results.filter((item) => item.cycleDays <= parseInt(filters.value.serviceCycle))
+    const maxCycle = parseInt(filters.value.serviceCycle)
+    results = results.filter((item) => {
+      const cycleDays = parseInt(item.period)
+      return cycleDays <= maxCycle
+    })
   }
 
   switch (sortBy.value) {
     case 'price_asc':
-      results.sort((a, b) => a.priceValue - b.priceValue)
+      results.sort((a, b) => a.price - b.price)
       break
     case 'price_desc':
-      results.sort((a, b) => b.priceValue - a.priceValue)
+      results.sort((a, b) => b.price - a.price)
       break
     case 'rating':
       results.sort((a, b) => b.rating - a.rating)
       break
     case 'orders':
-      results.sort((a, b) => b.orderCount - a.orderCount)
+      results.sort((a, b) => b.orders - a.orders)
       break
     default:
-      results.sort((a, b) => b.rating * b.orderCount - a.rating * a.orderCount)
+      results.sort((a, b) => b.rating * b.orders - a.rating * a.orders)
   }
 
+  pagination.total = results.length
   return results
+})
+
+// 分页结果
+const paginatedResults = computed(() => {
+  const start = (pagination.currentPage - 1) * pagination.pageSize
+  const end = start + pagination.pageSize
+  return filteredResults.value.slice(start, end)
 })
 
 const handleSearch = () => {
   console.log('搜索关键词:', searchKeyword.value)
+  pagination.currentPage = 1
 }
 
 const resetFilters = () => {
@@ -375,10 +477,12 @@ const resetFilters = () => {
     serviceCycle: ''
   }
   searchKeyword.value = ''
+  pagination.currentPage = 1
 }
 
 const sortResults = () => {
   console.log('排序方式:', sortBy.value)
+  pagination.currentPage = 1
 }
 
 const collectService = (service) => {
@@ -434,462 +538,414 @@ const formatTime = (date) => {
   return `${h}:${m}`
 }
 
-const highlightKeyword = (text) => {
-  if (!searchKeyword.value) return text
-  const keyword = searchKeyword.value
-  const regex = new RegExp(`(${keyword})`, 'gi')
-  return text.replace(regex, '<span class="highlight">$1</span>')
+const selectRecommendedService = (service) => {
+  searchKeyword.value = service.name
+  handleSearch()
+}
+
+const handleHotSearchClick = (keyword) => {
+  searchKeyword.value = keyword
+  handleSearch()
+}
+
+// 分页处理
+const handleSizeChange = (size) => {
+  pagination.pageSize = size
+  pagination.currentPage = 1
+}
+
+const handleCurrentChange = (page) => {
+  pagination.currentPage = page
 }
 </script>
 
 <style lang="scss" scoped>
 .service-search-page {
-  min-height: 100vh;
-  background: #f9fafb;
-  padding: 40px 0;
+  padding: 100px 0 60px;
+  min-height: calc(100vh - 80px);
+  background: #F9FAFB;
 }
 
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+// 搜索区域
 .search-section {
-  background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 20px;
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.search-bar {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
+.search-box {
+  margin-bottom: 20px;
 
-  input {
-    flex: 1;
-    padding: 12px 20px;
-    border: 2px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: all 0.3s;
+  :deep(.el-input-group__append) {
+    padding: 0;
 
-    &:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    .el-button {
+      border: none;
+      border-radius: 0 8px 8px 0;
+      padding: 0 32px;
+      font-size: 16px;
     }
   }
+}
 
-  .search-btn {
-    padding: 12px 30px;
-    background: linear-gradient(135deg, #204e9c 0%, #2563eb 100%);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
+.history-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.history-label {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.history-tag {
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// 筛选区域
+.filter-section {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.filter-collapse {
+  border: none;
+
+  :deep(.el-collapse-item__header) {
+    font-size: 18px;
     font-weight: 600;
-    cursor: pointer;
+    color: #1F2937;
+    border: none;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border: none;
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding: 0;
+  }
+}
+
+.filter-content {
+  padding: 0 0 20px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #F3F4F6;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  label {
+    width: 120px;
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .filter-options {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    }
+  .price-range {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-    .icon {
-      font-size: 18px;
+    span {
+      color: #6B7280;
+      font-weight: 500;
     }
   }
 }
 
-.filter-section {
+.filter-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  align-items: flex-end;
-
-  .filter-column {
-    flex: 1;
-    min-width: 300px;
-
-    .filter-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #f3f4f6;
-    }
-
-    .filter-group {
-      margin-bottom: 20px;
-
-      label {
-        display: block;
-        font-size: 14px;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 8px;
-      }
-
-      .el-select,
-      .el-cascader {
-        width: 100%;
-      }
-
-      .price-range {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        .el-input {
-          flex: 1;
-        }
-
-        span {
-          color: #6b7280;
-          font-weight: 600;
-        }
-      }
-    }
-  }
-
-  .reset-btn {
-    padding: 12px 25px;
-    background: #fff;
-    color: #6b7280;
-    border: 2px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-
-    &:hover {
-      border-color: #2563eb;
-      color: #2563eb;
-    }
-  }
+  justify-content: center;
+  gap: 16px;
+  padding-top: 24px;
 }
 
+// 搜索结果
 .results-section {
-  background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .results-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #F3F4F6;
+  margin-bottom: 24px;
+}
 
-  .total-count {
-    font-size: 16px;
-    color: #374151;
+.results-count {
+  font-size: 16px;
+  color: #6B7280;
 
-    strong {
-      color: #2563eb;
-      font-size: 20px;
-      font-weight: 700;
-    }
-  }
-
-  .sort-select {
-    width: 180px;
+  .count-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: #204E9C;
+    margin: 0 4px;
   }
 }
 
-.results-grid {
+.results-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6B7280;
+  
+  span {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  :deep(.el-select) {
+    display: inline-flex;
+    align-items: center;
+    min-width: 120px;
+  }
+  
+  :deep(.el-select__wrapper) {
+    width: 100%;
+  }
+}
+
+// 结果列表
+.service-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
+  gap: 24px;
 }
 
 .service-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 25px;
-  transition: all 0.3s;
-  position: relative;
-  cursor: pointer;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
 
   &:hover {
-    border-color: #2563eb;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
-    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: #204E9C;
   }
+}
 
-  .card-header {
+.card-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.card-content {
+  padding: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.service-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.service-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.service-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.service-meta .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #6B7280;
+
+  .el-icon {
+    color: #2563EB;
+  }
+  
+  .provider-rating {
+    margin-left: 12px;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-
-    .service-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-    }
-
-    .qualification-badge {
-      padding: 4px 12px;
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      color: #d97706;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-  }
-
-  .service-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 15px 0;
-    line-height: 1.4;
-
-    :deep(.highlight) {
-      background: #fef3c7;
-      color: #d97706;
-      padding: 2px 4px;
-      border-radius: 3px;
-    }
-  }
-
-  .service-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 15px;
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: #6b7280;
-
-      .icon {
-        font-size: 16px;
-      }
-
-      .provider-name {
-        font-weight: 600;
-        color: #374151;
-      }
-
-      .service-type {
-        font-weight: 500;
-        color: #4b5563;
-      }
-    }
-  }
-
-  .service-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .card-stats {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 0;
-    margin-bottom: 20px;
-    border-top: 1px solid #f3f4f6;
-    border-bottom: 1px solid #f3f4f6;
-
-    .stat-item {
-      text-align: center;
-
-      .stat-label {
-        font-size: 12px;
-        color: #9ca3af;
-        margin-bottom: 5px;
-      }
-
-      .stat-value {
-        font-size: 16px;
-        font-weight: 700;
-        color: #111827;
-
-        &.rating {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
-
-          .star {
-            font-size: 14px;
-          }
-        }
-      }
-    }
-  }
-
-  .card-footer {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-
-    .price-section {
-      .price-label {
-        display: block;
-        font-size: 12px;
-        color: #9ca3af;
-        margin-bottom: 5px;
-      }
-
-      .price-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: #2563eb;
-      }
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-
-      .collect-btn {
-        width: 40px;
-        height: 40px;
-        background: #f9fafb;
-        border: 2px solid #e5e7eb;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-
-        &:hover {
-          border-color: #ef4444;
-          background: #fef2f2;
-
-          .icon {
-            font-size: 20px;
-          }
-
-          .icon-filled {
-            font-size: 20px;
-          }
-        }
-
-        .icon,
-        .icon-filled {
-          font-size: 18px;
-        }
-
-        .icon-filled {
-          color: #ef4444;
-        }
-      }
-
-      .chat-btn {
-        padding: 10px 20px;
-        background: linear-gradient(135deg, #204e9c 0%, #2563eb 100%);
-        color: #fff;
-        border: none;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-      }
+    gap: 4px;
+    font-size: 14px;
+    color: #2563EB;
+    
+    .el-icon {
+      color: #F59E0B;
     }
   }
 }
 
-.empty-result {
+.service-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.service-stats .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #6B7280;
+
+  .el-icon {
+    color: #2563EB;
+  }
+}
+
+.service-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.price-section {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.price-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2563EB;
+}
+
+.price-unit {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+// 无结果
+.empty-results {
+  padding: 60px 0;
   text-align: center;
-  padding: 80px 20px;
+}
 
-  .empty-icon {
-    font-size: 80px;
-    margin-bottom: 20px;
-    opacity: 0.5;
-  }
+.empty-suggestions {
+  margin-top: 32px;
 
-  h3 {
-    font-size: 24px;
-    color: #111827;
-    margin-bottom: 10px;
-  }
-
-  p {
+  h4 {
     font-size: 16px;
-    color: #6b7280;
-    margin-bottom: 40px;
-  }
-
-  .recommendations {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #f9fafb;
-    padding: 25px;
-    border-radius: 8px;
-    text-align: left;
-
-    h4 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 15px;
-    }
-
-    .recommendation-list {
-      .recommendation-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 15px;
-        background: #fff;
-        border-radius: 6px;
-        margin-bottom: 8px;
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover {
-          background: #eff6ff;
-          transform: translateX(5px);
-        }
-
-        .item-name {
-          font-size: 15px;
-          color: #374151;
-          font-weight: 500;
-        }
-
-        .item-price {
-          font-size: 15px;
-          color: #2563eb;
-          font-weight: 700;
-        }
-      }
-    }
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 16px;
   }
 }
 
+.hot-services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.hot-tag {
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// 分页
+.pagination-section {
+  display: flex;
+  justify-content: center;
+  padding-top: 32px;
+  margin-top: 32px;
+  border-top: 2px solid #F3F4F6;
+}
+
+// 聊天窗口
 .chat-container {
   .chat-header {
     padding: 20px 0;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #E5E7EB;
     margin-bottom: 20px;
 
     .provider-info {
@@ -900,8 +956,8 @@ const highlightKeyword = (text) => {
       .avatar {
         width: 50px;
         height: 50px;
-        background: linear-gradient(135deg, #204e9c 0%, #2563eb 100%);
-        color: #fff;
+        background: #204E9C;
+        color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -913,14 +969,14 @@ const highlightKeyword = (text) => {
       .info {
         .name {
           font-size: 16px;
-          font-weight: 700;
-          color: #111827;
-          margin-bottom: 5px;
+          font-weight: 600;
+          color: #1F2937;
+          margin-bottom: 4px;
         }
 
         .service {
           font-size: 14px;
-          color: #6b7280;
+          color: #6B7280;
         }
       }
     }
@@ -930,16 +986,16 @@ const highlightKeyword = (text) => {
     height: 300px;
     overflow-y: auto;
     padding: 20px;
-    background: #f9fafb;
+    background: #F9FAFB;
     border-radius: 8px;
     margin-bottom: 20px;
 
     .message {
-      margin-bottom: 15px;
+      margin-bottom: 16px;
 
       &.system {
         text-align: center;
-        color: #9ca3af;
+        color: #9CA3AF;
         font-size: 14px;
       }
 
@@ -948,9 +1004,9 @@ const highlightKeyword = (text) => {
 
         .message-content {
           display: inline-block;
-          background: #2563eb;
-          color: #fff;
-          padding: 10px 15px;
+          background: #2563EB;
+          color: white;
+          padding: 12px 16px;
           border-radius: 8px;
           max-width: 70%;
           text-align: left;
@@ -962,79 +1018,73 @@ const highlightKeyword = (text) => {
 
         .message-content {
           display: inline-block;
-          background: #fff;
-          color: #111827;
-          padding: 10px 15px;
+          background: white;
+          color: #1F2937;
+          padding: 12px 16px;
           border-radius: 8px;
           max-width: 70%;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
         }
       }
 
       .message-time {
         font-size: 12px;
-        color: #9ca3af;
-        margin-top: 5px;
+        color: #9CA3AF;
+        margin-top: 4px;
       }
     }
   }
 
   .chat-input {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 
     .el-textarea {
       flex: 1;
     }
 
-    .send-btn {
-      padding: 0 30px;
-      background: linear-gradient(135deg, #204e9c 0%, #2563eb 100%);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-      }
+    .el-button {
+      white-space: nowrap;
+      padding: 0 24px;
     }
   }
 }
 
 @media (max-width: 768px) {
   .service-search-page {
-    padding: 20px 0;
+    padding: 100px 16px 40px;
   }
 
-  .search-section {
-    padding: 20px;
+  .search-section,
+  .filter-section,
+  .results-section {
+    padding: 20px 16px;
   }
 
-  .search-bar {
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-image {
+    height: 180px;
+  }
+
+  .service-stats {
+    flex-wrap: wrap;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .chat-input {
     flex-direction: column;
 
-    input {
+    .el-button {
       width: 100%;
     }
-
-    .search-btn {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-
-  .filter-section {
-    .filter-column {
-      width: 100%;
-    }
-  }
-
-  .results-grid {
-    grid-template-columns: 1fr;
   }
 }
 </style>

@@ -60,12 +60,14 @@
               </li>
 
               <li class="nav-item" @mouseenter="showServiceMenu = true" @mouseleave="showServiceMenu = false">
-                <div class="nav-link has-submenu" :class="{ active: $route.path.startsWith('/bidding') }">
+                <div class="nav-link has-submenu" :class="{ active: $route.path.startsWith('/bidding') || $route.path.startsWith('/service') }">
                   找服务
                 </div>
                 <transition name="dropdown">
                   <ul v-show="showServiceMenu" class="dropdown-menu">
                     <li><router-link to="/bidding">招投标信息</router-link></li>
+                    <li><router-link to="/service/search">展会服务</router-link></li>
+                    <li><router-link to="/service/hotel">酒店服务</router-link></li>
                   </ul>
                 </transition>
               </li>

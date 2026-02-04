@@ -98,6 +98,12 @@ const routes = [
     meta: { title: '展会服务搜索' }
   },
   {
+    path: '/service/hotel',
+    name: 'HotelService',
+    component: () => import('@/views/service/hotel/Index.vue'),
+    meta: { title: '酒店服务' }
+  },
+  {
     path: '/center',
     name: 'PersonalCenter',
     component: () => import('@/views/center/Index.vue'),
