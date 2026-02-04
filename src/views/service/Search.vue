@@ -191,7 +191,7 @@
                   {{ item.provider }}
                   <span class="provider-rating">
                     <el-icon><Star /></el-icon>
-                    {{ item.rating }}
+                    {{ item.rating.toFixed(1) }}
                   </span>
                 </div>
               </div>
