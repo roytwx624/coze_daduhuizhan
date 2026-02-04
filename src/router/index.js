@@ -104,6 +104,12 @@ const routes = [
     meta: { title: '酒店服务' }
   },
   {
+    path: '/service/business',
+    name: 'BusinessHall',
+    component: () => import('@/views/service/business/Index.vue'),
+    meta: { title: '商机大厅' }
+  },
+  {
     path: '/center',
     name: 'PersonalCenter',
     component: () => import('@/views/center/Index.vue'),

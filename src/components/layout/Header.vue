@@ -68,6 +68,7 @@
                     <li><router-link to="/bidding">招投标信息</router-link></li>
                     <li><router-link to="/service/search">展会服务</router-link></li>
                     <li><router-link to="/service/hotel">酒店服务</router-link></li>
+                    <li><router-link to="/service/business">商机大厅</router-link></li>
                   </ul>
                 </transition>
               </li>
