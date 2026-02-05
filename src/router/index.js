@@ -62,6 +62,12 @@ const routes = [
     meta: { title: '场馆搜索' }
   },
   {
+    path: '/venue/detail/:id',
+    name: 'VenueDetail',
+    component: () => import('@/views/venue/Detail.vue'),
+    meta: { title: '场馆详情' }
+  },
+  {
     path: '/policy/search',
     name: 'PolicySearch',
     component: () => import('@/views/policy/Search.vue'),
