@@ -117,11 +117,11 @@
         </el-select>
       </el-form-item>
       
-      <el-form-item label="最大会议厅面积要求">
-        <el-select v-model="searchForm.maxHallArea" placeholder="请选择最大会议厅面积" clearable style="width: 100%">
+      <el-form-item label="会议厅面积要求">
+        <el-select v-model="searchForm.maxHallArea" placeholder="请选择会议厅面积" clearable style="width: 100%">
           <el-option label="2000㎡以上" value="large" />
           <el-option label="1000-2000㎡" value="medium" />
-          <el-option label="1000㎡以下" value="small" />
+          <el-option label="500-1000平米" value="small" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -159,7 +159,7 @@ let isMounted = ref(true)
 
 const searchForm = reactive({
   keyword: '',
-  region: '',
+  region: 'chaoyang',
   area: '',
   maxHallArea: '',
   capacity: '',
