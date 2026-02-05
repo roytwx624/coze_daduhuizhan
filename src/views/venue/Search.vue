@@ -69,8 +69,9 @@
                     {{ formatArea(venue.area) }}㎡
                   </div>
                 </div>
-                <div class="venue-desc">
-                  {{ venue.description || '暂无描述' }}
+                <div class="venue-actions">
+                  <el-button type="primary" size="small" @click.stop="viewDetail(venue)">查看详情</el-button>
+                  <el-button size="small" @click.stop="venueLeaveInfo(venue)">场馆留资</el-button>
                 </div>
               </div>
             </div>
@@ -148,6 +149,7 @@ import {
   ArrowLeft, 
   ArrowRight 
 } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { venues } from '@/data/mockData'
 
 const router = useRouter()
@@ -323,6 +325,16 @@ const viewDetail = (venue) => {
   router.push(`/venue/detail/${venue.id}`)
 }
 
+// 场馆留资
+const venueLeaveInfo = (venue) => {
+  console.log('场馆留资:', venue)
+  // 这里可以实现留资逻辑，比如打开留资表单弹窗
+  ElMessage({
+    message: `已为场馆 ${venue.name} 提交留资申请`,
+    type: 'success'
+  })
+}
+
 // 格式化面积
 const formatArea = (area) => {
   if (area >= 10000) {
@@ -494,6 +506,7 @@ const getMarkerPosition = (venue) => {
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+  height: 124px;
   
   &:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -525,6 +538,7 @@ const getMarkerPosition = (venue) => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 100px;
     
     .venue-name {
       margin: 0 0 8px 0;
@@ -540,7 +554,6 @@ const getMarkerPosition = (venue) => {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-bottom: 8px;
       
       .meta-item {
         display: flex;
@@ -556,12 +569,14 @@ const getMarkerPosition = (venue) => {
       }
     }
     
-    .venue-desc {
-      font-size: 12px;
-      color: #9CA3AF;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .venue-actions {
+      display: flex;
+      gap: 8px;
+      
+      .el-button {
+        font-size: 12px;
+        padding: 4px 8px;
+      }
     }
   }
 </style>
