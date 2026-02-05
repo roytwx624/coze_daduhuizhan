@@ -639,6 +639,10 @@ onMounted(() => {
   margin-right: 8px;
   font-size: 20px;
   vertical-align: middle;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 // 场馆介绍
