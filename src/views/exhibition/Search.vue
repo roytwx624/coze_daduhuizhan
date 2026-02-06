@@ -157,21 +157,6 @@
                   <div class="title-section">
                     <h3 class="card-title" :title="item.name">{{ item.name }}</h3>
                   </div>
-                  <div class="card-info">
-                    <div class="info-item">
-                      <el-icon><Calendar /></el-icon>
-                      <span>{{ item.time }}</span>
-                      <div class="countdown-section">
-                        <span class="countdown-label">距开展</span>
-                        <span class="countdown-days">{{ getCountdown(item.time) }}</span>
-                        <span class="countdown-unit">天</span>
-                      </div>
-                    </div>
-                    <div class="info-item">
-                      <el-icon><Location /></el-icon>
-                      <span>{{ item.venue }}</span>
-                    </div>
-                  </div>
                   <div class="meta-tags">
                     <el-tag size="small" type="primary">国家级展会</el-tag>
                     <el-tag size="small" type="primary">UFI认证展会</el-tag>
@@ -187,9 +172,25 @@
                       {{ tag }}
                     </el-tag>
                   </div>
+                  <div class="card-info">
+                    <div class="info-item">
+                      <el-icon><Calendar /></el-icon>
+                      <span>{{ item.time }}</span>
+                      <div class="countdown-section">
+                        <span class="countdown-label">距开展</span>
+                        <span class="countdown-days">{{ getCountdown(item.time) }}</span>
+                        <span class="countdown-unit">天</span>
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <el-icon><Location /></el-icon>
+                      <span>{{ item.venue }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="card-footer">
+                <div class="divider"></div>
                 <div class="item-actions">
                   <el-button size="small" type="primary" class="action-btn">展位申请</el-button>
                   <el-button size="small" type="success" class="action-btn">观众预登记</el-button>
@@ -911,47 +912,50 @@ onMounted(() => {
   margin-bottom: 16px;
 
   .info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #6B7280;
+  flex-wrap: nowrap;
+
+  .el-icon {
+    color: #2563EB;
+    flex-shrink: 0;
+  }
+
+  span {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .countdown-section {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 14px;
+    gap: 4px;
+    padding: 4px 10px;
+    background: #EFF6FF;
+    border-radius: 20px;
+    width: fit-content;
+    flex-shrink: 0;
+  }
+
+  .countdown-label {
+    font-size: 12px;
     color: #6B7280;
-    flex-wrap: wrap;
+  }
 
-    .el-icon {
-      color: #2563EB;
-    }
+  .countdown-days {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2563EB;
+  }
 
-    span {
-      flex: 1;
-      min-width: 150px;
-    }
-
-    .countdown-section {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      background: #EFF6FF;
-      border-radius: 20px;
-      width: fit-content;
-    }
-
-    .countdown-label {
-      font-size: 12px;
-      color: #6B7280;
-    }
-
-    .countdown-days {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2563EB;
-    }
-
-    .countdown-unit {
-      font-size: 12px;
-      color: #6B7280;
-    }
+  .countdown-unit {
+    font-size: 12px;
+    color: #6B7280;
   }
 }
 
@@ -970,10 +974,15 @@ onMounted(() => {
 .card-footer {
   margin-top: auto;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
   gap: 16px;
+
+  .divider {
+    height: 1px;
+    background: #F3F4F6;
+    width: 100%;
+  }
 }
 
 .countdown-section {
