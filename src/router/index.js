@@ -77,7 +77,7 @@ const routes = [
     path: '/policy/apply',
     name: 'PolicyApply',
     component: () => import('@/views/policy/Apply.vue'),
-    meta: { title: '一站式报批' }
+    meta: { title: '大型活动报批' }
   },
   {
     path: '/bidding',
