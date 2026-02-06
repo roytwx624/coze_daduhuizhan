@@ -1,8 +1,10 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "env": {
-    "NODE_ENV": "production"
+  "build": {
+    "command": "npm run build",
+    "outputDirectory": "dist",
+    "env": {
+      "NODE_ENV": "production"
+    }
   },
   "rewrites": [
     {
