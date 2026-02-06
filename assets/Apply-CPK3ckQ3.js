@@ -1,0 +1,1 @@
+import{_ as o,c as s,b as t,d as e,e as a,h as n}from"./index-k_1nbijc.js";const _={},p={class:"policy-apply-page"},r={class:"container"},d={class:"content-placeholder"};function l(i,m){const c=n("el-empty");return t(),s("div",p,[e("div",r,[e("div",d,[a(c,{description:"大型活动报批功能即将上线，敬请期待"})])])])}const h=o(_,[["render",l],["__scopeId","data-v-c91a66f2"]]);export{h as default};
