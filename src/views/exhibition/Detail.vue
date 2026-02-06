@@ -55,6 +55,26 @@
               中国制冷展全称为“国际制冷、空调、供暖、通风及食品冷冻加工展览会”，始创于1987年，由中国国际贸易促进委员会北京市分会、中国制冷学会、中国制冷空调工业协会共同主办，是获得国际展览业协会（UFI）、美国商务部和中国展览馆协会认证的全球制冷暖通空调行业专业展会。展会采取北京、上海两地交替举办的模式，2024年展会选址中国国际展览中心（顺义馆），2025年展会移师上海新国际博览中心。
             </div>
           </div>
+          
+          <!-- 核心信息 -->
+          <div class="core-info-section">
+            <div class="core-info-item">
+              <div class="core-info-value">1年1届</div>
+              <div class="core-info-label">举办周期</div>
+            </div>
+            <div class="core-info-item">
+              <div class="core-info-value">6.0万平方米</div>
+              <div class="core-info-label">展览面积</div>
+            </div>
+            <div class="core-info-item">
+              <div class="core-info-value">1000家</div>
+              <div class="core-info-label">展商数量</div>
+            </div>
+            <div class="core-info-item">
+              <div class="core-info-value">8.0万人</div>
+              <div class="core-info-label">观众数量</div>
+            </div>
+          </div>
           <!-- 标签区域 -->
           <div class="tags-section">
             <div class="tag-group">
@@ -443,6 +463,44 @@ const downloadItems = ref([
     }
   }
 
+  // 核心信息区域
+  .core-info-section {
+    display: flex;
+    gap: 24px;
+    margin: 24px 0;
+
+    .core-info-item {
+      flex: 1;
+      text-align: center;
+      padding: 16px 16px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+      transition: all 0.3s ease;
+      border: 1px solid #bae6fd;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+        border-color: #38bdf8;
+      }
+
+      .core-info-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0369a1;
+        margin-bottom: 6px;
+        font-family: 'DIN Alternate', Arial, sans-serif;
+      }
+
+      .core-info-label {
+        font-size: 13px;
+        color: #0c4a6e;
+        font-weight: 500;
+      }
+    }
+  }
+
   // 标签区域样式
   .tags-section {
     margin-top: 20px;
@@ -678,6 +736,11 @@ const downloadItems = ref([
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 // 快捷功能

@@ -194,25 +194,19 @@
           <div class="contact-left">
             <div class="contact-item">
               <el-icon><Phone /></el-icon>
-              <span>{{ contactInfo.phone }}</span>
+              <span><strong>联系方式：</strong>{{ contactInfo.phone }}</span>
             </div>
             <div class="contact-item">
               <el-icon><Message /></el-icon>
-              <span>{{ contactInfo.email }}</span>
+              <span><strong>邮箱：</strong>{{ contactInfo.email }}</span>
             </div>
             <div class="contact-item">
               <el-icon><Location /></el-icon>
-              <span>{{ venue?.address }}</span>
+              <span><strong>地址：</strong>{{ venue?.address }}</span>
             </div>
-          </div>
-          <div class="contact-right">
             <div class="contact-item">
               <el-icon><Clock /></el-icon>
-              <span>{{ contactInfo.hours }}</span>
-            </div>
-            <div class="contact-item">
-              <el-icon><User /></el-icon>
-              <span>{{ contactInfo.contactPerson }}</span>
+              <span><strong>工作时间：</strong>{{ contactInfo.hours }}</span>
             </div>
           </div>
         </div>
@@ -240,16 +234,18 @@
         <h2><el-icon class="title-icon"><Position /></el-icon> 交通指南</h2>
         <div class="transport-detail">
           <div class="transport-item">
-            <h3>地铁</h3>
+            <div class="transport-header">
+              <el-icon class="transport-icon"><Location /></el-icon>
+              <h3>地铁出行</h3>
+            </div>
             <p>{{ transportInfo.subway }}</p>
           </div>
           <div class="transport-item">
-            <h3>公交</h3>
+            <div class="transport-header">
+              <el-icon class="transport-icon"><Position /></el-icon>
+              <h3>公交出行</h3>
+            </div>
             <p>{{ transportInfo.bus }}</p>
-          </div>
-          <div class="transport-item">
-            <h3>自驾</h3>
-            <p>{{ transportInfo.drive }}</p>
           </div>
         </div>
       </div>
@@ -643,6 +639,11 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 // 场馆介绍
@@ -1213,14 +1214,6 @@ onMounted(() => {
   }
 
   .contact-info {
-    display: flex;
-    gap: 40px;
-
-    .contact-left,
-    .contact-right {
-      flex: 1;
-    }
-
     .contact-item {
       display: flex;
       align-items: center;
@@ -1234,6 +1227,11 @@ onMounted(() => {
 
       span {
         color: #4B5563;
+
+        strong {
+          color: #1F2937;
+          font-weight: 600;
+        }
       }
     }
   }
@@ -1345,10 +1343,22 @@ onMounted(() => {
     gap: 24px;
 
     .transport-item {
+      .transport-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .transport-icon {
+        color: #2563EB;
+        font-size: 18px;
+      }
+
       h3 {
         font-size: 16px;
         font-weight: 600;
-        margin: 0 0 8px 0;
+        margin: 0;
         color: #1F2937;
       }
 

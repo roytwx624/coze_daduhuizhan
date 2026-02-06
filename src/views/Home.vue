@@ -161,43 +161,34 @@
       </div>
     </section>
 
-    <!-- 展会政策 -->
-    <section class="policy-section">
+    <!-- 展会资讯 -->
+    <section class="news-section">
       <div class="content-wrapper">
         <div class="section-header">
-          <h2>展会政策</h2>
-          <p class="section-desc">最新政策动态，助力展会发展</p>
+          <h2>展会资讯</h2>
+          <p class="section-desc">最新行业动态，掌握展会脉搏</p>
         </div>
-        <div class="policy-list">
-          <div v-for="policy in policies" :key="policy.id" class="policy-item">
-            <div class="policy-icon">
-              <el-icon :size="20"><Document /></el-icon>
+        <div class="news-list">
+          <div 
+            v-for="news in newsList" 
+            :key="news.id"
+            class="news-item"
+          >
+            <div class="news-image">
+              <img :src="news.image" :alt="news.title" />
             </div>
-            <div class="policy-content">
-              <div class="policy-header-row">
-                <h3 class="policy-title">{{ policy.title }}</h3>
-                <span class="policy-tag">{{ policy.category }}</span>
+            <div class="news-content">
+              <h3 class="news-title">{{ news.title }}</h3>
+              <p class="news-description">{{ news.description }}</p>
+              <div class="news-meta">
+                <span class="news-category">{{ news.category }}</span>
+                <span class="news-time">{{ news.time }}</span>
               </div>
-              <p class="policy-summary">{{ policy.summary }}</p>
-              <div class="policy-meta">
-                <span class="meta-item">
-                  <el-icon><HomeFilled /></el-icon>
-                  {{ policy.publisher }}
-                </span>
-                <span class="meta-item">
-                  <el-icon><DocumentCopy /></el-icon>
-                  {{ policy.documentNumber }}
-                </span>
-              </div>
-            </div>
-            <div class="policy-date-styled">
-              <span class="day">{{ policy.publishTime.split('-')[2] }}</span>
-              <span class="ym">{{ policy.publishTime.slice(0, 7).replace('-', '.') }}</span>
             </div>
           </div>
         </div>
         <div class="section-footer">
-          <router-link to="/policy/search" class="btn btn-outline">查看更多政策</router-link>
+          <router-link to="/news" class="btn btn-outline">查看更多资讯</router-link>
         </div>
       </div>
     </section>
@@ -260,6 +251,47 @@
         </div>
       </div>
     </section>
+
+    <!-- 展会政策 -->
+    <section class="policy-section">
+      <div class="content-wrapper">
+        <div class="section-header">
+          <h2>展会政策</h2>
+          <p class="section-desc">最新政策动态，助力展会发展</p>
+        </div>
+        <div class="policy-list">
+          <div v-for="policy in policies" :key="policy.id" class="policy-item">
+            <div class="policy-icon">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <div class="policy-content">
+              <div class="policy-header-row">
+                <h3 class="policy-title">{{ policy.title }}</h3>
+                <span class="policy-tag">{{ policy.category }}</span>
+              </div>
+              <p class="policy-summary">{{ policy.summary }}</p>
+              <div class="policy-meta">
+                <span class="meta-item">
+                  <el-icon><HomeFilled /></el-icon>
+                  {{ policy.publisher }}
+                </span>
+                <span class="meta-item">
+                  <el-icon><DocumentCopy /></el-icon>
+                  {{ policy.documentNumber }}
+                </span>
+              </div>
+            </div>
+            <div class="policy-date-styled">
+              <span class="day">{{ policy.publishTime.split('-')[2] }}</span>
+              <span class="ym">{{ policy.publishTime.slice(0, 7).replace('-', '.') }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-footer">
+          <router-link to="/policy/search" class="btn btn-outline">查看更多政策</router-link>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -296,6 +328,12 @@ import banner1 from '@/assets/images/banner/banner1.png'
 import banner2 from '@/assets/images/banner/banner2.png'
 import banner3 from '@/assets/images/banner/banner3.png'
 import banner4 from '@/assets/images/banner/banner4.png'
+import news1 from '@/assets/images/news/0314ae994133da94a4118c8d2819a36a.jpg'
+import news2 from '@/assets/images/news/176d5dfe39988556530e9c2684f3e077.jpg'
+import news3 from '@/assets/images/news/196ba9c1b5019a3010645bfb041e209a.png'
+import news4 from '@/assets/images/news/756e00e92139cd197c624399c5587656.jpg'
+import news5 from '@/assets/images/news/775f7b791cf821fc5e8523bd6f579bf8.jpg'
+import news6 from '@/assets/images/news/7f5395deb0786126f6105da8c4ec4cf2.jpg'
 
 const router = useRouter()
 
@@ -657,6 +695,64 @@ const quickServices = [
   { id: 2, title: '视频中心', desc: '精彩回放观看', icon: VideoCamera, path: '/video' },
   { id: 3, title: '精选商城', desc: '展会周边购买', icon: ShoppingCart, path: '/mall' },
   { id: 4, title: '一站式申报', desc: '政策补贴申请', icon: DocumentChecked, path: '/policy/apply' }
+]
+
+// 展会资讯
+const newsList = [
+  {
+    id: 1,
+    title: '2025年中国会展行业十大新闻，重磅揭晓',
+    description: '"2025年中国会展行业十大新闻"评选活动于12月30日揭晓。活动由中国经济网发起，邀请10位会展专家评选和线上公开投票，以影响力和传播力为标准，公开评选的结果。"上海合作组织峰会在天津举行，习近平主持会议并出席系列活动...',
+    image: news1,
+    category: '会展活动',
+    time: '2025-12-31 09:27:04',
+    views: '249'
+  },
+  {
+    id: 2,
+    title: '2025中国会展人大会今日开幕！2000+从业者齐聚天津，共话会展破局与远航',
+    description: '11月25日，2025中国会展人大会在天津正式启幕。2000余名来自全国各地的会展从业者齐聚"北方会展之都"，以"创新协同·多元融合"为核心，共探行业发展新路径，为京津冀会展业融合注入新动能。一、群贤汇聚：政企学大咖共筑行...',
+    image: news2,
+    category: '会展活动',
+    time: '2025-11-25 15:36:30',
+    views: '300'
+  },
+  {
+    id: 3,
+    title: 'DeepSeek与会展领域的深度融合，未来可期！',
+    description: '在人工智能技术渗透渗透各行各业的2025年，会展行业正经历一场由技术驱动的深刻变革。作为AGI（通用人工智能）领域的黑马，DeepSeek凭借其自然语言处理、多模态融合技术及强大的数据分析能力，正在重新定义会展行业的价值...',
+    image: news3,
+    category: 'DeepSeek',
+    time: '2025-02-17 19:15:05',
+    views: '872'
+  },
+  {
+    id: 4,
+    title: '数字化的展览充满未来感，非常值得一看！',
+    description: '"数字化的展览充满未来感，非常值得一看！"春节期间，在位于江苏省南京市德基广场的德基艺术博物馆，不少市民、游客参观了当代数字艺术领军人物Beeple的全球首个个展——"Beeple：来自人造未来的故事"。自去年11月13日启幕...',
+    image: news4,
+    category: '数字化展会',
+    time: '2025-02-12 13:49:25',
+    views: '478'
+  },
+  {
+    id: 5,
+    title: '厦门市商务局：做大做强会展产业',
+    description: '2025年是"十四五"规划的收官之年，也是厦门全方位推进高质量发展、加快构建新发展格局节点城市的关键一年，2月10日的厦门全市商务工作会议对新一年工作给出了答案，提出了新要求。2025年，外部环境变化带来的不利影响加深...',
+    image: news5,
+    category: '厦门会展产业',
+    time: '2025-02-12 13:21:19',
+    views: '556'
+  },
+  {
+    id: 6,
+    title: '为会展经济高质量发展，加油鼓劲建言献策！',
+    description: '海内外会展业精英日前因一场盛会相聚天津，为寒冷的冬日带来了勃勃生机。第二十届中国会展经济国际合作论坛（CEFCO）首次落地天津，搭平台、促合作、谋发展……来自20个国家和地区的600余位会展业人士，为会展经济高质量...',
+    image: news6,
+    category: '会展经济',
+    time: '2025-02-11 16:41:47',
+    views: '283'
+  }
 ]
 
 const handleBannerClick = (item) => {
@@ -1770,6 +1866,157 @@ const getStatusClass = (status) => {
   }
 }
 
+// 展会资讯
+.news-section {
+  background: #F9FAFB;
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.news-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.news-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  flex: 1;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+  }
+}
+
+.news-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.news-image {
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.news-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.news-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.news-description {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #F3F4F6;
+
+  .news-category {
+    background: #EFF6FF;
+    color: #2563EB;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 11px;
+  }
+
+  .news-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .news-views {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.btn-outline {
+  display: inline-block;
+  padding: 10px 24px;
+  border: 1px solid #2563EB;
+  color: #2563EB;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #2563EB;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+}
+
+@media (max-width: 1024px) {
+  .news-list {
+    grid-template-columns: 1fr;
+  }
+
+  .news-item {
+    flex-direction: row;
+    gap: 16px;
+
+    .news-image {
+      width: 180px;
+      height: 100px;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .exhibition-grid,
   .core-functions,
@@ -1779,6 +2026,15 @@ const getStatusClass = (status) => {
 
   .calendar-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .news-item {
+    flex-direction: column;
+
+    .news-image {
+      width: 100%;
+      height: 140px;
+    }
   }
 
   .section-header h2 {
