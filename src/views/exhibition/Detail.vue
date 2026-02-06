@@ -34,6 +34,11 @@
                 <el-icon><Location /></el-icon>
                 <span>上海新国际博览中心</span>
               </div>
+              <div class="countdown-section">
+                <span class="countdown-label">距开展</span>
+                <span class="countdown-days">{{ countdownDays }}</span>
+                <span class="countdown-unit">天</span>
+              </div>
             </div>
           </div>
         </div>
@@ -64,19 +69,17 @@
         </div>
       </div>
 
-      <!-- 按钮卡片模块 -->
-      <div class="button-cards-section">
-        <h2 class="section-title">快捷功能</h2>
-        <div class="cards-grid">
-          <div class="button-card" v-for="card in buttonCards" :key="card.key">
-            <div class="card-icon">
-              <el-icon :size="32"><component :is="card.icon" /></el-icon>
+      <!-- 快捷功能 -->
+      <div class="quick-functions-section">
+        <h2><el-icon class="title-icon"><Grid /></el-icon> 快捷功能</h2>
+        <div class="functions-grid">
+          <div class="function-card" v-for="card in buttonCards" :key="card.key">
+            <div class="function-icon">
+              <el-icon class="icon-large"><component :is="card.icon" /></el-icon>
             </div>
-            <div class="card-content">
-              <h3 class="card-title">{{ card.name }}</h3>
-              <p class="card-desc">{{ card.desc }}</p>
-            </div>
-            <el-button type="primary" size="small" plain>
+            <h4 class="function-name">{{ card.name }}</h4>
+            <p class="function-desc">{{ card.desc }}</p>
+            <el-button type="primary" class="function-button">
               {{ card.name === '获取报名分享链接' ? '获取报名分享链接' : card.name }}
             </el-button>
           </div>
@@ -138,21 +141,17 @@
 
       <!-- 资料下载 -->
       <div class="download-section">
-        <h2 class="section-title">资料下载</h2>
-        <div class="download-cards">
-          <div class="download-card" v-for="(item, index) in downloadItems" :key="index">
-            <div class="download-info">
-              <el-icon class="download-icon"><Document /></el-icon>
-              <span class="download-name">{{ item.name }}</span>
-              <div class="download-meta">
-                <span class="download-format">{{ item.format }}</span>
-                <span class="download-size">{{ item.size }}</span>
-              </div>
+        <h2><el-icon class="title-icon"><Document /></el-icon> 资料下载</h2>
+        <div class="download-grid">
+          <div v-for="(item, index) in downloadItems" :key="index" class="download-item">
+            <div class="download-icon">
+              <el-icon class="file-icon"><Document /></el-icon>
             </div>
-            <el-button type="primary" size="small">
-              <el-icon><Download /></el-icon>
-              下载
-            </el-button>
+            <div class="download-info">
+              <h4 class="download-name">{{ item.name }}</h4>
+              <span class="download-size">{{ item.size }}</span>
+            </div>
+            <el-button type="primary" class="download-button">下载</el-button>
           </div>
         </div>
       </div>
@@ -191,11 +190,11 @@ import {
   Ticket, 
   Monitor, 
   Share, 
-  Clock, 
   Document, 
   Download, 
   User, 
-  OfficeBuilding 
+  OfficeBuilding,
+  Grid
 } from '@element-plus/icons-vue'
 
 // 右上角按钮数据
@@ -204,6 +203,20 @@ const topButtons = ref([
   { icon: Share, name: '获取报名分享链接', key: 'share' },
   { icon: Monitor, name: '访问官网', key: 'website' }
 ])
+
+// 计算倒计时天数
+const countdownDays = ref(0)
+
+// 初始化倒计时
+const initCountdown = () => {
+  const now = new Date()
+  const eventDate = new Date('2026-04-08')
+  const diffTime = eventDate - now
+  countdownDays.value = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+}
+
+// 页面加载时初始化倒计时
+initCountdown()
 
 // 标签数据
 const industryTags = ref(['制冷设备', '空调系统', '暖通技术', '热泵设备', '通风系统'])
@@ -375,6 +388,31 @@ const downloadItems = ref([
         display: flex;
         align-items: center;
         gap: 8px;
+      }
+
+      .countdown-section {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        background: #EFF6FF;
+        border-radius: 20px;
+      }
+
+      .countdown-label {
+        font-size: 12px;
+        color: #6B7280;
+      }
+
+      .countdown-days {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2563EB;
+      }
+
+      .countdown-unit {
+        font-size: 12px;
+        color: #6B7280;
       }
     }
   }
@@ -630,57 +668,121 @@ const downloadItems = ref([
   }
 }
 
-.button-cards-section {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
-}
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.button-card {
-  display: flex;
-  flex-direction: column;
+// 标题图标样式
+.title-icon {
+  color: #2563EB;
+  margin-right: 8px;
+  font-size: 20px;
+  vertical-align: middle;
+  line-height: 1;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+}
+
+// 快捷功能
+.quick-functions-section {
+  background: white;
+  border-radius: 8px;
   padding: 24px;
-  background-color: #f5f7fa;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  border: 1px solid #ebeef5;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    background-color: #ecf5ff;
-    border-color: #409eff;
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 24px 0;
+    color: #1F2937;
   }
-}
 
-.card-icon {
-  margin-bottom: 16px;
-  color: #409eff;
-}
+  .functions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
 
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 8px;
-  text-align: center;
-}
+  .function-card {
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: white;
+    position: relative;
+    overflow: hidden;
 
-.card-desc {
-  font-size: 14px;
-  color: #606266;
-  margin-bottom: 16px;
-  text-align: center;
-  line-height: 1.5;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #2563EB 0%, #60A5FA 100%);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      border-color: #2563EB;
+
+      &::before {
+        transform: scaleX(1);
+      }
+    }
+
+    .function-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: #EFF6FF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+
+      .icon-large {
+        font-size: 32px;
+        color: #2563EB;
+      }
+
+      &:hover {
+        background: #DBEAFE;
+        transform: scale(1.1);
+      }
+    }
+
+    .function-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      color: #1F2937;
+    }
+
+    .function-desc {
+      font-size: 14px;
+      color: #6B7280;
+      margin: 0 0 24px 0;
+      line-height: 1.5;
+    }
+
+    .function-button {
+      width: 100%;
+      background-color: #2563EB;
+      border-color: #2563EB;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #1D4ED8;
+        border-color: #1D4ED8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      }
+    }
+  }
 }
 
 .function-section {
@@ -784,137 +886,85 @@ const downloadItems = ref([
   }
 
 .download-section {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
-}
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 
-.download-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.download-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 32px;
-  border: 1px solid #e0ebff;
-  border-radius: 16px;
-  transition: all 0.3s ease;
-  height: 220px;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
-
-  // 背景装饰细节
-  &::before {
-    content: '';
-    position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 160px;
-    height: 160px;
-    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0) 70%);
-    border-radius: 50%;
-    z-index: 0;
-    transition: all 0.3s ease;
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 24px 0;
+    color: #1F2937;
   }
 
-  &:hover {
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
-    transform: translateY(-4px);
-    border-color: #2563eb;
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
 
-    &::before {
-      transform: scale(1.2);
-      background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0) 70%);
-    }
-
-    .download-icon {
-      transform: scale(1.1);
-      background: rgba(37, 99, 235, 0.15);
-    }
-  }
-
-  .download-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-
-    .download-icon {
-      font-size: 48px;
-      color: #2563eb;
-      margin-bottom: 8px;
+    .download-item {
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
       transition: all 0.3s ease;
-      background: rgba(37, 99, 235, 0.1);
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 
-    .download-name {
-      font-size: 20px;
-      color: #1e40af;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        border-color: #2563EB;
+      }
 
-    .download-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-      font-size: 14px;
-      color: #64748b;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
+      .download-icon {
+        width: 60px;
+        height: 60px;
+        background: #EFF6FF;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
 
-    .download-format {
-      padding: 4px 16px;
-      background-color: #dbeafe;
-      color: #1e40af;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
-    }
+        .file-icon {
+          font-size: 24px;
+          color: #2563EB;
+        }
+      }
 
-    .download-size {
-      font-size: 14px;
-      color: #3b82f6;
-      font-weight: 500;
-    }
-  }
+      .download-info {
+        flex: 1;
+        min-width: 0;
 
-  :deep(.el-button) {
-    margin-top: 16px;
-    padding: 0 24px;
-    height: 40px;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: none;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    transition: all 0.3s ease;
+        .download-name {
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0 0 8px 0;
+          color: #1F2937;
+          line-height: 1.4;
+        }
 
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        .download-size {
+          font-size: 14px;
+          color: #6B7280;
+        }
+      }
+
+      .download-button {
+        flex-shrink: 0;
+        background-color: #2563EB;
+        border-color: #2563EB;
+
+        &:hover {
+          background-color: #1D4ED8;
+          border-color: #1D4ED8;
+        }
+      }
     }
   }
 }

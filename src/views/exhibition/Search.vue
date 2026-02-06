@@ -158,19 +158,9 @@
                     <h3 class="card-title" :title="item.name">{{ item.name }}</h3>
                   </div>
                   <div class="meta-tags">
-                    <el-tag size="small" type="primary">国家级展会</el-tag>
-                    <el-tag size="small" type="primary">UFI认证展会</el-tag>
-                    <el-tag size="small" type="primary">国际展会</el-tag>
-                    <el-tag size="small" type="primary">大型展会</el-tag>
-                    <el-tag size="small" type="primary">{{ item.industry }}</el-tag>
-                    <el-tag 
-                      v-for="tag in item.tags.filter(tag => tag !== '即将开展' && tag !== '热门推荐')" 
-                      :key="tag" 
-                      size="small" 
-                      type="primary"
-                    >
-                      {{ tag }}
-                    </el-tag>
+                    <template v-for="(tag, index) in displayTags(item)" :key="index">
+                      <el-tag size="small" type="primary">{{ tag }}</el-tag>
+                    </template>
                   </div>
                   <div class="card-info">
                     <div class="info-item">
@@ -190,12 +180,15 @@
                 </div>
               </div>
               <div class="card-footer">
-                <div class="divider"></div>
                 <div class="item-actions">
-                  <el-button size="small" type="primary" class="action-btn">展位申请</el-button>
-                  <el-button size="small" type="success" class="action-btn">观众预登记</el-button>
-                  <el-button size="small" type="warning" class="action-btn">免费地铁码</el-button>
-                  <el-button size="small" type="danger" class="action-btn">获取分享链接</el-button>
+                  <el-button size="small" type="primary" class="action-btn">
+                    <el-icon><Grid /></el-icon>
+                    <span>展位申请</span>
+                  </el-button>
+                  <el-button size="small" type="primary" class="action-btn">
+                    <el-icon><UserFilled /></el-icon>
+                    <span>观众预登记</span>
+                  </el-button>
                 </div>
               </div>
             </div>
@@ -245,7 +238,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Delete, Clock, LocationFilled, Star, StarFilled } from '@element-plus/icons-vue'
+import { Search, Delete, Clock, LocationFilled, Star, StarFilled, Grid, UserFilled } from '@element-plus/icons-vue'
 import { exhibitions } from '@/data/mockData'
 
 const router = useRouter()
@@ -398,6 +391,13 @@ const getCountdown = (dateString) => {
   const eventDate = new Date(dateString.split('至')[0])
   const diffTime = eventDate - now
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+}
+
+// 计算要显示的标签，避免显示一半的标签
+const displayTags = (item) => {
+  const allTags = ['国家级展会', 'UFI认证展会', '国际展会', '大型展会', item.industry, ...item.tags.filter(tag => tag !== '即将开展' && tag !== '热门推荐')]
+  // 限制最多显示4个标签，确保不会被截断
+  return allTags.slice(0, 4)
 }
 
 // 热门展会点击
@@ -761,7 +761,7 @@ onMounted(() => {
 }
 
 .card-content {
-  padding: 20px;
+  padding: 16px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -772,7 +772,7 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .card-title {
@@ -811,13 +811,13 @@ onMounted(() => {
 .card-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
+  margin-bottom: 12px;
 
   .info-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     font-size: 14px;
     color: #6B7280;
     flex-wrap: nowrap;
@@ -828,7 +828,7 @@ onMounted(() => {
     }
 
     span {
-      flex: 1;
+      flex-shrink: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -839,12 +839,9 @@ onMounted(() => {
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       background: #EFF6FF;
       border-radius: 20px;
-      width: auto;
-      flex-shrink: 0;
-      white-space: nowrap;
     }
 
     .countdown-label {
@@ -853,7 +850,7 @@ onMounted(() => {
     }
 
     .countdown-days {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       color: #2563EB;
     }
@@ -867,13 +864,13 @@ onMounted(() => {
 
 .meta-tags {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  margin-bottom: 12px;
 
   .el-tag {
-    margin-right: 8px;
-    margin-bottom: 8px;
+    margin-right: 6px;
   }
 }
 
@@ -882,7 +879,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 16px;
 
   .divider {
     height: 1px;
@@ -917,17 +913,27 @@ onMounted(() => {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 12px;
 
   .action-btn {
     flex: 1;
-    min-width: 80px;
+    min-width: 90px;
+    height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
     transition: all 0.3s ease;
     border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
   }
 }

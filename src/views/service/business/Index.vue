@@ -72,37 +72,7 @@
         </el-collapse-transition>
       </div>
 
-      <!-- 数据统计 -->
-      <div class="business-stats">
-        <div class="stat-card">
-          <div class="stat-icon"><el-icon><Shop /></el-icon></div>
-          <div class="stat-info">
-            <div class="stat-number">{{ businessStats.total }}</div>
-            <div class="stat-label">总商机数</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><el-icon><Timer /></el-icon></div>
-          <div class="stat-info">
-            <div class="stat-number">{{ businessStats.recent }}</div>
-            <div class="stat-label">近期商机</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><el-icon><Connection /></el-icon></div>
-          <div class="stat-info">
-            <div class="stat-number">{{ businessStats.partners }}</div>
-            <div class="stat-label">合作商家</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><el-icon><Check /></el-icon></div>
-          <div class="stat-info">
-            <div class="stat-number">{{ businessStats.successful }}</div>
-            <div class="stat-label">成功案例</div>
-          </div>
-        </div>
-      </div>
+
 
       <!-- 搜索结果 -->
       <div class="results-section">

@@ -119,6 +119,9 @@
             <div class="card-image">
               <img :src="item.poster" :alt="item.name" />
               <div class="hot-badge">热门推荐</div>
+              <button class="follow-button" @click.stop="toggleFollow(item)">
+                <el-icon><Star /></el-icon>
+              </button>
             </div>
             <div class="card-content">
               <div class="content-main">
@@ -659,9 +662,16 @@ const quickServices = [
 const handleBannerClick = (item) => {
   router.push(item.link)
 }
-
+// 跳转到展会详情
 const goToDetail = (item) => {
   router.push(`/exhibition/detail/${item.id}`)
+}
+
+// 切换关注状态
+const toggleFollow = (item) => {
+  item.followed = !item.followed
+  // 这里可以添加关注/取消关注的API调用
+  console.log(item.followed ? '关注了展会' : '取消关注展会', item.name)
 }
 
 const navigateTo = (path) => {
@@ -1155,18 +1165,51 @@ const getStatusClass = (status) => {
   }
 
   .hot-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: linear-gradient(135deg, #3B82F6, #2563EB); /* Blue Gradient */
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px 0 20px 0;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
-    z-index: 10;
-  }
+     position: absolute;
+     top: 12px;
+     right: 12px;
+     background: linear-gradient(135deg, #3B82F6, #2563EB); /* Blue Gradient */
+     color: white;
+     padding: 4px 12px;
+     border-radius: 20px 0 20px 0;
+     font-size: 12px;
+     font-weight: 600;
+     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+     z-index: 10;
+   }
+
+   .follow-button {
+     position: absolute;
+     bottom: 12px;
+     right: 12px;
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     background: rgba(255, 255, 255, 0.9);
+     border: none;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+     cursor: pointer;
+     transition: all 0.3s ease;
+     z-index: 10;
+
+     .el-icon {
+       font-size: 20px;
+       color: #9CA3AF;
+       transition: color 0.3s ease;
+     }
+
+     &:hover {
+       transform: translateY(-2px);
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+       .el-icon {
+         color: #2563EB;
+       }
+     }
+   }
 }
 
   .card-content {
