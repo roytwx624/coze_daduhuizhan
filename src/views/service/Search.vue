@@ -169,6 +169,9 @@
           >
             <div class="card-image">
               <img :src="item.poster || defaultServiceImage" :alt="item.name" />
+              <button class="follow-button" @click.stop="collectService(item)">
+                <el-icon><Star /></el-icon>
+              </button>
             </div>
             <div class="card-content">
               <div class="card-header">
@@ -180,11 +183,11 @@
                     v-for="tag in item.tags" 
                     :key="tag" 
                     size="small" 
-                    type="info"
+                    type="primary"
                   >
                     {{ tag }}
                   </el-tag>
-                  <el-tag size="small" type="info" v-if="item.type">{{ item.type }}</el-tag>
+                  <el-tag size="small" type="primary" v-if="item.type">{{ item.type }}</el-tag>
                 </div>
                 <div class="meta-item">
                   <el-icon><OfficeBuilding /></el-icon>
@@ -215,14 +218,6 @@
                   <span class="price-unit">{{ item.unit }}</span>
                 </div>
                 <div class="action-buttons">
-                  <el-button
-                    :type="isCollected(item.id) ? '' : 'primary'"
-                    :icon="isCollected(item.id) ? 'StarFilled' : 'Star'"
-                    size="small"
-                    @click.stop="collectService(item)"
-                  >
-                    {{ isCollected(item.id) ? '已收藏' : '收藏' }}
-                  </el-button>
                   <el-button type="primary" @click.stop="startChat(item)" size="small">
                     <el-icon><ChatLineSquare /></el-icon>
                     洽谈
@@ -773,6 +768,7 @@ const handleCurrentChange = (page) => {
 }
 
 .card-image {
+  position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
@@ -781,6 +777,39 @@ const handleCurrentChange = (page) => {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .follow-button {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+
+    .el-icon {
+      font-size: 20px;
+      color: #9CA3AF;
+      transition: color 0.3s ease;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+      .el-icon {
+        color: #2563EB;
+      }
+    }
   }
 }
 

@@ -22,7 +22,7 @@
         
         <!-- 历史搜索 -->
         <div v-if="historySearch.length > 0" class="history-search">
-          <span class="history-label">历史搜索：</span>
+          <span class="history-label">热门搜索：</span>
           <el-tag
             v-for="(item, index) in historySearch"
             :key="index"
