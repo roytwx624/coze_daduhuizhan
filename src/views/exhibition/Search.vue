@@ -27,6 +27,7 @@
             v-for="(item, index) in historySearch"
             :key="index"
             class="history-tag"
+            type="primary"
             @click="handleHistoryClick(item)"
           >
             {{ item }}
@@ -140,46 +141,60 @@
           <div
             v-for="item in searchResults"
             :key="item.id"
-            class="exhibition-item"
+            class="exhibition-card"
             @click="navigateToDetail(item.id)"
           >
-            <div class="item-logo">
+            <div class="card-image">
               <img :src="item.poster" :alt="item.name" />
+              <div v-if="item.tags.includes('热门推荐')" class="hot-badge">热门推荐</div>
+              <button class="follow-button" @click.stop="toggleFollow(item)">
+                <el-icon :class="item.followed ? 'followed' : ''"><Star /></el-icon>
+              </button>
             </div>
-            <div class="item-content">
-              <div class="item-title">
-                <h3>{{ item.name }}</h3>
-                <el-button
-                  :type="item.followed ? '' : 'primary'"
-                  :icon="item.followed ? 'StarFilled' : 'Star'"
-                  size="small"
-                  @click.stop="toggleFollow(item)"
-                >
-                  {{ item.followed ? '已关注' : '关注' }}
-                </el-button>
-              </div>
-              <p class="item-desc">{{ item.description }}</p>
-              <div class="item-meta">
-                <div class="meta-row">
-                  <span class="meta-item">
-                    <el-icon><Calendar /></el-icon>
-                    举办时间：{{ item.time }}
-                  </span>
-                  <span class="meta-item">
-                    <el-icon><Location /></el-icon>
-                    举办场馆：{{ item.venue }}
-                  </span>
+            <div class="card-content">
+              <div class="content-main">
+                <div class="info-area">
+                  <div class="title-section">
+                    <h3 class="card-title" :title="item.name">{{ item.name }}</h3>
+                  </div>
+                  <div class="card-info">
+                    <div class="info-item">
+                      <el-icon><Calendar /></el-icon>
+                      <span>{{ item.time }}</span>
+                      <div class="countdown-section">
+                        <span class="countdown-label">距开展</span>
+                        <span class="countdown-days">{{ getCountdown(item.time) }}</span>
+                        <span class="countdown-unit">天</span>
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <el-icon><Location /></el-icon>
+                      <span>{{ item.venue }}</span>
+                    </div>
+                  </div>
+                  <div class="meta-tags">
+                    <el-tag size="small" type="primary">国家级展会</el-tag>
+                    <el-tag size="small" type="primary">UFI认证展会</el-tag>
+                    <el-tag size="small" type="primary">国际展会</el-tag>
+                    <el-tag size="small" type="primary">大型展会</el-tag>
+                    <el-tag size="small" type="primary">{{ item.industry }}</el-tag>
+                    <el-tag 
+                      v-for="tag in item.tags.filter(tag => tag !== '即将开展' && tag !== '热门推荐')" 
+                      :key="tag" 
+                      size="small" 
+                      type="primary"
+                    >
+                      {{ tag }}
+                    </el-tag>
+                  </div>
                 </div>
-                <div class="meta-tags">
-                  <el-tag 
-                    v-for="tag in item.tags.filter(tag => tag !== '即将开展')" 
-                    :key="tag" 
-                    size="small" 
-                    :type="tag === '热门推荐' ? 'danger' : 'info'"
-                  >
-                    {{ tag }}
-                  </el-tag>
-                  <el-tag size="small">{{ item.industry }}</el-tag>
+              </div>
+              <div class="card-footer">
+                <div class="item-actions">
+                  <el-button size="small" type="primary" class="action-btn">展位申请</el-button>
+                  <el-button size="small" type="success" class="action-btn">观众预登记</el-button>
+                  <el-button size="small" type="warning" class="action-btn">免费地铁码</el-button>
+                  <el-button size="small" type="danger" class="action-btn">获取分享链接</el-button>
                 </div>
               </div>
             </div>
@@ -196,13 +211,14 @@
               <h4>热门展会推荐</h4>
               <div class="hot-exhibitions">
                 <el-tag
-                  v-for="item in hotExhibitions"
-                  :key="item.id"
-                  class="hot-tag"
-                  @click="handleHotClick(item)"
-                >
-                  {{ item.name }}
-                </el-tag>
+              v-for="item in hotExhibitions"
+              :key="item.id"
+              class="hot-tag"
+              type="primary"
+              @click="handleHotClick(item)"
+            >
+              {{ item.name }}
+            </el-tag>
               </div>
             </div>
           </el-empty>
@@ -373,6 +389,14 @@ const toggleFollow = (item) => {
     message: item.followed ? '已关注该展会' : '已取消关注',
     type: 'success'
   })
+}
+
+// 计算倒计时天数
+const getCountdown = (dateString) => {
+  const now = new Date()
+  const eventDate = new Date(dateString.split('至')[0])
+  const diffTime = eventDate - now
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 }
 
 // 热门展会点击
@@ -740,6 +764,259 @@ onMounted(() => {
   border-top: 2px solid #F3F4F6;
 }
 
+// 卡片式展会列表
+.exhibition-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 24px;
+}
+
+.exhibition-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.card-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  .hot-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px 0 20px 0;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+    z-index: 10;
+  }
+
+  .follow-button {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+
+    .el-icon {
+      font-size: 20px;
+      color: #9CA3AF;
+      transition: color 0.3s ease;
+    }
+
+    .el-icon.followed {
+      color: #F59E0B;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+      .el-icon {
+        color: #2563EB;
+      }
+    }
+  }
+}
+
+.card-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin: 0;
+}
+
+.industry-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #EFF6FF;
+  color: #2563EB;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: #6B7280;
+  line-height: 1.5;
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #6B7280;
+    flex-wrap: wrap;
+
+    .el-icon {
+      color: #2563EB;
+    }
+
+    span {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .countdown-section {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #EFF6FF;
+      border-radius: 20px;
+      width: fit-content;
+    }
+
+    .countdown-label {
+      font-size: 12px;
+      color: #6B7280;
+    }
+
+    .countdown-days {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2563EB;
+    }
+
+    .countdown-unit {
+      font-size: 12px;
+      color: #6B7280;
+    }
+  }
+}
+
+.meta-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  .el-tag {
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+}
+
+.card-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.countdown-section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.countdown-label {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.countdown-days {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.countdown-unit {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.item-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+
+  .action-btn {
+    flex: 1;
+    min-width: 80px;
+    transition: all 0.3s ease;
+    border: none;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .exhibition-search-page {
     padding: 100px 16px 40px;
@@ -751,18 +1028,25 @@ onMounted(() => {
     padding: 20px 16px;
   }
 
-  .exhibition-item {
-    flex-direction: column;
+  .exhibition-list {
+    grid-template-columns: 1fr;
   }
 
-  .item-logo {
+  .card-image {
+    height: 180px;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .item-actions {
     width: 100%;
-    height: 200px;
   }
 
-  .meta-row {
-    flex-direction: column;
-    gap: 8px;
+  .action-btn {
+    width: 100%;
   }
 }
 </style>
