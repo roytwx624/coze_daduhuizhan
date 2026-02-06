@@ -1,1 +1,0 @@
-import{_ as s,c as t,b as c,d as e,e as n,h as a}from"./index-BZD5B0OA.js";const _={},r={class:"hotel-service-page"},d={class:"container"},i={class:"content-placeholder"};function l(p,m){const o=a("el-empty");return c(),t("div",r,[e("div",d,[e("div",i,[n(o,{description:"酒店服务页面正在建设中，敬请期待"})])])])}const f=s(_,[["render",l],["__scopeId","data-v-57b23b51"]]);export{f as default};
