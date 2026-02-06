@@ -624,103 +624,6 @@ onMounted(() => {
 }
 
 // 结果列表
-.exhibition-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.exhibition-item {
-  display: flex;
-  gap: 24px;
-  padding: 24px;
-  border: 1px solid #E5E7EB;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-    border-color: #204E9C;
-  }
-}
-
-.item-logo {
-  width: 200px;
-  height: 150px;
-  border-radius: 8px;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.item-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.item-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-
-  h3 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1F2937;
-    margin: 0;
-    flex: 1;
-  }
-}
-
-.item-desc {
-    font-size: 14px;
-    color: #6B7280;
-    line-height: 1.6;
-    margin-bottom: 16px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-.item-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.meta-row {
-  display: flex;
-  gap: 24px;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #6B7280;
-
-  .el-icon {
-    color: #2563EB;
-  }
-}
-
-.meta-tags {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
 
 // 无结果
 .empty-results {
@@ -912,50 +815,53 @@ onMounted(() => {
   margin-bottom: 16px;
 
   .info-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  color: #6B7280;
-  flex-wrap: nowrap;
-
-  .el-icon {
-    color: #2563EB;
-    flex-shrink: 0;
-  }
-
-  span {
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .countdown-section {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    background: #EFF6FF;
-    border-radius: 20px;
-    width: fit-content;
-    flex-shrink: 0;
-  }
-
-  .countdown-label {
-    font-size: 12px;
-    color: #6B7280;
-  }
-
-  .countdown-days {
+    gap: 12px;
     font-size: 14px;
-    font-weight: 600;
-    color: #2563EB;
-  }
-
-  .countdown-unit {
-    font-size: 12px;
     color: #6B7280;
+    flex-wrap: nowrap;
+
+    .el-icon {
+      color: #2563EB;
+      flex-shrink: 0;
+    }
+
+    span {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .countdown-section {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #EFF6FF;
+      border-radius: 20px;
+      width: auto;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .countdown-label {
+      font-size: 12px;
+      color: #6B7280;
+    }
+
+    .countdown-days {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2563EB;
+    }
+
+    .countdown-unit {
+      font-size: 12px;
+      color: #6B7280;
+    }
   }
 }
 
