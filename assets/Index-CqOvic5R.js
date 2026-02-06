@@ -1,0 +1,1 @@
+import{_ as s,c as t,b as c,d as e,e as n,h as a}from"./index-BGx1WkTu.js";const _={},d={class:"mall-page"},r={class:"container"},l={class:"content-placeholder"};function i(p,m){const o=a("el-empty");return c(),t("div",d,[e("div",r,[e("div",l,[n(o,{description:"商城正在建设中，敬请期待"})])])])}const h=s(_,[["render",i],["__scopeId","data-v-d6e5039f"]]);export{h as default};
