@@ -16,13 +16,6 @@
           <p class="section-desc">为您提供全方位的活动报批服务</p>
         </div>
         <div class="functions-grid">
-          <div class="function-card" @click="navigateTo('/policy/apply/guide')">
-            <div class="function-icon">
-              <el-icon :size="40"><Document /></el-icon>
-            </div>
-            <h3>办事指南</h3>
-            <p>详细的申请流程和所需材料说明</p>
-          </div>
           <div class="function-card" @click="navigateTo('/policy/apply/process')">
             <div class="function-icon">
               <el-icon :size="40"><DataAnalysis /></el-icon>
@@ -43,6 +36,13 @@
             </div>
             <h3>一站式服务</h3>
             <p>全程代办，省心省力</p>
+          </div>
+          <div class="function-card" @click="navigateTo('/policy/apply/guide')">
+            <div class="function-icon">
+              <el-icon :size="40"><ChatLineSquare /></el-icon>
+            </div>
+            <h3>在线咨询</h3>
+            <p>详细的申请流程和所需材料说明</p>
           </div>
         </div>
       </div>
@@ -121,7 +121,40 @@
               <el-icon :size="24"><DocumentCopy /></el-icon>
             </div>
             <div class="policy-content">
-              <h3>{{ policy }}</h3>
+              <h3>{{ policy.title }}</h3>
+            </div>
+            <div class="policy-action">
+              <el-button size="small" type="primary" @click="viewPolicyDetail(policy)">查看详情</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 资料下载 -->
+    <section class="download-section">
+      <div class="content-wrapper">
+        <div class="section-header">
+          <h2>资料下载</h2>
+          <p class="section-desc">下载相关办事指南和模板</p>
+        </div>
+        <div class="download-list">
+          <div class="download-item" v-for="(material, index) in downloadMaterials" :key="material.id">
+            <div class="download-icon">
+              <el-icon :size="24"><Document /></el-icon>
+            </div>
+            <div class="download-content">
+              <h3>{{ material.title }}</h3>
+              <div class="download-info">
+                <span class="file-type">{{ material.type }}</span>
+                <span class="file-size">{{ material.size }}</span>
+              </div>
+            </div>
+            <div class="download-action">
+              <el-button size="small" type="primary" @click="downloadMaterial(material)">
+                <el-icon><Download /></el-icon>
+                下载
+              </el-button>
             </div>
           </div>
         </div>
@@ -133,17 +166,55 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Document, DataAnalysis, Check, Service, DocumentCopy, QuestionFilled, SuccessFilled } from '@element-plus/icons-vue'
+import { Document, DataAnalysis, Check, Service, DocumentCopy, QuestionFilled, SuccessFilled, Download, ChatLineSquare } from '@element-plus/icons-vue'
 
 const router = useRouter()
-
+// 相关政策
 const policies = [
-  '《艺术品经营管理办法》',
-  '《国务院对确需保留的行政审批项目设定行政许可的决定》',
-  '《国务院关于取消和下放一批行政审批项目的决定》',
-  '《中华人民共和国海关暂时进出境货物管理办法》',
-  '《大型群众性活动安全管理条例》'
+  {
+    title: '《艺术品经营管理办法》',
+    detail: '为了规范艺术品经营活动，加强艺术品市场管理，保护创作者、经营者、消费者的合法权益，促进艺术品市场健康发展，制定本办法。'
+  },
+  {
+    title: '《国务院对确需保留的行政审批项目设定行政许可的决定》',
+    detail: '为了保证改革开放和社会主义现代化建设的顺利进行，保障公民、法人和其他组织的合法权益，根据《中华人民共和国行政许可法》第十四条第二款的规定，现对法律、行政法规以外的规范性文件规定的，但确需保留且符合《中华人民共和国行政许可法》第十二条规定事项的行政审批项目，决定予以保留并设定行政许可。'
+  },
+  {
+    title: '《国务院关于取消和下放一批行政审批项目的决定》',
+    detail: '为了深入推进行政审批制度改革，加快政府职能转变，现决定取消和下放52项行政审批项目。'
+  },
+  {
+    title: '《中华人民共和国海关暂时进出境货物管理办法》',
+    detail: '为了规范海关对暂时进出境货物的监管，根据《中华人民共和国海关法》及有关法律、行政法规的规定，制定本办法。'
+  },
+  {
+    title: '《大型群众性活动安全管理条例》',
+    detail: '为了加强对大型群众性活动的安全管理，保护公民生命和财产安全，维护社会治安秩序和公共安全，制定本条例。'
+  }
 ]
+
+// 资料下载
+const downloadMaterials = [
+  {
+    id: 1,
+    title: '大型活动报批办事指南',
+    type: 'pdf',
+    size: '2.5MB',
+    url: '#'
+  }
+]
+
+// 查看政策详情
+const viewPolicyDetail = (policy) => {
+  // 这里可以实现查看详情的逻辑，比如弹窗显示详情
+  console.log('查看政策详情:', policy)
+}
+
+// 下载资料
+const downloadMaterial = (material) => {
+  // 这里可以实现下载逻辑
+  console.log('下载资料:', material)
+}
 
 const navigateTo = (path) => {
   router.push(path)
@@ -424,6 +495,78 @@ const navigateTo = (path) => {
       margin: 0;
     }
   }
+
+  .policy-action {
+    flex-shrink: 0;
+  }
+}
+
+// 资料下载
+.download-section {
+  padding: 60px 0;
+  background: #F9FAFB;
+}
+
+.download-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.download-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .download-icon {
+    width: 48px;
+    height: 48px;
+    background: #EFF6FF;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563EB;
+    flex-shrink: 0;
+  }
+
+  .download-content {
+    flex: 1;
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1F2937;
+      margin: 0 0 8px 0;
+    }
+
+    .download-info {
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+      color: #6B7280;
+
+      .file-type {
+        padding: 2px 8px;
+        background: #F3F4F6;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .download-action {
+    flex-shrink: 0;
+  }
 }
 
 // 响应式设计
@@ -515,6 +658,48 @@ const navigateTo = (path) => {
     .policy-content {
       h3 {
         font-size: 14px;
+      }
+    }
+
+    .policy-action {
+      :deep(.el-button) {
+        font-size: 12px;
+        padding: 4px 12px;
+      }
+    }
+  }
+
+  .download-section {
+    padding: 40px 0;
+  }
+
+  .download-item {
+    padding: 16px 20px;
+
+    .download-icon {
+      width: 40px;
+      height: 40px;
+
+      :deep(.el-icon) {
+        font-size: 20px;
+      }
+    }
+
+    .download-content {
+      h3 {
+        font-size: 14px;
+      }
+
+      .download-info {
+        font-size: 12px;
+        gap: 12px;
+      }
+    }
+
+    .download-action {
+      :deep(.el-button) {
+        font-size: 12px;
+        padding: 4px 12px;
       }
     }
   }

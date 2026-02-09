@@ -2,7 +2,20 @@
   <div class="exhibition-detail-page">
     <!-- Banner -->
     <div class="detail-banner">
-      <img src="@/assets/images/banner/banner1.png" alt="展会banner" class="banner-img" />
+      <img src="@/assets/images/exhibition_photo/640.png" alt="展会banner" class="banner-img" />
+      <div class="banner-overlay">
+        <div class="banner-content">
+          <h1>第三十七届制冷展</h1>
+          <div class="banner-address">
+            <el-icon><Location /></el-icon>
+            <span>上海新国际博览中心</span>
+          </div>
+          <div class="banner-time">
+            <el-icon><Calendar /></el-icon>
+            <span>2026年4月8日～4月10日</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="container">
@@ -320,15 +333,67 @@ const downloadItems = ref([
 
 .detail-banner {
   width: 100%;
+  height: 320px;
   overflow: hidden;
   margin-bottom: 30px;
+  position: relative;
 
   .banner-img {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
   }
+
+  .banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .banner-content {
+    padding: 40px;
+    color: white;
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    h1 {
+      font-size: 36px;
+      margin: 0 0 16px 0;
+      font-weight: bold;
+    }
+
+    .banner-address,
+    .banner-time {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 16px;
+      margin: 0 0 12px 0;
+      opacity: 0.9;
+    }
+  }
+
+  @media (max-width: 768px) {
+    height: 280px;
+
+    .banner-content {
+      padding: 24px;
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  }
 }
+
 
 .container {
   width: 1200px;

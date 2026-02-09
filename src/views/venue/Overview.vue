@@ -395,7 +395,9 @@ const handleResize = () => {
 .banner {
   background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
   color: white;
-  padding: 60px 0;
+  height: 320px;
+  display: flex;
+  align-items: center;
   margin-bottom: 40px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;

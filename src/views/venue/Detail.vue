@@ -540,6 +540,7 @@ onMounted(() => {
 .venue-detail-page {
   min-height: 100vh;
   background: #F9FAFB;
+  padding-top: 80px;
 }
 
 // 顶部场馆信息
@@ -550,7 +551,7 @@ onMounted(() => {
 
 .venue-banner {
   position: relative;
-  height: 400px;
+  height: 320px;
   overflow: hidden;
 
   img {
@@ -567,7 +568,8 @@ onMounted(() => {
     bottom: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
   }
 
   .banner-content {
