@@ -1,6 +1,24 @@
 <template>
   <div class="business-hall-page">
     <div class="container">
+      <!-- 操作按钮区域 -->
+      <div class="action-section">
+        <div class="action-buttons">
+          <el-button type="primary" size="large" @click="handlePublish">
+            <el-icon><Edit /></el-icon>
+            我要发布
+          </el-button>
+          <el-button size="large" @click="handlePublishRecord">
+            <el-icon><DocumentCopy /></el-icon>
+            发布记录
+          </el-button>
+          <el-button size="large" @click="handleQuoteRecord">
+            <el-icon><Notebook /></el-icon>
+            报价记录
+          </el-button>
+        </div>
+      </div>
+
       <!-- 搜索区域 -->
       <div class="search-section">
         <div class="search-box">
@@ -14,10 +32,20 @@
             <template #prefix>
               <el-icon><Search /></el-icon>
             </template>
-            <template #append>
-              <el-button type="primary" @click="handleSearch">搜索</el-button>
-            </template>
           </el-input>
+        </div>
+        
+        <!-- 热门搜索 -->
+        <div v-if="hotSearches.length > 0" class="history-search">
+          <span class="history-label">热门搜索：</span>
+          <el-tag
+            v-for="(item, index) in hotSearches"
+            :key="index"
+            class="history-tag"
+            @click="handleHotSearchClick(item)"
+          >
+            {{ item }}
+          </el-tag>
         </div>
       </div>
 
@@ -122,6 +150,10 @@
                   <el-icon><ChatLineSquare /></el-icon>
                   联系
                 </el-button>
+                <el-button type="success" size="small" @click="quoteBusiness(item)">
+                  <el-icon><Notebook /></el-icon>
+                  发起报价
+                </el-button>
                 <el-button size="small" @click="saveBusiness(item)">
                   <el-icon><Star /></el-icon>
                   收藏
@@ -172,7 +204,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Search, Shop, Timer, Connection, Check, Location, Calendar, UserFilled, ChatLineSquare, Star, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search, Shop, Timer, Connection, Check, Location, Calendar, UserFilled, ChatLineSquare, Star, ArrowUp, ArrowDown, Edit, DocumentCopy, Notebook } from '@element-plus/icons-vue'
 
 const showFilter = ref(false)
 const sortBy = ref('newest')
@@ -207,7 +239,7 @@ const businessData = ref([
     city: '北京市',
     period: '2026-04-20至2026-04-28',
     provider: '北京创意展览服务有限公司',
-    budget: '50-80万元',
+    budget: '5-8万元',
     description: '寻找专业的特装展位搭建服务商，要求有大型车展经验，能够提供创意设计和高质量施工服务。',
     status: 'active'
   },
@@ -218,7 +250,7 @@ const businessData = ref([
     city: '上海市',
     period: '2026-05-10至2026-05-14',
     provider: '上海同声传译公司',
-    budget: '8-12万元',
+    budget: '0.8-1.2万元',
     description: '需要英语、日语、德语专业翻译人员，为国际电子展提供现场翻译服务。',
     status: 'active'
   },
@@ -229,7 +261,7 @@ const businessData = ref([
     city: '广州市',
     period: '2026-03-18至2026-03-22',
     provider: '广州会展旅游服务公司',
-    budget: '15-20万元',
+    budget: '1.5-2万元',
     description: '为参展商和观众提供酒店预订服务，需要与多家酒店达成合作协议，确保房源充足和优惠价格。',
     status: 'active'
   },
@@ -240,7 +272,7 @@ const businessData = ref([
     city: '深圳市',
     period: '2026-06-01至2026-06-05',
     provider: '深圳国际会展中心',
-    budget: '100-150万元',
+    budget: '10-15万元',
     description: '租赁深圳国际会展中心的主要展厅，用于举办2026深圳国际科技展。',
     status: 'active'
   },
@@ -251,7 +283,7 @@ const businessData = ref([
     city: '成都市',
     period: '2026-07-15至2026-07-19',
     provider: '成都展览设备租赁公司',
-    budget: '20-30万元',
+    budget: '2-3万元',
     description: '租赁展览所需的桌椅、展架、音响设备等，确保展会顺利进行。',
     status: 'active'
   },
@@ -262,7 +294,7 @@ const businessData = ref([
     city: '西安市',
     period: '2026-08-10至2026-08-14',
     provider: '西安文化传媒公司',
-    budget: '30-40万元',
+    budget: '3-4万元',
     description: '为2026西安国际旅游展提供全面的宣传推广服务，包括线上线下宣传、媒体合作等。',
     status: 'active'
   }
@@ -270,6 +302,21 @@ const businessData = ref([
 
 // 热门商机
 const hotBusinesses = ref([...businessData.value].slice(0, 4))
+
+// 热门搜索
+const hotSearches = ref([
+  '展位搭建',
+  '翻译服务',
+  '物流运输',
+  '宣传推广',
+  '礼仪接待',
+  '设备租赁'
+])
+
+const handleHotSearchClick = (keyword) => {
+  searchForm.value.keyword = keyword
+  handleSearch()
+}
 
 const filteredBusinesses = computed(() => {
   let results = [...businessData.value]
@@ -396,6 +443,11 @@ const saveBusiness = (business) => {
   console.log('收藏商机:', business)
 }
 
+const quoteBusiness = (business) => {
+  // 发起报价逻辑
+  console.log('发起报价:', business)
+}
+
 const handleSizeChange = (size) => {
   pagination.value.pageSize = size
   pagination.value.currentPage = 1
@@ -403,6 +455,21 @@ const handleSizeChange = (size) => {
 
 const handleCurrentChange = (current) => {
   pagination.value.currentPage = current
+}
+
+const handlePublish = () => {
+  // 我要发布逻辑
+  console.log('我要发布')
+}
+
+const handlePublishRecord = () => {
+  // 发布记录逻辑
+  console.log('发布记录')
+}
+
+const handleQuoteRecord = () => {
+  // 报价记录逻辑
+  console.log('报价记录')
 }
 
 onMounted(() => {
@@ -424,6 +491,40 @@ onMounted(() => {
   padding: 0 24px;
 }
 
+// 操作按钮区域
+.action-section {
+  margin-bottom: 24px;
+
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    
+    .el-button {
+      &.el-button--primary {
+        background-color: #2563EB;
+        border-color: #2563EB;
+        
+        &:hover {
+          background-color: #1D4ED8;
+          border-color: #1D4ED8;
+        }
+      }
+      
+      &:not(.el-button--primary) {
+        background-color: white;
+        border-color: #E5E7EB;
+        color: #374151;
+        
+        &:hover {
+          border-color: #2563EB;
+          color: #2563EB;
+        }
+      }
+    }
+  }
+}
+
 // 搜索区域
 .search-section {
   background: white;
@@ -433,12 +534,45 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   .search-box {
+    margin-bottom: 20px;
+
     :deep(.el-input-group__append) {
+      padding: 0;
+
       .el-button {
         border: none;
         border-radius: 0 8px 8px 0;
         padding: 0 32px;
         font-size: 16px;
+        background-color: #6B7280;
+        
+        &:hover {
+          background-color: #4B5563;
+        }
+      }
+    }
+  }
+  
+  .history-search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+    
+    .history-label {
+      font-size: 14px;
+      color: #6B7280;
+    }
+    
+    .history-tag {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
     }
   }
@@ -464,6 +598,22 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 600;
   color: #1F2937;
+}
+
+.filter-header .el-button {
+  &.el-button--primary {
+    &.is-plain {
+      color: #2563EB;
+      border-color: #2563EB;
+      background-color: white;
+      
+      &:hover {
+        color: white;
+        background-color: #2563EB;
+        border-color: #2563EB;
+      }
+    }
+  }
 }
 
 .filter-content {
@@ -494,6 +644,14 @@ onMounted(() => {
     flex-wrap: wrap;
     gap: 16px;
   }
+  
+  :deep(.el-select .el-input__wrapper:hover) {
+    border-color: #2563EB;
+  }
+  
+  :deep(.el-select .el-input__wrapper.is-focus) {
+    box-shadow: 0 0 0 1px #2563EB inset;
+  }
 }
 
 .filter-actions {
@@ -501,6 +659,18 @@ onMounted(() => {
   justify-content: center;
   gap: 16px;
   padding-top: 24px;
+  
+  .el-button {
+    &.el-button--primary {
+      background-color: #2563EB;
+      border-color: #2563EB;
+      
+      &:hover {
+        background-color: #1D4ED8;
+        border-color: #1D4ED8;
+      }
+    }
+  }
 }
 
 // 数据统计
@@ -520,7 +690,7 @@ onMounted(() => {
     
     .stat-icon {
       font-size: 32px;
-      color: #409eff;
+      color: #2563EB;
       margin-right: 20px;
     }
     
@@ -530,13 +700,13 @@ onMounted(() => {
       .stat-number {
         font-size: 24px;
         font-weight: bold;
-        color: #333;
+        color: #2563EB;
         margin-bottom: 5px;
       }
       
       .stat-label {
         font-size: 14px;
-        color: #666;
+        color: #6B7280;
       }
     }
   }
@@ -566,7 +736,7 @@ onMounted(() => {
   .count-number {
     font-size: 24px;
     font-weight: 700;
-    color: #204E9C;
+    color: #2563EB;
     margin: 0 4px;
   }
 }
@@ -592,67 +762,93 @@ onMounted(() => {
   
   :deep(.el-select__wrapper) {
     width: 100%;
+    
+    &:hover {
+      border-color: #2563EB;
+    }
+    
+    &.is-focus {
+      box-shadow: 0 0 0 1px #2563EB inset;
+    }
   }
 }
 
 // 商机网格
 .business-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 24px;
   margin-bottom: 30px;
   
   .business-card {
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 28px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     
     &:hover {
       transform: translateY(-5px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.1);
     }
     
     .business-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       
       .business-title {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: bold;
-        color: #333;
+        color: #1F2937;
         margin: 0;
         flex: 1;
-        margin-right: 10px;
+        margin-right: 12px;
+      }
+      
+      .el-tag {
+        background-color: #EFF6FF;
+        color: #2563EB;
+        border: none;
+        
+        &.el-tag--primary,
+        &.el-tag--success,
+        &.el-tag--warning,
+        &.el-tag--info,
+        &.el-tag--default {
+          background-color: #EFF6FF;
+          color: #2563EB;
+          border: none;
+        }
       }
     }
     
     .business-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 15px;
+      gap: 20px;
+      margin-bottom: 20px;
       
       .meta-item {
         display: flex;
         align-items: center;
-        font-size: 14px;
-        color: #666;
+        font-size: 15px;
+        color: #6B7280;
         
         .el-icon {
-          margin-right: 5px;
+          margin-right: 6px;
+          font-size: 16px;
+          color: #2563EB;
         }
       }
     }
     
     .business-description {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #666;
-      margin-bottom: 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #6B7280;
+      margin-bottom: 24px;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -668,20 +864,44 @@ onMounted(() => {
       
       .business-price {
         .price-label {
-          font-size: 14px;
-          color: #666;
+          font-size: 15px;
+          color: #6B7280;
         }
         
         .price-value {
-          font-size: 16px;
+          font-size: 18px;
           font-weight: bold;
-          color: #f56c6c;
+          color: #2563EB;
         }
       }
       
       .business-actions {
         display: flex;
-        gap: 10px;
+        gap: 12px;
+
+        .el-button {
+          font-size: 14px;
+          
+          &.el-button--primary {
+            background-color: #2563EB;
+            border-color: #2563EB;
+            
+            &:hover {
+              background-color: #1D4ED8;
+              border-color: #1D4ED8;
+            }
+          }
+          
+          &.el-button--success {
+            background-color: #059669;
+            border-color: #059669;
+            
+            &:hover {
+              background-color: #047857;
+              border-color: #047857;
+            }
+          }
+        }
       }
     }
   }
@@ -714,10 +934,14 @@ onMounted(() => {
 .hot-tag {
   cursor: pointer;
   transition: all 0.3s ease;
+  
+  background-color: #EFF6FF;
+  color: #2563EB;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    background-color: #DBEAFE;
   }
 }
 
@@ -728,6 +952,20 @@ onMounted(() => {
   padding-top: 32px;
   margin-top: 32px;
   border-top: 2px solid #F3F4F6;
+  
+  :deep(.el-pagination__item.is-current) {
+    background-color: #2563EB;
+    border-color: #2563EB;
+  }
+  
+  :deep(.el-pagination__item:hover:not(.is-disabled)) {
+    color: #2563EB;
+    border-color: #2563EB;
+  }
+  
+  :deep(.el-pagination__arrow:hover:not(.is-disabled)) {
+    color: #2563EB;
+  }
 }
 
 @media (max-width: 768px) {
@@ -737,6 +975,28 @@ onMounted(() => {
 
   .container {
     padding: 0 16px;
+  }
+
+  .action-section {
+    .action-buttons {
+      flex-direction: column;
+      gap: 12px;
+
+      .el-button {
+        width: 100%;
+        justify-content: center;
+        
+        &.el-button--primary {
+          background-color: #2563EB;
+          border-color: #2563EB;
+          
+          &:hover {
+            background-color: #1D4ED8;
+            border-color: #1D4ED8;
+          }
+        }
+      }
+    }
   }
 
   .search-section,

@@ -105,9 +105,13 @@
     <!-- 展会推荐 -->
     <section class="exhibition-section">
       <div class="content-wrapper">
-        <div class="section-header">
-          <h2>展会推荐</h2>
-          <p class="section-desc">精选优质展会，不容错过</p>
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>展会推荐</h2>
+          </div>
+          <div class="header-right">
+            <router-link to="/exhibition/search" class="view-more-link">查看更多</router-link>
+          </div>
         </div>
         <div class="exhibition-grid">
           <div 
@@ -164,9 +168,13 @@
     <!-- 展会资讯 -->
     <section class="news-section">
       <div class="content-wrapper">
-        <div class="section-header">
-          <h2>展会资讯</h2>
-          <p class="section-desc">最新行业动态，掌握展会脉搏</p>
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>展会资讯</h2>
+          </div>
+          <div class="header-right">
+            <router-link to="/news" class="view-more-link">查看更多</router-link>
+          </div>
         </div>
         <div class="news-list">
           <div 
@@ -187,15 +195,17 @@
             </div>
           </div>
         </div>
-        <div class="section-footer">
-          <router-link to="/news" class="btn btn-outline">查看更多资讯</router-link>
-        </div>
       </div>
     </section>
 
     <!-- 核心功能 -->
     <section class="core-section">
       <div class="content-wrapper">
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>核心功能</h2>
+          </div>
+        </div>
         <div class="digital-map-entry">
           <div class="map-visual">
             <el-icon :size="60"><Monitor /></el-icon>
@@ -228,9 +238,10 @@
     <!-- 快捷服务 -->
     <section class="service-section">
       <div class="content-wrapper">
-        <div class="section-header">
-          <h2>快捷服务</h2>
-          <p class="section-desc">一站式服务，便捷高效</p>
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>快捷服务</h2>
+          </div>
         </div>
         <div class="service-grid">
           <div 
@@ -255,9 +266,13 @@
     <!-- 展会政策 -->
     <section class="policy-section">
       <div class="content-wrapper">
-        <div class="section-header">
-          <h2>展会政策</h2>
-          <p class="section-desc">最新政策动态，助力展会发展</p>
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>展会政策</h2>
+          </div>
+          <div class="header-right">
+            <router-link to="/policy/search" class="view-more-link">查看更多</router-link>
+          </div>
         </div>
         <div class="policy-list">
           <div v-for="policy in policies" :key="policy.id" class="policy-item">
@@ -286,9 +301,6 @@
               <span class="ym">{{ policy.publishTime.slice(0, 7).replace('-', '.') }}</span>
             </div>
           </div>
-        </div>
-        <div class="section-footer">
-          <router-link to="/policy/search" class="btn btn-outline">查看更多政策</router-link>
         </div>
       </div>
     </section>
@@ -694,7 +706,7 @@ const quickServices = [
   { id: 1, title: '展会文集', desc: '行业报告下载', icon: Document, path: '/collection' },
   { id: 2, title: '视频中心', desc: '精彩回放观看', icon: VideoCamera, path: '/video' },
   { id: 3, title: '精选商城', desc: '展会周边购买', icon: ShoppingCart, path: '/mall' },
-  { id: 4, title: '一站式申报', desc: '政策补贴申请', icon: DocumentChecked, path: '/policy/apply' }
+  { id: 4, title: '大型活动报批', desc: '活动报批服务', icon: DocumentChecked, path: '/policy/apply' }
 ]
 
 // 展会资讯
@@ -849,13 +861,68 @@ const getStatusClass = (status) => {
   margin-bottom: 20px;
   
   .header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    
     h2 {
       margin-bottom: 0;
       text-align: left;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1E3A8A;
+      background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      padding-left: 12px;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%);
+        border-radius: 2px;
+      }
       
       &::after {
         display: none;
       }
+    }
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .view-more-link {
+    font-size: 14px;
+    color: #3B82F6;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: #1D4ED8;
+      text-decoration: underline;
+    }
+    
+    &::after {
+      content: '→';
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover::after {
+      transform: translateX(4px);
     }
   }
 
@@ -1875,9 +1942,14 @@ const getStatusClass = (status) => {
 
 .news-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: 16px;
   margin-bottom: 32px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .news-item {
@@ -1890,7 +1962,9 @@ const getStatusClass = (status) => {
   transition: all 0.3s ease;
   cursor: pointer;
   height: 100%;
-  flex: 1;
+  min-height: 480px;
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -1904,6 +1978,54 @@ const getStatusClass = (status) => {
   flex-direction: column;
   justify-content: space-between;
   min-height: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.news-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.news-description {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #F3F4F6;
+  width: 100%;
+  flex-wrap: wrap;
+
+  .news-category {
+    background: #EFF6FF;
+    color: #2563EB;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
 }
 
 .news-image {
@@ -1912,11 +2034,13 @@ const getStatusClass = (status) => {
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
+  min-width: 0;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    min-width: 0;
   }
 }
 
