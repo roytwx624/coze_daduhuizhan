@@ -70,13 +70,13 @@
       <div class="quick-functions-section">
         <h2><el-icon class="title-icon"><Grid /></el-icon> 快捷功能</h2>
         <div class="functions-grid">
-          <div class="function-card" @click="window.open('https://www.kuleiman.com/127909/', '_blank')" style="cursor: pointer;">
+          <div class="function-card" @click="openVRTour" style="cursor: pointer;">
             <div class="function-icon">
               <el-icon class="icon-large"><View /></el-icon>
             </div>
             <h4 class="function-name">VR看馆</h4>
             <p class="function-desc">360°全景查看场馆环境</p>
-            <el-button type="primary" class="function-button" @click.stop="window.open('https://www.kuleiman.com/127909/', '_blank')">立即体验</el-button>
+            <el-button type="primary" class="function-button" @click.stop="openVRTour">立即体验</el-button>
           </div>
           <div class="function-card">
             <div class="function-icon">
@@ -261,6 +261,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Search, Phone, Message, Location, Clock, User, VideoCamera, Calendar, Link, ArrowLeft, ArrowRight, Document, DataAnalysis, Star, Share, View, Position, OfficeBuilding, Grid } from '@element-plus/icons-vue'
 import { venues } from '@/data/mockData'
+
+// 打开VR看馆链接
+const openVRTour = () => {
+  window.open('https://www.kuleiman.com/127909/', '_blank')
+}
 
 // 导入场馆图片
 import venueImage1 from '@/assets/images/venuedetail/1/3583-5dcecfd2c245820393f45fc3eccda5be.jpg'
