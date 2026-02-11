@@ -262,6 +262,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { Search, Phone, Message, Location, Clock, User, VideoCamera, Calendar, Link, ArrowLeft, ArrowRight, Document, DataAnalysis, Star, Share, View, Position, OfficeBuilding, Grid } from '@element-plus/icons-vue'
 import { venues } from '@/data/mockData'
 
+// 导入场馆图片
+import venueImage1 from '@/assets/images/venuedetail/1/3583-5dcecfd2c245820393f45fc3eccda5be.jpg'
+import venueImage2 from '@/assets/images/venuedetail/1/3d34-2e38c93de49118b72321b73330ef143e.jpg'
+import venueImage3 from '@/assets/images/venuedetail/1/a262-4f79ec76843a8e2f0f8223a62c6d7dbb.png'
+import venueImage4 from '@/assets/images/venuedetail/1/u=1128872623,3952748564&fm=253&app=138&f=JPEG.jpeg'
+import venueBanner from '@/assets/images/venues/527424142127173.jpg'
+
 const route = useRoute()
 const router = useRouter()
 const venueId = computed(() => parseInt(route.params.id))
@@ -287,7 +294,7 @@ const venue = computed(() => {
   return {
     id: 1,
     name: '国家会议中心',
-    image: '/src/assets/images/venues/527424142127173.jpg',
+    image: venueBanner,
     address: '北京市朝阳区天辰东路7号',
     area: 270000,
     height: '5.0',
@@ -327,10 +334,10 @@ const surroundings = ref([
 
 // 场馆轮播图片
 const venueImages = ref([
-  '@/assets/images/venuedetail/1/3583-5dcecfd2c245820393f45fc3eccda5be.jpg',
-  '@/assets/images/venuedetail/1/3d34-2e38c93de49118b72321b73330ef143e.jpg',
-  '@/assets/images/venuedetail/1/a262-4f79ec76843a8e2f0f8223a62c6d7dbb.png',
-  '@/assets/images/venuedetail/1/u=1128872623,3952748564&fm=253&app=138&f=JPEG.jpeg'
+  venueImage1,
+  venueImage2,
+  venueImage3,
+  venueImage4
 ])
 
 // 展厅信息
