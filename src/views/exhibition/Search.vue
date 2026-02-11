@@ -463,6 +463,15 @@ onMounted(() => {
       border-radius: 0 8px 8px 0;
       padding: 0 32px;
       font-size: 16px;
+      background-color: #2563EB;
+      border-color: #2563EB;
+      color: white;
+
+      &:hover {
+        background-color: #1D4ED8;
+        border-color: #1D4ED8;
+        color: white;
+      }
     }
   }
 }
@@ -484,10 +493,13 @@ onMounted(() => {
 .history-tag {
   cursor: pointer;
   transition: all 0.3s ease;
+  background: #EFF6FF;
+  color: #2563EB;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    background: #DBEAFE;
   }
 }
 
@@ -549,7 +561,7 @@ onMounted(() => {
   label {
     width: 100px;
     font-size: 14px;
-    color: #374151;
+    color: #1F2937;
     font-weight: 500;
     flex-shrink: 0;
   }
@@ -561,6 +573,20 @@ onMounted(() => {
     flex-wrap: wrap;
     gap: 16px;
   }
+
+  :deep(.el-radio__input.is-checked .el-radio__inner) {
+    border-color: #2563EB;
+    background-color: #2563EB;
+  }
+
+  :deep(.el-radio__label) {
+    color: #6B7280;
+  }
+
+  :deep(.el-radio__input.is-checked + .el-radio__label) {
+    color: #2563EB;
+    font-weight: 500;
+  }
 }
 
 .filter-actions {
@@ -568,6 +594,35 @@ onMounted(() => {
   justify-content: center;
   gap: 16px;
   padding-top: 24px;
+
+  :deep(.el-button--primary) {
+    background-color: #2563EB;
+    border-color: #2563EB;
+    color: white;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #1D4ED8;
+      border-color: #1D4ED8;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+  }
+
+  :deep(.el-button) {
+    color: #6B7280;
+    border-color: #D1D5DB;
+    background-color: white;
+
+    &:hover {
+      color: #2563EB;
+      border-color: #2563EB;
+      background-color: #EFF6FF;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+  }
 }
 
 // 搜索结果
@@ -594,8 +649,9 @@ onMounted(() => {
   .count-number {
     font-size: 24px;
     font-weight: 700;
-    color: #204E9C;
+    color: #2563EB;
     margin: 0 4px;
+    font-family: 'DIN Alternate', Arial, sans-serif;
   }
 }
 
@@ -620,6 +676,23 @@ onMounted(() => {
   
   :deep(.el-select__wrapper) {
     width: 100%;
+  }
+
+  :deep(.el-select .el-input.is-focus .el-input__wrapper) {
+    box-shadow: 0 0 0 1px #2563EB inset;
+  }
+
+  :deep(.el-select-dropdown__item.selected) {
+    color: #2563EB;
+    font-weight: 500;
+  }
+
+  :deep(.el-select-dropdown__item:hover) {
+    background-color: #EFF6FF;
+  }
+
+  :deep(.el-select-dropdown__item.hover) {
+    background-color: #EFF6FF;
   }
 }
 
@@ -648,14 +721,17 @@ onMounted(() => {
   gap: 12px;
   justify-content: center;
 }
-
+// 热门标签样式
 .hot-tag {
   cursor: pointer;
   transition: all 0.3s ease;
+  background: #EFF6FF;
+  color: #2563EB;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    background: #DBEAFE;
   }
 }
 
@@ -761,7 +837,7 @@ onMounted(() => {
 }
 
 .card-content {
-  padding: 16px;
+  padding: 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -811,19 +887,19 @@ onMounted(() => {
 .card-info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 16px;
 
   .info-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     font-size: 14px;
     color: #6B7280;
     flex-wrap: nowrap;
 
     .el-icon {
-      color: #2563EB;
+      color: #9CA3AF;
       flex-shrink: 0;
     }
 
@@ -871,43 +947,25 @@ onMounted(() => {
 
   .el-tag {
     margin-right: 6px;
+    background: #EFF6FF;
+    color: #2563EB;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
   }
 }
 
 .card-footer {
-  margin-top: auto;
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-
-  .divider {
-    height: 1px;
-    background: #F3F4F6;
-    width: 100%;
-  }
-}
-
-.countdown-section {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
+  padding-top: 16px;
+  border-top: 1px solid #F3F4F6;
+  margin-top: auto;
+  min-height: 48px;
 }
 
-.countdown-label {
-  font-size: 12px;
-  color: #6B7280;
-}
 
-.countdown-days {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1F2937;
-}
-
-.countdown-unit {
-  font-size: 12px;
-  color: #6B7280;
-}
 
 .item-actions {
   display: flex;
@@ -923,17 +981,21 @@ onMounted(() => {
     font-weight: 500;
     border-radius: 8px;
     transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    background-color: #2563EB;
+    border-color: #2563EB;
+    color: white;
 
     &:hover {
+      background-color: #1D4ED8;
+      border-color: #1D4ED8;
+      color: white;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
 
     &:active {
       transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.3);
     }
   }
 }

@@ -14,6 +14,10 @@ const routes = [
     meta: { title: '新首页' }
   },
   {
+    path: '/homenew',
+    redirect: '/home-new'
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),

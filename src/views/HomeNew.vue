@@ -1,14 +1,83 @@
 <template>
   <div class="home-page">
+    <!-- 顶部背景区域 -->
+    <section class="top-background-section">
+      <div class="background-image"></div>
+      <div class="search-container">
+        <div class="search-content">
+          <h1>大都会展数智平台</h1>
+          <p class="search-guide">搜索展会、场馆、政策、招投标信息、展会服务等</p>
+          <div class="search-box">
+            <div class="advanced-search">
+              <el-input v-model="searchQuery" placeholder="请输入关键词" size="large" class="custom-input">
+                <template #prefix>
+                  <el-icon class="search-icon"><Search /></el-icon>
+                </template>
+              </el-input>
+              <el-button type="primary" size="large" class="custom-search-button" @click="handleSearch">
+                <span>搜索</span>
+                <el-icon class="button-icon"><ArrowRight /></el-icon>
+              </el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 平台数据展示 -->
+      <div class="platform-stats-section">
+        <div class="content-wrapper">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <el-icon><Calendar /></el-icon>
+              </div>
+              <div class="stat-number">1635</div>
+              <div class="stat-label">入驻展会</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <el-icon><OfficeBuilding /></el-icon>
+              </div>
+              <div class="stat-number">355</div>
+              <div class="stat-label">合作场馆</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <el-icon><Service /></el-icon>
+              </div>
+              <div class="stat-number">231</div>
+              <div class="stat-label">优质服务商</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <el-icon><DocumentCopy /></el-icon>
+              </div>
+              <div class="stat-number">128</div>
+              <div class="stat-label">政策资讯</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <el-icon><DataAnalysis /></el-icon>
+              </div>
+              <div class="stat-number">12392</div>
+              <div class="stat-label">招投标信息</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 轮播 Banner -->
     <section class="banner-section">
-      <el-carousel :interval="5000" :height="bannerHeight" arrow="always" indicator-position="outside">
-        <el-carousel-item v-for="item in bannerList" :key="item.id">
-          <div class="banner-item" @click="handleBannerClick(item)">
-            <img :src="item.image" :alt="item.title" />
-          </div>
-        </el-carousel-item>
-      </el-carousel>
+      <div class="content-wrapper">
+        <el-carousel :interval="5000" :height="bannerHeight" arrow="always" indicator-position="outside">
+          <el-carousel-item v-for="item in bannerList" :key="item.id">
+            <div class="banner-item" @click="handleBannerClick(item)">
+              <img :src="item.image" :alt="item.title" />
+            </div>
+          </el-carousel-item>
+        </el-carousel>
+      </div>
     </section>
 
     <!-- 展会日历 -->
@@ -348,6 +417,15 @@ import news5 from '@/assets/images/news/775f7b791cf821fc5e8523bd6f579bf8.jpg'
 import news6 from '@/assets/images/news/7f5395deb0786126f6105da8c4ec4cf2.jpg'
 
 const router = useRouter()
+
+// 搜索相关
+const searchQuery = ref('')
+const handleSearch = () => {
+  if (searchQuery.value) {
+    // 这里可以根据搜索内容跳转到相应的搜索页面
+    router.push(`/exhibition/search?keyword=${encodeURIComponent(searchQuery.value)}`)
+  }
+}
 
 // Banner高度自适应
 const bannerHeight = ref('380px')
@@ -821,6 +899,198 @@ const getStatusClass = (status) => {
   padding-top: 80px;
 }
 
+/* 顶部背景区域 */
+.top-background-section {
+  position: relative;
+  min-height: 700px;
+  overflow: hidden;
+  margin-bottom: 24px;
+
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+    z-index: 1;
+  }
+
+  .search-container {
+    position: relative;
+    z-index: 2;
+    padding: 100px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .search-content {
+      text-align: center;
+      max-width: 800px;
+      width: 100%;
+      margin-bottom: 40px;
+
+      h1 {
+        font-size: 56px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 16px;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        letter-spacing: -0.5px;
+      }
+
+      .search-guide {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 40px;
+        line-height: 1.4;
+      }
+
+      .search-box {
+        max-width: 700px;
+        margin: 0 auto;
+
+        .advanced-search {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 50px;
+          padding: 10px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+
+          &:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+          }
+
+          .custom-input {
+            flex: 1;
+
+            :deep(.el-input__wrapper) {
+              background: transparent !important;
+              border: none !important;
+              box-shadow: none !important;
+
+              :deep(.el-input__inner) {
+                font-size: 18px;
+                height: 50px;
+                line-height: 50px;
+                color: white;
+                background: transparent;
+
+                &::placeholder {
+                  color: rgba(255, 255, 255, 0.7);
+                }
+              }
+            }
+
+            .search-icon {
+              color: rgba(255, 255, 255, 0.8);
+              font-size: 20px;
+            }
+          }
+
+          .custom-search-button {
+            height: 50px;
+            padding: 0 36px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+            border: none;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+              box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+              transform: translateY(-1px);
+            }
+
+            .button-icon {
+              margin-left: 8px;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* 平台数据展示 */
+  .platform-stats-section {
+    position: relative;
+    z-index: 2;
+    margin-top: -80px;
+    padding: 0 20px;
+
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 32px 20px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+
+        :deep(.el-icon) {
+          font-size: 28px;
+          color: #2563EB;
+        }
+      }
+
+      .stat-number {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1E3A8A;
+        margin-bottom: 8px;
+        font-family: 'DIN Alternate', Arial, sans-serif;
+        line-height: 1;
+      }
+
+      .stat-label {
+        font-size: 16px;
+        color: #6B7280;
+        font-weight: 500;
+        line-height: 1.2;
+      }
+    }
+  }
+}
+
 .section-header {
   text-align: center;
   margin-bottom: 24px;
@@ -987,6 +1257,15 @@ const getStatusClass = (status) => {
 .banner-section {
   margin-bottom: 24px;
 
+  .content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  :deep(.el-carousel) {
+    max-width: 100%;
+  }
+
   :deep(.el-carousel__item) {
     overflow: hidden;
   }
@@ -996,12 +1275,14 @@ const getStatusClass = (status) => {
     width: 100%;
     height: 100%;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
   }
 
   .banner-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 }
 
