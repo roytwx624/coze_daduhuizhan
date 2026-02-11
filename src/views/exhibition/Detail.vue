@@ -104,7 +104,9 @@
 
       <!-- 快捷功能 -->
       <div class="quick-functions-section">
-        <h2><el-icon class="title-icon"><Grid /></el-icon> 快捷功能</h2>
+        <div class="section-header">
+          <h2 class="section-title">快捷功能</h2>
+        </div>
         <div class="functions-grid">
           <div class="function-card" v-for="card in buttonCards" :key="card.key">
             <div class="function-icon">
@@ -123,13 +125,11 @@
       <div class="combined-section">
         <!-- 展会资讯 -->
         <div class="news-section">
-          <div class="section-header calendar-header">
-            <div class="header-left">
-              <h2>展会资讯</h2>
-            </div>
-            <div class="header-right">
-              <router-link to="/news" class="view-more-link">查看更多</router-link>
-            </div>
+          <div class="section-header">
+            <h2 class="section-title">
+              展会资讯
+              <router-link to="/news" class="view-more-text">查看更多</router-link>
+            </h2>
           </div>
           <div class="news-list">
             <div class="news-item" v-for="(news, index) in exhibitionNews" :key="index">
@@ -173,7 +173,9 @@
 
       <!-- 资料下载 -->
       <div class="download-section">
-        <h2><el-icon class="title-icon"><Document /></el-icon> 资料下载</h2>
+        <div class="section-header">
+          <h2 class="section-title">资料下载</h2>
+        </div>
         <div class="download-grid">
           <div v-for="(item, index) in downloadItems" :key="index" class="download-item">
             <div class="download-icon">
@@ -698,9 +700,11 @@ const downloadItems = ref([
 }
 
 .news-section {
-  background: #F9FAFB;
-  padding: 24px 0;
-  margin-bottom: 24px;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 30px;
 }
 
 .news-list {
@@ -708,11 +712,7 @@ const downloadItems = ref([
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-auto-rows: 1fr;
   gap: 16px;
-  margin-bottom: 32px;
-  width: 100%;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 24px;
 }
 
 .news-item {
@@ -867,23 +867,17 @@ const downloadItems = ref([
 
 // 快捷功能
 .quick-functions-section {
-  background: white;
-  border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 40px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 24px 0;
-    color: #1F2937;
-  }
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 30px;
 
   .functions-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+    margin-top: 24px;
   }
 
   .function-card {
@@ -1043,23 +1037,17 @@ const downloadItems = ref([
   }
 
 .download-section {
-  background: white;
-  border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 40px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 24px 0;
-    color: #1F2937;
-  }
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 30px;
 
   .download-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
+    margin-top: 24px;
 
     .download-item {
       border: 1px solid #E5E7EB;

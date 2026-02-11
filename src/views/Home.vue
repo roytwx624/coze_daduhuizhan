@@ -1955,14 +1955,14 @@ const getStatusClass = (status) => {
 .news-item {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   background: white;
   padding: 20px;
   border-radius: 12px;
   transition: all 0.3s ease;
   cursor: pointer;
   height: 100%;
-  min-height: 480px;
+  min-height: 400px;
   width: 100%;
   box-sizing: border-box;
 
@@ -1976,10 +1976,10 @@ const getStatusClass = (status) => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   min-height: 0;
   width: 100%;
   min-width: 0;
+  gap: 4px;
 }
 
 .news-title {
@@ -1997,7 +1997,7 @@ const getStatusClass = (status) => {
 .news-description {
   font-size: 13px;
   color: #6B7280;
-  margin-bottom: 12px;
+  margin-bottom: 2px;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -2014,8 +2014,7 @@ const getStatusClass = (status) => {
   gap: 12px;
   font-size: 12px;
   color: #9CA3AF;
-  margin-top: auto;
-  padding-top: 8px;
+  padding-top: 2px;
   border-top: 1px solid #F3F4F6;
   width: 100%;
   flex-wrap: wrap;
@@ -2048,7 +2047,6 @@ const getStatusClass = (status) => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   min-height: 0;
 }
 
@@ -2066,7 +2064,7 @@ const getStatusClass = (status) => {
 .news-description {
   font-size: 13px;
   color: #6B7280;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
