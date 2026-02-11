@@ -1,0 +1,2118 @@
+<template>
+  <div class="home-page">
+    <!-- 轮播 Banner -->
+    <section class="banner-section">
+      <el-carousel :interval="5000" :height="bannerHeight" arrow="always" indicator-position="outside">
+        <el-carousel-item v-for="item in bannerList" :key="item.id">
+          <div class="banner-item" @click="handleBannerClick(item)">
+            <img :src="item.image" :alt="item.title" />
+          </div>
+        </el-carousel-item>
+      </el-carousel>
+    </section>
+
+    <!-- 展会日历 -->
+    <section class="calendar-section">
+      <div class="content-wrapper">
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>展会日历</h2>
+          </div>
+          <div class="calendar-controls">
+            <div class="city-selector">
+              <el-select v-model="selectedCity" placeholder="选择城市" size="small">
+                <el-option
+                  v-for="city in availableCities"
+                  :key="city.value"
+                  :label="city.label"
+                  :value="city.value"
+                />
+              </el-select>
+            </div>
+            <div class="month-switcher">
+              <el-button circle size="small" @click="prevMonth">
+                <el-icon><ArrowLeft /></el-icon>
+              </el-button>
+              <span class="current-date">{{ currentYear }}年{{ currentMonth }}月</span>
+              <el-button circle size="small" @click="nextMonth">
+                <el-icon><ArrowRight /></el-icon>
+              </el-button>
+            </div>
+          </div>
+        </div>
+        <div class="calendar-content">
+          <div class="calendar-stats">
+            <div class="stat-item">
+              <div class="stat-number">{{ totalExhibitions }}</div>
+              <div class="stat-label">本月累计展会</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-number">{{ totalVenues }}</div>
+              <div class="stat-label">覆盖场馆</div>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-header-row">
+              <div class="header-day">一</div>
+              <div class="header-day">二</div>
+              <div class="header-day">三</div>
+              <div class="header-day">四</div>
+              <div class="header-day">五</div>
+              <div class="header-day">六</div>
+              <div class="header-day">日</div>
+            </div>
+            <div 
+              v-for="day in calendarDays" 
+              :key="day.date"
+              class="calendar-day"
+              :class="{ 'has-event': day.events.length > 0, 'today': day.isToday }"
+            >
+              <div class="day-number">{{ day.day }}</div>
+              <div v-if="day.events.length > 0" class="event-count">{{ day.events.length }}</div>
+              
+              <!-- 悬停展示展会列表 -->
+              <div v-if="day.events.length > 0" class="day-events-popover" :class="{ 'four-columns': day.events.length > 4 }">
+                <div class="popover-header">
+                  <span class="date">{{ day.date }}</span>
+                  <span class="count">共 {{ day.events.length }} 场展会</span>
+                </div>
+                <div class="popover-content">
+                  <div v-for="event in day.events" :key="event.id" class="mini-event-card">
+                    <div class="event-name">
+                      <el-icon class="icon"><Calendar /></el-icon>
+                      {{ event.name }}
+                    </div>
+                    <div class="event-tags">
+                      <div class="tag-item">
+                        <el-icon><Place /></el-icon>
+                        <span>{{ event.venue }}</span>
+                      </div>
+                      <div class="tag-item">
+                        <el-icon><Location /></el-icon>
+                        <span>{{ event.city }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 展会推荐 -->
+    <section class="exhibition-section">
+      <div class="content-wrapper">
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>展会推荐</h2>
+          </div>
+          <div class="header-right">
+            <router-link to="/exhibition/search" class="view-more-link">查看更多</router-link>
+          </div>
+        </div>
+        <div class="exhibition-grid">
+          <div 
+            v-for="item in exhibitions" 
+            :key="item.id"
+            class="exhibition-card"
+            @click="goToDetail(item)"
+          >
+            <div class="card-image">
+              <img :src="item.poster" :alt="item.name" />
+              <div class="hot-badge">热门推荐</div>
+              <button class="follow-button" @click.stop="toggleFollow(item)">
+                <el-icon><Star /></el-icon>
+              </button>
+            </div>
+            <div class="card-content">
+              <div class="content-main">
+                <div class="info-area">
+                  <div class="title-section">
+                    <h3 class="card-title" :title="item.name">{{ item.name }}</h3>
+                    <span class="industry-tag">{{ item.industry }}</span>
+                  </div>
+                  <div class="card-info">
+                    <div class="info-item">
+                      <el-icon><Calendar /></el-icon>
+                      <span>{{ item.time }}</span>
+                    </div>
+                    <div class="info-item">
+                      <el-icon><Location /></el-icon>
+                      <span>{{ item.venue }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="countdown-section">
+                  <template v-if="getCountdown(item.time) > 0">
+                    <span class="countdown-label">距开展</span>
+                    <span class="countdown-days">{{ getCountdown(item.time) }}</span>
+                    <span class="countdown-unit">天</span>
+                  </template>
+                  <template v-else>
+                     <span class="countdown-label">已开展</span>
+                  </template>
+                </div>
+                <span class="status-tag" :class="getStatusClass(item.status)">{{ item.status }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 展会资讯 -->
+    <section class="news-section">
+      <div class="content-wrapper">
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>展会资讯</h2>
+          </div>
+          <div class="header-right">
+            <router-link to="/news" class="view-more-link">查看更多</router-link>
+          </div>
+        </div>
+        <div class="news-list">
+          <div 
+            v-for="news in newsList" 
+            :key="news.id"
+            class="news-item"
+          >
+            <div class="news-image">
+              <img :src="news.image" :alt="news.title" />
+            </div>
+            <div class="news-content">
+              <h3 class="news-title">{{ news.title }}</h3>
+              <p class="news-description">{{ news.description }}</p>
+              <div class="news-meta">
+                <span class="news-category">{{ news.category }}</span>
+                <span class="news-time">{{ news.time }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 核心功能 -->
+    <section class="core-section">
+      <div class="content-wrapper">
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>核心功能</h2>
+          </div>
+        </div>
+        <div class="digital-map-entry">
+          <div class="map-visual">
+            <el-icon :size="60"><Monitor /></el-icon>
+          </div>
+          <div class="map-content">
+            <h3>数字产业图谱</h3>
+            <p>全景展示会展产业链，精准匹配商机</p>
+          </div>
+          <div class="map-action">
+            <el-icon><ArrowRight /></el-icon>
+          </div>
+        </div>
+        <div class="core-functions">
+          <div v-for="func in coreFunctions" :key="func.id" class="function-card" @click="navigateTo(func.path)">
+            <div class="func-icon-wrapper">
+              <component :is="func.icon" />
+            </div>
+            <div class="function-content">
+              <h4>{{ func.title }}</h4>
+              <p>{{ func.desc }}</p>
+            </div>
+            <div class="hover-arrow">
+              <el-icon><Right /></el-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 快捷服务 -->
+    <section class="service-section">
+      <div class="content-wrapper">
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>快捷服务</h2>
+          </div>
+        </div>
+        <div class="service-grid">
+          <div 
+            v-for="(service, index) in quickServices" 
+            :key="service.id"
+            class="service-card"
+            @click="navigateTo(service.path)"
+          >
+            <div class="card-decoration"></div>
+            <div class="service-icon-box">
+              <el-icon><component :is="service.icon" /></el-icon>
+            </div>
+            <div class="service-info">
+              <h4>{{ service.title }}</h4>
+              <p>{{ service.desc }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 展会政策 -->
+    <section class="policy-section">
+      <div class="content-wrapper">
+        <div class="section-header calendar-header">
+          <div class="header-left">
+            <h2>展会政策</h2>
+          </div>
+          <div class="header-right">
+            <router-link to="/policy/search" class="view-more-link">查看更多</router-link>
+          </div>
+        </div>
+        <div class="policy-list">
+          <div v-for="policy in policies" :key="policy.id" class="policy-item">
+            <div class="policy-icon">
+              <el-icon :size="20"><Document /></el-icon>
+            </div>
+            <div class="policy-content">
+              <div class="policy-header-row">
+                <h3 class="policy-title">{{ policy.title }}</h3>
+                <span class="policy-tag">{{ policy.category }}</span>
+              </div>
+              <p class="policy-summary">{{ policy.summary }}</p>
+              <div class="policy-meta">
+                <span class="meta-item">
+                  <el-icon><HomeFilled /></el-icon>
+                  {{ policy.publisher }}
+                </span>
+                <span class="meta-item">
+                  <el-icon><DocumentCopy /></el-icon>
+                  {{ policy.documentNumber }}
+                </span>
+              </div>
+            </div>
+            <div class="policy-date-styled">
+              <span class="day">{{ policy.publishTime.split('-')[2] }}</span>
+              <span class="ym">{{ policy.publishTime.slice(0, 7).replace('-', '.') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { 
+  Calendar, 
+  Location, 
+  Document, 
+  OfficeBuilding, 
+  Clock, 
+  DataAnalysis,
+  Search,
+  MapLocation,
+  DocumentCopy,
+  Service,
+  Ticket,
+  Place,
+  CollectionTag,
+  ArrowRight,
+  Right,
+  Trophy,
+  LocationInformation,
+  ArrowLeft,
+  Monitor,
+  VideoCamera,
+  ShoppingCart,
+  DocumentChecked,
+  HomeFilled
+} from '@element-plus/icons-vue'
+import { exhibitions, policies, calendarData } from '@/data/mockData'
+import banner1 from '@/assets/images/banner/banner1.png'
+import banner2 from '@/assets/images/banner/banner2.png'
+import banner3 from '@/assets/images/banner/banner3.png'
+import banner4 from '@/assets/images/banner/banner4.png'
+import news1 from '@/assets/images/news/0314ae994133da94a4118c8d2819a36a.jpg'
+import news2 from '@/assets/images/news/176d5dfe39988556530e9c2684f3e077.jpg'
+import news3 from '@/assets/images/news/196ba9c1b5019a3010645bfb041e209a.png'
+import news4 from '@/assets/images/news/756e00e92139cd197c624399c5587656.jpg'
+import news5 from '@/assets/images/news/775f7b791cf821fc5e8523bd6f579bf8.jpg'
+import news6 from '@/assets/images/news/7f5395deb0786126f6105da8c4ec4cf2.jpg'
+
+const router = useRouter()
+
+// Banner高度自适应
+const bannerHeight = ref('380px')
+
+const updateBannerHeight = () => {
+  const width = window.innerWidth
+  // 保持 1920:380 的比例
+  const height = Math.floor(width * (380 / 1920))
+  // 设置最大高度为 380px (当宽度 > 1920 时)
+  bannerHeight.value = (width > 1920 ? 380 : height) + 'px'
+}
+
+onMounted(() => {
+  updateBannerHeight()
+  window.addEventListener('resize', updateBannerHeight)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateBannerHeight)
+})
+
+// Banner数据
+const bannerList = ref([
+  {
+    id: 1,
+    title: '中国制冷展 2026',
+    description: '2026年4月8-10日 中国国际展览中心（顺义馆）',
+    image: banner1,
+    link: '/exhibition/detail/1'
+  },
+  {
+    id: 2,
+    title: '北京插画艺术展',
+    description: 'GAF 2026',
+    image: banner2,
+    link: '/exhibition/detail/2'
+  },
+  {
+    id: 3,
+    title: '第66届中国特许加盟展',
+    description: '2026.5.29-31 北京国家会议中心',
+    image: banner3,
+    link: '/exhibition/detail/3'
+  },
+  {
+    id: 4,
+    title: '第二十七届中国北京国际科技产业博览会',
+    description: 'THE 27TH CHINA BEIJING INTERNATIONAL HIGH-TECH EXPO',
+    image: banner4,
+    link: '/exhibition/detail/4'
+  }
+])
+
+// 城市选择数据
+const cities = ref([
+  { value: 'all', label: '全国' },
+  { value: 'beijing', label: '北京' },
+  { value: 'shanghai', label: '上海' },
+  { value: 'guangzhou', label: '广州' },
+  { value: 'shenzhen', label: '深圳' },
+  { value: 'hangzhou', label: '杭州' },
+  { value: 'chengdu', label: '成都' },
+  { value: 'wuhan', label: '武汉' }
+])
+const selectedCity = ref('all')
+
+// 动态城市选项，只包含当月有展会的城市
+const availableCities = computed(() => {
+  const year = currentYear.value
+  const month = String(currentMonth.value).padStart(2, '0')
+  const citySet = new Set()
+  
+  // 收集当月所有展会的城市
+  Object.keys(calendarData.events).forEach(dateStr => {
+    if (dateStr.startsWith(`${year}-${month}`)) {
+      calendarData.events[dateStr].forEach(event => {
+        if (event.city) {
+          citySet.add(event.city)
+        }
+      })
+    }
+  })
+  
+  // 构建城市选项列表
+  const cityOptions = [{ value: 'all', label: '全国' }]
+  const cityMap = {
+    '北京市': { value: 'beijing', label: '北京' },
+    '上海市': { value: 'shanghai', label: '上海' },
+    '广州市': { value: 'guangzhou', label: '广州' },
+    '深圳市': { value: 'shenzhen', label: '深圳' },
+    '杭州市': { value: 'hangzhou', label: '杭州' },
+    '成都市': { value: 'chengdu', label: '成都' },
+    '武汉市': { value: 'wuhan', label: '武汉' },
+    '哈尔滨市': { value: 'harbin', label: '哈尔滨' },
+    '西安市': { value: 'xian', label: '西安' },
+    '昆明市': { value: 'kunming', label: '昆明' },
+    '乌鲁木齐市': { value: 'urumqi', label: '乌鲁木齐' },
+    '重庆市': { value: 'chongqing', label: '重庆' },
+    '济南市': { value: 'jinan', label: '济南' },
+    '温州市': { value: 'wenzhou', label: '温州' },
+    '台州市': { value: 'taizhou', label: '台州' },
+    '合肥市': { value: 'hefei', label: '合肥' },
+    '南安市': { value: 'nanan', label: '南安' },
+    '抚州市': { value: 'fuzhou', label: '抚州' },
+    '常州市': { value: 'changzhou', label: '常州' },
+    '中山市': { value: 'zhongshan', label: '中山' },
+    '沈阳市': { value: 'shenyang', label: '沈阳' },
+    '郑州市': { value: 'zhengzhou', label: '郑州' },
+    '东莞市': { value: 'dongguan', label: '东莞' },
+    '南京市': { value: 'nanjing', label: '南京' }
+  }
+  
+  // 添加当月有展会的城市
+  citySet.forEach(cityName => {
+    if (cityMap[cityName]) {
+      cityOptions.push(cityMap[cityName])
+    }
+  })
+  
+  return cityOptions
+})
+
+// 日历数据
+const calendarDays = ref([])
+const selectedDay = reactive({ date: '', events: [] })
+// 设置默认日期为当前实际日期
+const currentDate = ref(new Date())
+const currentYear = computed(() => currentDate.value.getFullYear())
+const currentMonth = computed(() => currentDate.value.getMonth() + 1)
+
+// 动态统计数据
+const totalExhibitions = computed(() => {
+  const year = currentYear.value
+  const month = String(currentMonth.value).padStart(2, '0')
+  let count = 0
+  
+  Object.keys(calendarData.events).forEach(dateStr => {
+    if (dateStr.startsWith(`${year}-${month}`)) {
+      let events = calendarData.events[dateStr]
+      
+      // 根据选中的城市筛选展会
+      if (selectedCity.value !== 'all') {
+        const cityMap = {
+          'beijing': '北京市',
+          'shanghai': '上海市',
+          'guangzhou': '广州市',
+          'shenzhen': '深圳市',
+          'hangzhou': '杭州市',
+          'chengdu': '成都市',
+          'wuhan': '武汉市',
+          'harbin': '哈尔滨市',
+          'xian': '西安市',
+          'kunming': '昆明市',
+          'urumqi': '乌鲁木齐市',
+          'chongqing': '重庆市',
+          'jinan': '济南市',
+          'wenzhou': '温州市',
+          'taizhou': '台州市',
+          'hefei': '合肥市',
+          'nanan': '南安市',
+          'fuzhou': '抚州市',
+          'changzhou': '常州市',
+          'zhongshan': '中山市',
+          'shenyang': '沈阳市',
+          'zhengzhou': '郑州市',
+          'dongguan': '东莞市',
+          'nanjing': '南京市'
+        }
+        const cityName = cityMap[selectedCity.value]
+        if (cityName) {
+          events = events.filter(event => event.city === cityName)
+        }
+      }
+      
+      count += events.length
+    }
+  })
+  
+  return count
+})
+
+const totalVenues = computed(() => {
+  const year = currentYear.value
+  const month = String(currentMonth.value).padStart(2, '0')
+  const venueSet = new Set()
+  
+  Object.keys(calendarData.events).forEach(dateStr => {
+    if (dateStr.startsWith(`${year}-${month}`)) {
+      let events = calendarData.events[dateStr]
+      
+      // 根据选中的城市筛选展会
+      if (selectedCity.value !== 'all') {
+        const cityMap = {
+          'beijing': '北京市',
+          'shanghai': '上海市',
+          'guangzhou': '广州市',
+          'shenzhen': '深圳市',
+          'hangzhou': '杭州市',
+          'chengdu': '成都市',
+          'wuhan': '武汉市',
+          'harbin': '哈尔滨市',
+          'xian': '西安市',
+          'kunming': '昆明市',
+          'urumqi': '乌鲁木齐市',
+          'chongqing': '重庆市',
+          'jinan': '济南市',
+          'wenzhou': '温州市',
+          'taizhou': '台州市',
+          'hefei': '合肥市',
+          'nanan': '南安市',
+          'fuzhou': '抚州市',
+          'changzhou': '常州市',
+          'zhongshan': '中山市',
+          'shenyang': '沈阳市',
+          'zhengzhou': '郑州市',
+          'dongguan': '东莞市'
+        }
+        const cityName = cityMap[selectedCity.value]
+        if (cityName) {
+          events = events.filter(event => event.city === cityName)
+        }
+      }
+      
+      // 添加实际场馆
+      events.forEach(event => {
+        if (event.venue) {
+          venueSet.add(event.venue)
+        }
+      })
+    }
+  })
+  
+  return venueSet.size
+})
+
+const prevMonth = () => {
+  currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() - 1, 1)
+  generateCalendarDays()
+}
+
+const nextMonth = () => {
+  currentDate.value = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth() + 1, 1)
+  generateCalendarDays()
+}
+
+const generateCalendarDays = () => {
+  const year = currentYear.value
+  const month = currentDate.value.getMonth()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const today = new Date()
+  
+  const days = []
+  
+  // Calculate the day of the week for the first day of the month (0 = Sunday, 1 = Monday, ...)
+  const firstDayOfWeek = new Date(year, month, 1).getDay()
+  // Adjust to make Monday = 0, Sunday = 6 (since our calendar starts on Monday)
+  const startOffset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1
+
+  // Add empty placeholders for days before the 1st
+  for (let i = 0; i < startOffset; i++) {
+    days.push({
+      day: '',
+      date: `prev-${i}`,
+      events: [],
+      isToday: false,
+      isEmpty: true
+    })
+  }
+
+  for (let i = 1; i <= daysInMonth; i++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`
+    let events = calendarData.events[dateStr] || []
+    
+    // 根据选中的城市筛选展会
+      if (selectedCity.value !== 'all') {
+        const cityMap = {
+          'beijing': '北京市',
+          'shanghai': '上海市',
+          'guangzhou': '广州市',
+          'shenzhen': '深圳市',
+          'hangzhou': '杭州市',
+          'chengdu': '成都市',
+          'wuhan': '武汉市',
+          'harbin': '哈尔滨市',
+          'xian': '西安市',
+          'kunming': '昆明市',
+          'urumqi': '乌鲁木齐市',
+          'chongqing': '重庆市',
+          'jinan': '济南市',
+          'wenzhou': '温州市',
+          'taizhou': '台州市',
+          'hefei': '合肥市',
+          'nanan': '南安市',
+          'fuzhou': '抚州市',
+          'changzhou': '常州市',
+          'zhongshan': '中山市',
+          'shenyang': '沈阳市',
+          'zhengzhou': '郑州市',
+          'dongguan': '东莞市'
+        }
+        const cityName = cityMap[selectedCity.value]
+        if (cityName) {
+          events = events.filter(event => event.city === cityName)
+        }
+      }
+    
+    days.push({
+      day: i,
+      date: dateStr,
+      events: events,
+      isToday: today.getDate() === i && today.getMonth() === month && today.getFullYear() === year,
+      isEmpty: false
+    })
+  }
+
+  // Calculate remaining cells to fill the last row (7 columns)
+  const totalCells = days.length
+  const remainingCells = 7 - (totalCells % 7)
+  if (remainingCells < 7) {
+    for (let i = 0; i < remainingCells; i++) {
+      days.push({ day: '', date: `next-${i}`, isEmpty: true, events: [] })
+    }
+  }
+
+  calendarDays.value = days
+}
+
+generateCalendarDays()
+
+// 监听城市选择变化，重新生成日历数据
+watch(selectedCity, () => {
+  generateCalendarDays()
+})
+
+// 监听月份变化，重置城市选择为全国
+watch([currentYear, currentMonth], () => {
+  selectedCity.value = 'all'
+  generateCalendarDays()
+})
+
+const showEvents = (day) => {
+  selectedDay.date = day.date
+  selectedDay.events = day.events
+}
+
+// 核心功能
+const coreFunctions = [
+  { id: 1, title: '找展会', desc: '海量展会信息', icon: Search, path: '/exhibition/search' },
+  { id: 2, title: '找场馆', desc: '优质场馆资源', icon: MapLocation, path: '/venue/search' },
+  { id: 3, title: '找政策', desc: '最新政策动态', icon: DocumentCopy, path: '/policy/search' },
+  { id: 4, title: '找服务', desc: '专业展会服务', icon: Service, path: '/service/search' }
+]
+
+// 快捷服务
+const quickServices = [
+  { id: 1, title: '展会文集', desc: '行业报告下载', icon: Document, path: '/collection' },
+  { id: 2, title: '视频中心', desc: '精彩回放观看', icon: VideoCamera, path: '/video' },
+  { id: 3, title: '精选商城', desc: '展会周边购买', icon: ShoppingCart, path: '/mall' },
+  { id: 4, title: '大型活动报批', desc: '活动报批服务', icon: DocumentChecked, path: '/policy/apply' }
+]
+
+// 展会资讯
+const newsList = [
+  {
+    id: 1,
+    title: '2025年中国会展行业十大新闻，重磅揭晓',
+    description: '"2025年中国会展行业十大新闻"评选活动于12月30日揭晓。活动由中国经济网发起，邀请10位会展专家评选和线上公开投票，以影响力和传播力为标准，公开评选的结果。"上海合作组织峰会在天津举行，习近平主持会议并出席系列活动...',
+    image: news4,
+    category: '会展活动',
+    time: '2025-12-31 09:27:04',
+    views: '249'
+  },
+  {
+    id: 2,
+    title: '2025中国会展人大会今日开幕！2000+从业者齐聚天津，共话会展破局与远航',
+    description: '11月25日，2025中国会展人大会在天津正式启幕。2000余名来自全国各地的会展从业者齐聚"北方会展之都"，以"创新协同·多元融合"为核心，共探行业发展新路径，为京津冀会展业融合注入新动能。一、群贤汇聚：政企学大咖共筑行...',
+    image: news3,
+    category: '会展活动',
+    time: '2025-11-25 15:36:30',
+    views: '300'
+  },
+  {
+    id: 3,
+    title: 'DeepSeek与会展领域的深度融合，未来可期！',
+    description: '在人工智能技术渗透渗透各行各业的2025年，会展行业正经历一场由技术驱动的深刻变革。作为AGI（通用人工智能）领域的黑马，DeepSeek凭借其自然语言处理、多模态融合技术及强大的数据分析能力，正在重新定义会展行业的价值...',
+    image: news6,
+    category: 'DeepSeek',
+    time: '2025-02-17 19:15:05',
+    views: '872'
+  },
+  {
+    id: 4,
+    title: '数字化的展览充满未来感，非常值得一看！',
+    description: '"数字化的展览充满未来感，非常值得一看！"春节期间，在位于江苏省南京市德基广场的德基艺术博物馆，不少市民、游客参观了当代数字艺术领军人物Beeple的全球首个个展——"Beeple：来自人造未来的故事"。自去年11月13日启幕...',
+    image: news1,
+    category: '数字化展会',
+    time: '2025-02-12 13:49:25',
+    views: '478'
+  },
+  {
+    id: 5,
+    title: '厦门市商务局：做大做强会展产业',
+    description: '2025年是"十四五"规划的收官之年，也是厦门全方位推进高质量发展、加快构建新发展格局节点城市的关键一年，2月10日的厦门全市商务工作会议对新一年工作给出了答案，提出了新要求。2025年，外部环境变化带来的不利影响加深...',
+    image: news2,
+    category: '厦门会展产业',
+    time: '2025-02-12 13:21:19',
+    views: '556'
+  },
+  {
+    id: 6,
+    title: '为会展经济高质量发展，加油鼓劲建言献策！',
+    description: '海内外会展业精英日前因一场盛会相聚天津，为寒冷的冬日带来了勃勃生机。第二十届中国会展经济国际合作论坛（CEFCO）首次落地天津，搭平台、促合作、谋发展……来自20个国家和地区的600余位会展业人士，为会展经济高质量...',
+    image: news5,
+    category: '会展经济',
+    time: '2025-02-11 16:41:47',
+    views: '283'
+  }
+]
+
+const handleBannerClick = (item) => {
+  router.push(item.link)
+}
+// 跳转到展会详情
+const goToDetail = (item) => {
+  router.push(`/exhibition/detail/${item.id}`)
+}
+
+// 切换关注状态
+const toggleFollow = (item) => {
+  item.followed = !item.followed
+  // 这里可以添加关注/取消关注的API调用
+  console.log(item.followed ? '关注了展会' : '取消关注展会', item.name)
+}
+
+const navigateTo = (path) => {
+  router.push(path)
+}
+
+const getCountdown = (timeStr) => {
+  if (!timeStr) return 0
+  const startDate = timeStr.split('至')[0]
+  const target = new Date(startDate).getTime()
+  const now = new Date().getTime()
+  const diff = target - now
+  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+}
+
+const getExhibitionDateParts = (timeStr) => {
+  if (!timeStr) return { day: '', ym: '' }
+  const startDate = timeStr.split('至')[0]
+  const date = new Date(startDate)
+  const day = String(date.getDate()).padStart(2, '0')
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  return { day, ym: `${year}.${month}` }
+}
+
+const getStatusClass = (status) => {
+  const classMap = {
+    '即将开展': 'status-upcoming',
+    '报名中': 'status-booking',
+    '筹备中': 'status-preparing'
+  }
+  return classMap[status] || ''
+}
+</script>
+
+<style lang="scss" scoped>
+.home-page {
+  /* 添加顶部内边距，确保banner从header底部开始显示，不被遮挡 */
+  padding-top: 80px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 8px;
+    display: inline-block;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 4px;
+      background: #2563EB;
+      border-radius: 2px;
+    }
+  }
+
+  .section-desc {
+    font-size: 16px;
+    color: #6B7280;
+    margin-top: 12px;
+  }
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    
+    h2 {
+      margin-bottom: 0;
+      text-align: left;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1E3A8A;
+      background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      padding-left: 12px;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%);
+        border-radius: 2px;
+      }
+      
+      &::after {
+        display: none;
+      }
+    }
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .view-more-link {
+    font-size: 14px;
+    color: #3B82F6;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: #1D4ED8;
+      text-decoration: underline;
+    }
+    
+    &::after {
+      content: '→';
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover::after {
+      transform: translateX(4px);
+    }
+  }
+
+  .calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .city-selector {
+    :deep(.el-select) {
+      width: 120px;
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border: none;
+      background: white;
+      
+      :deep(.el-input__wrapper) {
+        border-radius: 30px;
+        box-shadow: none;
+        border: 1px solid #E5E7EB;
+        padding: 6px 16px;
+        
+        &:hover {
+          border-color: #2563EB;
+        }
+        
+        :deep(.el-input__inner) {
+          font-size: 14px;
+          font-weight: 500;
+          color: #1F2937;
+        }
+        
+        :deep(.el-select__caret) {
+          color: #6B7280;
+        }
+      }
+    }
+  }
+
+  .month-switcher {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 6px 12px;
+    border-radius: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    .current-date {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1F2937;
+      min-width: 100px;
+      text-align: center;
+      font-feature-settings: "tnum";
+    }
+  }
+}
+
+// Banner
+.banner-section {
+  margin-bottom: 24px;
+
+  :deep(.el-carousel__item) {
+    overflow: hidden;
+  }
+
+  .banner-item {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .banner-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// 展会日历
+.calendar-section {
+  background: #F9FAFB;
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.calendar-content {
+  display: flex;
+  gap: 24px;
+  align-items: stretch; /* 确保高度一致 */
+}
+
+.calendar-stats {
+  display: flex;
+  flex-direction: column; /* 改为垂直排列 */
+  justify-content: center;
+  gap: 24px;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  min-width: 200px; /* 调整宽度 */
+
+  .stat-item {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2563EB;
+    margin-bottom: 8px;
+    font-family: 'DIN Alternate', Arial, sans-serif;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: #6B7280;
+  }
+
+  .stat-divider {
+    width: 100%;
+    height: 1px;
+    background: #E5E7EB;
+    margin: 12px 0;
+  }
+}
+
+.calendar-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  align-content: start;
+}
+
+.calendar-header-row {
+  display: contents; /* Allows children to participate in the grid layout */
+
+  .header-day {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6B7280;
+    background: #F3F4F6;
+    border-radius: 8px;
+  }
+}
+
+.calendar-day {
+  height: 60px; /* 进一步降低高度 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    background: #2563EB;
+    color: white;
+    transform: translateY(-2px);
+    z-index: 100;
+
+    .day-events-popover {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  &.has-event {
+    background: #EFF6FF;
+    color: #2563EB;
+    font-weight: 600;
+
+    &:hover {
+      background: #2563EB;
+      color: white;
+    }
+  }
+
+  &.today {
+    border: 2px solid #2563EB;
+  }
+
+  .event-count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    background: #2563EB !important;
+    color: white;
+    font-size: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.day-events-popover {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  min-width: 300px;
+  max-width: 1000px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  margin-bottom: 16px;
+  cursor: default;
+  color: #374151;
+  text-align: left;
+  z-index: 1000;
+  transition: all 0.3s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: white;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .popover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #E5E7EB;
+    
+    .date {
+      font-weight: 600;
+      color: #1F2937;
+    }
+    
+    .count {
+      font-size: 12px;
+      color: #6B7280;
+    }
+  }
+
+  .popover-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .mini-event-card {
+    padding: 8px;
+    background: #F9FAFB;
+    border-radius: 8px;
+    border-left: 3px solid #2563EB;
+
+    .event-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1F2937;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.2;
+
+      .icon {
+        color: #2563EB;
+        font-size: 12px;
+      }
+    }
+
+    .event-tags {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      margin-top: 2px;
+    }
+
+    .tag-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      color: #6B7280;
+
+      .el-icon {
+        color: #9CA3AF;
+        font-size: 10px;
+      }
+    }
+
+    .industry-badge {
+      font-size: 10px;
+      padding: 1px 6px;
+      background: #F3F4F6;
+      color: #4B5563;
+      border-radius: 3px;
+    }
+  }
+
+  &.four-columns {
+    width: 1000px;
+
+    .popover-content {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .mini-event-card {
+      padding: 6px;
+
+      .event-name {
+        font-size: 12px;
+        margin-bottom: 4px;
+
+        .icon {
+          font-size: 11px;
+        }
+      }
+
+      .tag-item {
+        font-size: 10px;
+
+        .el-icon {
+          font-size: 9px;
+        }
+      }
+    }
+  }
+}
+
+// 展会推荐
+.exhibition-section {
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.exhibition-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 1920*1080一行4个 */
+  gap: 24px;
+}
+
+.exhibition-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.card-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  .hot-badge {
+     position: absolute;
+     top: 12px;
+     right: 12px;
+     background: linear-gradient(135deg, #3B82F6, #2563EB); /* Blue Gradient */
+     color: white;
+     padding: 4px 12px;
+     border-radius: 20px 0 20px 0;
+     font-size: 12px;
+     font-weight: 600;
+     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+     z-index: 10;
+   }
+
+   .follow-button {
+     position: absolute;
+     bottom: 12px;
+     right: 12px;
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     background: rgba(255, 255, 255, 0.9);
+     border: none;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+     cursor: pointer;
+     transition: all 0.3s ease;
+     z-index: 10;
+
+     .el-icon {
+       font-size: 20px;
+       color: #9CA3AF;
+       transition: color 0.3s ease;
+     }
+
+     &:hover {
+       transform: translateY(-2px);
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+       .el-icon {
+         color: #2563EB;
+       }
+     }
+   }
+}
+
+  .card-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .title-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1F2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+
+  .industry-tag {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #EFF6FF;
+    color: #2563EB;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #6B7280;
+
+      .el-icon {
+        color: #9CA3AF;
+      }
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+    margin-top: auto;
+    /* Ensure consistent spacing */
+    min-height: 48px; 
+  }
+
+  .countdown-section {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    
+    .countdown-label {
+      font-size: 12px;
+      color: #6B7280;
+    }
+    
+    .countdown-days {
+      font-size: 24px; /* Increased size */
+      font-weight: 700;
+      color: #2563EB; /* Blue */
+      font-family: 'DIN Alternate', sans-serif;
+      line-height: 1;
+    }
+    
+    .countdown-unit {
+      font-size: 12px;
+      color: #2563EB; /* Blue */
+      font-weight: 500;
+    }
+  }
+
+  .status-tag {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+
+    &.status-upcoming {
+      background: #EFF6FF; /* Blue bg */
+      color: #2563EB; /* Blue text */
+    }
+
+    &.status-booking {
+      background: rgba(5, 150, 105, 0.1);
+      color: #059669;
+    }
+
+    &.status-preparing {
+      background: rgba(245, 158, 11, 0.1);
+      color: #F59E0B;
+    }
+  }
+
+// 展会政策
+.policy-section {
+  background: #F9FAFB;
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.policy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.policy-item {
+  display: flex;
+  gap: 20px;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateX(4px);
+  }
+}
+
+.policy-icon {
+  width: 60px;
+  height: 60px;
+  background: #EFF6FF;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563EB;
+  font-size: 32px;
+  flex-shrink: 0;
+  margin: auto 0;
+}
+
+.policy-content {
+  flex: 1;
+}
+
+.policy-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.policy-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 0;
+}
+
+.policy-tag {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #EFF6FF;
+    color: #2563EB;
+    font-weight: 500;
+  }
+
+.policy-summary {
+  font-size: 14px;
+  color: #6B7280;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.policy-meta {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 24px;
+        margin-top: auto; /* Ensure it stays at the bottom if content is short */
+
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 13px;
+          color: #9CA3AF;
+
+          .el-icon {
+            color: #2563EB;
+          }
+        }
+
+        .document-number {
+          font-size: 13px;
+          color: #6B7280;
+        }
+      }
+
+  .policy-date-styled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-left: 20px;
+    border-left: 1px solid #E5E7EB;
+    margin-left: 12px;
+    min-width: 80px;
+
+    .day {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2563EB;
+      line-height: 1;
+      font-family: 'DIN Alternate', sans-serif;
+      margin-bottom: 4px;
+    }
+
+    .ym {
+      font-size: 13px;
+      color: #6B7280;
+      font-weight: 500;
+    }
+  }
+
+.section-footer {
+  text-align: center;
+}
+
+// 核心功能
+.core-section {
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.digital-map-entry {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+  color: white;
+  padding: 32px;
+  border-radius: 20px;
+  margin-bottom: 32px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(30, 58, 138, 0.3);
+  }
+
+  .map-visual {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .map-content {
+    flex: 1;
+
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-size: 15px;
+      opacity: 0.9;
+    }
+  }
+
+  .map-action {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s ease;
+  }
+
+  &:hover .map-action {
+    background: white;
+    color: #2563EB;
+    transform: translateX(8px);
+  }
+}
+
+.core-functions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.function-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Left align content */
+    justify-content: space-between;
+    text-align: left;
+    gap: 12px;
+    background: linear-gradient(135deg, #1E3A8A, #3B82F6); /* Matched with map entry */
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 100%;
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+
+    &:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 30px -10px rgba(30, 58, 138, 0.4);
+      
+      .func-icon-wrapper {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+        transform: scale(1.1);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+      
+      .hover-arrow {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Decorative circle */
+    &::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .func-icon-wrapper {
+      width: 56px; /* Smaller icon wrapper */
+      height: 56px;
+      background: rgba(255, 255, 255, 0.1); /* Frosted glass */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px; /* Smaller icon size */
+      transition: all 0.4s ease;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .function-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+
+      h4 {
+        font-size: 22px;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      p {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+        margin: 0;
+        max-width: 100%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    .hover-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: white;
+      color: #2563EB;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 32px;
+      right: 32px;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+  }
+
+// 快捷服务
+.service-section {
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.service-card {
+  position: relative;
+  background: white;
+  padding: 32px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  border: 1px solid #E5E7EB;
+  min-height: 200px;
+  overflow: hidden;
+
+  .card-decoration {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: #EFF6FF;
+    border-radius: 50%;
+    z-index: 0;
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.1);
+    border-color: #3B82F6;
+
+    .card-decoration {
+      transform: scale(1.2);
+    }
+    
+    .service-icon-box {
+      transform: scale(1.1);
+    }
+  }
+
+  .service-icon-box {
+    position: relative;
+    z-index: 1;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563EB;
+    font-size: 40px;
+    transition: all 0.3s ease;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .service-info {
+    position: relative;
+    z-index: 1;
+    flex: unset;
+
+    h4 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1F2937;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 13px;
+      color: #6B7280;
+      line-height: 1.5;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .exhibition-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .core-functions,
+  .service-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .exhibition-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calendar-content {
+    flex-direction: column;
+  }
+
+  .calendar-stats {
+    width: 100%;
+  }
+
+  .digital-map-entry {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+// 展会资讯
+.news-section {
+  background: #F9FAFB;
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.news-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.news-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  min-height: 480px;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+  }
+}
+
+.news-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.news-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.news-description {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #F3F4F6;
+  width: 100%;
+  flex-wrap: wrap;
+
+  .news-category {
+    background: #EFF6FF;
+    color: #2563EB;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 11px;
+  }
+
+  .news-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .news-views {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.news-image {
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  min-width: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-width: 0;
+  }
+}
+
+.btn-outline {
+  display: inline-block;
+  padding: 10px 24px;
+  border: 1px solid #2563EB;
+  color: #2563EB;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #2563EB;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+}
+
+@media (max-width: 1024px) {
+  .news-list {
+    grid-template-columns: 1fr;
+  }
+
+  .news-item {
+    flex-direction: row;
+    gap: 16px;
+
+    .news-image {
+      width: 180px;
+      height: 100px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .exhibition-grid,
+  .core-functions,
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .news-item {
+    flex-direction: column;
+
+    .news-image {
+      width: 100%;
+      height: 140px;
+    }
+  }
+
+  .section-header h2 {
+    font-size: 28px;
+  }
+}
+</style>

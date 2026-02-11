@@ -123,27 +123,26 @@
       <div class="combined-section">
         <!-- 展会资讯 -->
         <div class="news-section">
-          <h2 class="section-title">展会资讯</h2>
+          <div class="section-header calendar-header">
+            <div class="header-left">
+              <h2>展会资讯</h2>
+            </div>
+            <div class="header-right">
+              <router-link to="/news" class="view-more-link">查看更多</router-link>
+            </div>
+          </div>
           <div class="news-list">
             <div class="news-item" v-for="(news, index) in exhibitionNews" :key="index">
-              <div class="news-icon">
-                <el-icon :size="28"><Document /></el-icon>
+              <div class="news-image">
+                <img src="/src/assets/images/exhibition_photo/640.png" :alt="news.title" />
               </div>
               <div class="news-content">
-                <div class="news-header">
-                  <h3 class="news-title">{{ news.title }}</h3>
-                </div>
-                <p class="news-desc">{{ news.desc }}</p>
+                <h3 class="news-title">{{ news.title }}</h3>
+                <p class="news-description">{{ news.desc }}</p>
                 <div class="news-meta">
-                  <div class="news-source">
-                    <el-icon><User /></el-icon>
-                    来源：{{ news.source }}
-                  </div>
+                  <span class="news-category">展会资讯</span>
+                  <span class="news-time">{{ news.time }}</span>
                 </div>
-              </div>
-              <div class="news-date-styled">
-                <span class="day">{{ news.time.split('-')[2].split(' ')[0] }}</span>
-                <span class="ym">{{ news.time.split('-')[0] }}.{{ news.time.split('-')[1] }}</span>
               </div>
             </div>
           </div>
@@ -215,6 +214,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { 
   Calendar, 
   Location, 
@@ -229,6 +229,8 @@ import {
   OfficeBuilding,
   Grid
 } from '@element-plus/icons-vue'
+
+const router = useRouter()
 
 // 右上角按钮数据
 const topButtons = ref([
@@ -286,21 +288,27 @@ const buttonCards = ref([
 // 展会资讯数据
 const exhibitionNews = ref([
   {
-    title: '第三十七届制冷展即将盛大开幕',
-    desc: '第三十七届制冷展将于2026年4月8日在上海新国际博览中心盛大开幕，展会将展示最新的制冷、空调、暖通、热泵及通风设备技术和产品。',
-    time: '2026-03-20 14:30',
+    title: '2026中国制冷展观众预登记指南',
+    desc: '第三十七届国际制冷、空调、供暖、通风及食品冷冻加工展览会（简称"2026中国制冷展"）将于2026年4月8至10日在北京·首都国际会展中心举办。本届展会以"数智塑冷暖，零碳启新程"（Empower refrigeration and heat pump with digital intelligence for a new chapter of carbon neutrality）为主题，设置A1、A2、B1、B2、B3五个展馆，总面积115,000平方米，预计将吸引全球近30个国家和地区的1,000余家企业和机构参展，80,000余名专业观众和买家参观洽谈，同期举办主题论坛、专题研讨会、技术交流会等70余场会议活动，更有多个主题示范专区精彩亮相。',
+    time: '2026-02-05 00:00:00',
     source: '官方发布'
   },
   {
-    title: '制冷展参展商名录正式发布',
-    desc: '第三十七届制冷展参展商名录已正式发布，共有来自全球20多个国家和地区的500多家企业参展。',
-    time: '2026-03-15 10:15',
+    title: '锁定黄金交流位！2026中国制冷展会议室预订通道正式开启',
+    desc: '2026年4月8日-10日，第三十七届中国制冷展将在首都国际会展中心盛大举办，同期将举办系列专属技术交流会，场地已锁定首都国际会议中心，会议室资源同步开放预订，助力企业高效链接行业资源、精准传递核心技术。',
+    time: '2026-02-02 00:00:00',
     source: '官方发布'
   },
   {
-    title: '制冷展观众预登记通道已开启',
-    desc: '第三十七届制冷展观众预登记通道已正式开启，预登记观众可享受快速入场、免费午餐等福利。',
-    time: '2026-03-01 09:00',
+    title: '2026中国制冷展广告位火热开售！',
+    desc: '第三十七届国际制冷、空调、供暖、通风及食品冷冻加工展览会将于2026年4月8日-10日在首都国际会展中心（北京）全新启航！',
+    time: '2026-01-19 00:00:00',
+    source: '官方发布'
+  },
+  {
+    title: '产学融合路演示范专区成功亮相2025中国制冷展',
+    desc: '2025年4月27-29日，第二届产学融合路演示范专区（以下简称"路演专区"）在第三十六届中国制冷展E3G31展位上隆重举办。',
+    time: '2025-05-09 00:00:00',
     source: '官方发布'
   }
 ])
@@ -328,7 +336,7 @@ const downloadItems = ref([
 <style lang="scss" scoped>
 .exhibition-detail-page {
   padding-top: 80px;
-  background-color: #f5f7fa;
+  background-color: #F9FAFB;
 }
 
 .detail-banner {
@@ -403,9 +411,9 @@ const downloadItems = ref([
 
 .base-info-section {
   background-color: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   margin-bottom: 30px;
   position: relative;
 }
@@ -423,12 +431,16 @@ const downloadItems = ref([
   padding: 0 16px;
   font-size: 14px;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
   transition: all 0.3s ease;
+  background-color: #2563EB;
+  border-color: #2563EB;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    background-color: #1D4ED8;
+    border-color: #1D4ED8;
   }
 }
 
@@ -595,6 +607,11 @@ const downloadItems = ref([
       .popular-tag {
         margin-right: 8px;
         margin-bottom: 0;
+        border-radius: 4px;
+        background: #EFF6FF;
+        color: #2563EB;
+        font-size: 12px;
+        padding: 2px 8px;
       }
     }
   }
@@ -621,16 +638,32 @@ const downloadItems = ref([
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: #303133;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #409eff;
+  color: #1E3A8A;
+  background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  padding-left: 12px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%);
+    border-radius: 2px;
+  }
 }
 
 .section-header {
@@ -639,155 +672,179 @@ const downloadItems = ref([
 
 .view-more-text {
   font-size: 14px;
-  color: #409eff;
+  color: #3B82F6;
   text-decoration: none;
-  transition: color 0.3s ease;
   display: flex;
   align-items: center;
   gap: 4px;
-  min-width: 100px; /* 增加宽度确保文字在一行展示 */
+  transition: all 0.3s ease;
+  min-width: 100px;
   width: fit-content;
   
   &:hover {
-    color: #66b1ff;
+    color: #1D4ED8;
+    text-decoration: underline;
   }
   
   &::after {
-    content: '>';
-    font-size: 16px;
+    content: '→';
+    font-size: 12px;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover::after {
+    transform: translateX(4px);
   }
 }
 
 .news-section {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
+  background: #F9FAFB;
+  padding: 24px 0;
+  margin-bottom: 24px;
 }
 
 .news-list {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .news-item {
   display: flex;
-  gap: 24px;
-  padding: 24px;
-  border: 1px solid #E5E7EB;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  padding: 20px;
   border-radius: 12px;
-  cursor: pointer;
   transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  min-height: 480px;
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateX(4px);
-    border-color: #204E9C;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
   }
 
-  .news-icon {
-    width: 80px;
-    height: 80px;
-    background: rgba(32, 78, 156, 0.08);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #204E9C;
+  .news-image {
+    width: 100%;
+    height: 280px;
+    border-radius: 8px;
+    overflow: hidden;
     flex-shrink: 0;
-    margin: auto 0;
+    min-width: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-width: 0;
+    }
   }
 
   .news-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding-left: 8px;
-  }
-
-  .news-date-styled {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-left: 20px;
-    border-left: 1px solid #E5E7EB;
-    margin-left: 12px;
-    min-width: 80px;
-
-    .day {
-      font-size: 32px;
-      font-weight: 700;
-      color: #204E9C;
-      line-height: 1;
-      font-family: 'DIN Alternate', sans-serif;
-      margin-bottom: 4px;
-    }
-
-    .ym {
-      font-size: 13px;
-      color: #6B7280;
-      font-weight: 500;
-    }
-  }
-
-  .news-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    min-height: 0;
+    width: 100%;
+    min-width: 0;
   }
 
   .news-title {
-    flex: 1;
     font-size: 18px;
     font-weight: 600;
     color: #1F2937;
-    margin: 0;
+    margin-bottom: 8px;
     line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
   }
 
-  .news-desc {
+  .news-description {
+    font-size: 13px;
     color: #6B7280;
-    line-height: 1.6;
-    margin: 0;
+    margin-bottom: 12px;
+    line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex-shrink: 0;
+    width: 100%;
   }
 
   .news-meta {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid #F3F4F6;
+    width: 100%;
     flex-wrap: wrap;
-    gap: 24px;
+
+    .news-category {
+      background: #EFF6FF;
+      color: #2563EB;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 11px;
+    }
+
+    .news-time {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .news-views {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .news-list {
+    grid-template-columns: 1fr;
   }
 
-  .news-source {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-    color: #6B7280;
+  .news-item {
+    flex-direction: row;
+    gap: 16px;
+
+    .news-image {
+      width: 180px;
+      height: 100px;
+    }
   }
+}
 
-  .news-date {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #6B7280;
-  }
+@media (max-width: 768px) {
+  .news-item {
+    flex-direction: column;
 
-
-
-  .news-source .el-icon {
-    color: #204E9C;
+    .news-image {
+      width: 100%;
+      height: 140px;
+    }
   }
 }
 
@@ -926,9 +983,9 @@ const downloadItems = ref([
 
 .exhibitor-section {
   background-color: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   margin-bottom: 0;
 }
 
@@ -942,70 +999,42 @@ const downloadItems = ref([
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 16px;
-    background-color: #f5f7fa;
-    border-radius: 8px;
+    padding: 16px 16px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #ebeef5;
-
-    // 背景装饰细节
-    &::before {
-      content: '';
-      position: absolute;
-      top: -40px;
-      right: -40px;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, rgba(64, 158, 255, 0.1) 0%, rgba(64, 158, 255, 0) 70%);
-      border-radius: 50%;
-      z-index: 0;
-      transition: all 0.3s ease;
-    }
+    border: 1px solid #bae6fd;
 
     &:hover {
-      background-color: #ecf5ff;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(64, 158, 255, 0.1);
-      border-color: #409eff;
-
-      &::before {
-        transform: scale(1.2);
-      }
-
-      .exhibitor-icon {
-        transform: scale(1.1);
-      }
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+      border-color: #38bdf8;
     }
 
     .exhibitor-icon {
-      margin-bottom: 12px;
-      color: #409eff;
-      z-index: 1;
-      position: relative;
+      margin-bottom: 6px;
+      color: #0369a1;
       transition: all 0.3s ease;
     }
 
     .exhibitor-name {
       font-size: 16px;
-      font-weight: 600;
-      color: #303133;
-      margin-bottom: 8px;
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 6px;
       text-align: center;
-      z-index: 1;
-      position: relative;
+      font-family: 'DIN Alternate', Arial, sans-serif;
     }
 
     .exhibitor-booth {
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #606266;
-      font-size: 14px;
+      color: #0c4a6e;
+      font-size: 13px;
+      font-weight: 500;
       text-align: center;
-      z-index: 1;
-      position: relative;
 
       .booth-label {
         font-weight: 600;
@@ -1099,9 +1128,9 @@ const downloadItems = ref([
 
 .traffic-section {
   background-color: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   margin-bottom: 30px;
 }
 
