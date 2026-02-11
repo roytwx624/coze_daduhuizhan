@@ -70,13 +70,13 @@
       <div class="quick-functions-section">
         <h2><el-icon class="title-icon"><Grid /></el-icon> 快捷功能</h2>
         <div class="functions-grid">
-          <div class="function-card">
+          <div class="function-card" @click="window.open('https://www.kuleiman.com/127909/', '_blank')" style="cursor: pointer;">
             <div class="function-icon">
               <el-icon class="icon-large"><View /></el-icon>
             </div>
             <h4 class="function-name">VR看馆</h4>
             <p class="function-desc">360°全景查看场馆环境</p>
-            <el-button type="primary" class="function-button">立即体验</el-button>
+            <el-button type="primary" class="function-button" @click.stop="window.open('https://www.kuleiman.com/127909/', '_blank')">立即体验</el-button>
           </div>
           <div class="function-card">
             <div class="function-icon">
