@@ -327,10 +327,10 @@ const surroundings = ref([
 
 // 场馆轮播图片
 const venueImages = ref([
-  '/src/assets/images/venuedetail/1/3583-5dcecfd2c245820393f45fc3eccda5be.jpg',
-  '/src/assets/images/venuedetail/1/3d34-2e38c93de49118b72321b73330ef143e.jpg',
-  '/src/assets/images/venuedetail/1/a262-4f79ec76843a8e2f0f8223a62c6d7dbb.png',
-  '/src/assets/images/venuedetail/1/u=1128872623,3952748564&fm=253&app=138&f=JPEG.jpeg'
+  '@/assets/images/venuedetail/1/3583-5dcecfd2c245820393f45fc3eccda5be.jpg',
+  '@/assets/images/venuedetail/1/3d34-2e38c93de49118b72321b73330ef143e.jpg',
+  '@/assets/images/venuedetail/1/a262-4f79ec76843a8e2f0f8223a62c6d7dbb.png',
+  '@/assets/images/venuedetail/1/u=1128872623,3952748564&fm=253&app=138&f=JPEG.jpeg'
 ])
 
 // 展厅信息
