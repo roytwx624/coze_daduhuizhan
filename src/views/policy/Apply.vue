@@ -8,217 +8,818 @@
       </div>
     </section>
 
-    <!-- 核心功能 -->
-    <section class="core-functions">
+    <!-- 基础信息填写 -->
+    <section class="region-selection" v-if="!formSubmitted">
       <div class="content-wrapper">
         <div class="section-header">
-          <h2>核心功能</h2>
-          <p class="section-desc">为您提供全方位的活动报批服务</p>
+          <h2>活动报批流程查询</h2>
+          <p class="section-desc">匹配对应的活动报批流程</p>
         </div>
-        <div class="functions-grid">
-          <div class="function-card" @click="navigateTo('/policy/apply/process')">
-            <div class="function-icon">
-              <el-icon :size="40"><DataAnalysis /></el-icon>
-            </div>
-            <h3>查看流程</h3>
-            <p>选择举办地查看对应申请流程</p>
+        <div class="region-selector">
+          <div class="region-select-level">
+            <h3>活动名称</h3>
+            <el-input v-model="eventName" placeholder="请输入活动名称" />
           </div>
-          <div class="function-card" @click="navigateTo('/policy/apply/precheck')">
-            <div class="function-icon">
-              <el-icon :size="40"><Check /></el-icon>
-            </div>
-            <h3>材料预审</h3>
-            <p>提前审核材料，提高申请通过率</p>
+          <div class="region-select-level">
+            <h3>活动时间</h3>
+            <el-date-picker
+              v-model="eventTime"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              style="width: 100%"
+              @change="handleTimeChange"
+            />
           </div>
-          <div class="function-card" @click="navigateTo('/policy/apply/service')">
-            <div class="function-icon">
-              <el-icon :size="40"><Service /></el-icon>
-            </div>
-            <h3>一站式服务</h3>
-            <p>全程代办，省心省力</p>
+          <div class="region-select-level">
+            <h3>活动人数</h3>
+            <el-radio-group v-model="eventAttendance" @change="handleAttendanceChange">
+              <el-radio-button label="above">1000人以上</el-radio-button>
+              <el-radio-button label="below">1000人以下</el-radio-button>
+            </el-radio-group>
           </div>
-          <div class="function-card" @click="navigateTo('/policy/apply/guide')">
-            <div class="function-icon">
-              <el-icon :size="40"><ChatLineSquare /></el-icon>
-            </div>
-            <h3>在线咨询</h3>
-            <p>详细的申请流程和所需材料说明</p>
+          <div class="region-select-level">
+            <h3>场馆预订状态</h3>
+            <el-radio-group v-model="venueBooked" @change="handleVenueBookedChange">
+              <el-radio-button label="yes">已完成预订</el-radio-button>
+              <el-radio-button label="no">未预订</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="region-select-level" v-if="venueBooked === 'yes'">
+            <h3>选择场馆</h3>
+            <el-select v-model="selectedVenue" placeholder="请选择场馆">
+              <el-option v-for="venue in venues" :key="venue" :label="venue" :value="venue" />
+            </el-select>
+          </div>
+          <div class="region-select-level" v-if="venueBooked === 'no'">
+            <h3>选择城市</h3>
+            <el-radio-group v-model="selectedCity" @change="handleCityChange">
+              <el-radio-button label="北京市">北京市</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="region-select-level" v-if="venueBooked === 'no' && selectedCity">
+            <h3>选择区域</h3>
+            <el-radio-group v-model="selectedDistrict" @change="handleDistrictChange">
+              <el-radio-button v-for="district in districts" :key="district" :label="district">{{ district }}</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="region-select-level submit-section">
+            <el-button type="primary" size="large" @click="handleSubmit" :disabled="!isFormValid">
+              立即查询
+            </el-button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 常见问题 -->
-    <section class="faq-section">
+
+
+    <!-- 申报流程 -->
+    <section class="process-section" v-if="formSubmitted">
       <div class="content-wrapper">
-        <div class="section-header">
-          <h2>常见问题</h2>
-          <p class="section-desc">解答您关心的问题</p>
+        <div class="process-header">
+          <h2>{{ processTitle }}</h2>
+          <p class="process-desc">根据您提供的信息，为您匹配的活动审批流程</p>
         </div>
-        <div class="faq-list">
-          <div class="faq-item">
-            <div class="faq-question">
-              <el-icon class="faq-question-icon"><QuestionFilled /></el-icon>
-              <span>各地申请流程是否一致？</span>
+        <div class="process-container">
+          <!-- 左侧流程步骤 -->
+          <div class="process-steps">
+            <div class="process-steps-header">
+              <h2>申报流程步骤</h2>
             </div>
-            <div class="faq-content">
-              <el-icon class="faq-answer-icon"><SuccessFilled /></el-icon>
-              <div class="faq-answer-text">
-                <p>流程各有差异，可以在查看流程功能中选择您的举办地查看对应申请流程。</p>
+            <div 
+              v-for="(step, index) in processSteps" 
+              :key="step.id"
+              class="process-step"
+              :class="[step.status, { 'active': activeStep === step.id }]"
+              @click="selectStep(step.id)"
+            >
+              <div class="step-number">{{ step.id }}</div>
+              <div class="step-content">
+                <h3>{{ step.title }}</h3>
+                <p v-if="step.description">{{ step.description }}</p>
               </div>
             </div>
           </div>
-          <div class="faq-item">
-            <div class="faq-question">
-              <el-icon class="faq-question-icon"><QuestionFilled /></el-icon>
-              <span>构成大型展览展销活动的标准是什么？</span>
-            </div>
-            <div class="faq-content">
-              <el-icon class="faq-answer-icon"><SuccessFilled /></el-icon>
-              <div class="faq-answer-text">
-                <p>法人或其他组织，租用、借用或者以其他形式临时占用场所、场地，向社会公众举办的，单场次参加人数一千人以上的展览展销活动。</p>
+
+          <!-- 右侧内容区域 -->
+          <div class="process-content">
+            <div v-if="activeStepContent" class="step-content-detail">
+              <h2>{{ activeStepContent.title }}</h2>
+              <div class="requirements-list">
+                <!-- 显示子步骤作为二级标题 -->
+                <template v-if="activeStepContent.substeps">
+                  <div v-for="(substep, substepIndex) in activeStepContent.substeps" :key="substep.id" class="substep-section">
+                    <!-- 二级标题 -->
+                    <div class="substep-title">
+                      {{ substep.id }} {{ substep.title }}
+                    </div>
+                    <!-- 子步骤的要求 -->
+                    <div v-for="(req, reqIndex) in substep.requirements" :key="reqIndex" class="requirement-item">
+                      <div class="requirement-header">
+                        <div class="requirement-title">
+                      {{ req.title }}
+                    </div>
+                        <div v-if="req.downloadable" class="download-buttons">
+                          <el-button size="small" type="primary" @click="downloadTemplate(req)">
+                            <el-icon><Download /></el-icon>
+                            下载模板
+                          </el-button>
+                          <el-button size="small" @click="downloadSample(req)">
+                            <el-icon><Document /></el-icon>
+                            下载范文
+                          </el-button>
+                        </div>
+                      </div>
+                      <div v-if="req.items" class="requirement-items">
+                        <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-detail">
+                          {{ item }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <!-- 显示普通要求 -->
+                <template v-else>
+                  <div v-for="(req, index) in activeStepContent.requirements" :key="index" class="requirement-item">
+                    <div class="requirement-header">
+                      <div class="requirement-title">
+                      {{ req.title }}
+                    </div>
+                      <div v-if="req.downloadable" class="download-buttons">
+                        <el-button size="small" type="primary" @click="downloadTemplate(req)">
+                          <el-icon><Download /></el-icon>
+                          下载模板
+                        </el-button>
+                        <el-button size="small" @click="downloadSample(req)">
+                          <el-icon><Document /></el-icon>
+                          下载范文
+                        </el-button>
+                      </div>
+                    </div>
+                    <div v-if="req.items" class="requirement-items">
+                      <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-detail">
+                        {{ item }}
+                      </div>
+                    </div>
+                  </div>
+                </template>
               </div>
+              
+
             </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-question">
-              <el-icon class="faq-question-icon"><QuestionFilled /></el-icon>
-              <span>食品展销会的举办者应当履行哪些食品安全管理义务？</span>
-            </div>
-            <div class="faq-content">
-              <el-icon class="faq-answer-icon"><SuccessFilled /></el-icon>
-              <div class="faq-answer-text">
-                <p>依法审查入场食品经营者的许可证等主体资质，明确其食品安全管理责任，定期对其经营环境和条件进行检查，发现其有违反食品安全法律法规规定行为的，应当及时制止，并立即报告属地市场监督管理部门。</p>
-              </div>
-            </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-question">
-              <el-icon class="faq-question-icon"><QuestionFilled /></el-icon>
-              <span>什么情况可申请设置临时性商业户外广告设施？</span>
-            </div>
-            <div class="faq-content">
-              <el-icon class="faq-answer-icon"><SuccessFilled /></el-icon>
-              <div class="faq-answer-text">
-                <p>主要是政府机关批准举办的，具有一定影响力和社会关注度的重大文化、体育、商业活动可按照需要申请设置临时性商业户外广告设施。</p>
-              </div>
+            <div v-else class="step-content-placeholder">
+              <p>请选择左侧流程步骤查看详细信息</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 相关政策 -->
-    <section class="policies-section">
+    <!-- 一站式服务 -->
+    <section class="one-stop-service-section" v-if="formSubmitted">
       <div class="content-wrapper">
-        <div class="section-header">
-          <h2>相关政策</h2>
-          <p class="section-desc">了解相关法律法规</p>
-        </div>
-        <div class="policies-list">
-          <div class="policy-item" v-for="(policy, index) in policies" :key="index">
-            <div class="policy-icon">
-              <el-icon :size="24"><DocumentCopy /></el-icon>
-            </div>
-            <div class="policy-content">
-              <h3>{{ policy.title }}</h3>
-            </div>
-            <div class="policy-action">
-              <el-button size="small" type="primary" @click="viewPolicyDetail(policy)">查看详情</el-button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 资料下载 -->
-    <section class="download-section">
-      <div class="content-wrapper">
-        <div class="section-header">
-          <h2>资料下载</h2>
-          <p class="section-desc">下载相关办事指南和模板</p>
-        </div>
-        <div class="download-list">
-          <div class="download-item" v-for="(material, index) in downloadMaterials" :key="material.id">
-            <div class="download-icon">
-              <el-icon :size="24"><Document /></el-icon>
-            </div>
-            <div class="download-content">
-              <h3>{{ material.title }}</h3>
-              <div class="download-info">
-                <span class="file-type">{{ material.type }}</span>
-                <span class="file-size">{{ material.size }}</span>
+        <div class="service-banner">
+          <div class="service-content">
+            <h2>一站式代办服务</h2>
+            <p class="service-desc">让专业团队为您处理繁琐的报批流程，节省时间和精力</p>
+            <div class="service-features">
+              <div class="service-feature-item">
+                <div class="feature-icon">
+                  <el-icon><Check /></el-icon>
+                </div>
+                <div class="feature-text">材料准备指导</div>
+              </div>
+              <div class="service-feature-item">
+                <div class="feature-icon">
+                  <el-icon><Check /></el-icon>
+                </div>
+                <div class="feature-text">全流程代办</div>
+              </div>
+              <div class="service-feature-item">
+                <div class="feature-icon">
+                  <el-icon><Check /></el-icon>
+                </div>
+                <div class="feature-text">快速审批通道</div>
+              </div>
+              <div class="service-feature-item">
+                <div class="feature-icon">
+                  <el-icon><Check /></el-icon>
+                </div>
+                <div class="feature-text">专业顾问支持</div>
               </div>
             </div>
-            <div class="download-action">
-              <el-button size="small" type="primary" @click="downloadMaterial(material)">
-                <el-icon><Download /></el-icon>
-                下载
+            <div class="service-cta">
+              <el-button type="primary" size="large" @click="handleOneStopService">
+                立即咨询代办服务
               </el-button>
             </div>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- 常见问题 -->
+    <section class="faq-section" v-if="formSubmitted">
+      <div class="content-wrapper">
+        <div class="section-header">
+          <h2>常见问题</h2>
+          <p class="section-desc">解答您在大型活动报批过程中的常见疑问</p>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-question">
+              <div class="faq-question-text">大型活动报批需要提前多久开始准备？</div>
+              <div class="faq-toggle" @click="toggleFaq(0)">
+                <el-icon :class="{ 'rotated': faqExpanded[0] }"><ArrowDown /></el-icon>
+              </div>
+            </div>
+            <div v-if="faqExpanded[0]" class="faq-answer">
+              建议至少提前30个工作日开始准备，特别是公安报批需要至少展前20个工作日提交材料。具体时间可能因活动规模、类型和当地政策有所不同。
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <div class="faq-question-text">展览会备案和公安报批有什么区别？</div>
+              <div class="faq-toggle" @click="toggleFaq(1)">
+                <el-icon :class="{ 'rotated': faqExpanded[1] }"><ArrowDown /></el-icon>
+              </div>
+            </div>
+            <div v-if="faqExpanded[1]" class="faq-answer">
+              展览会备案是在商务部系统进行的展会信息登记，主要针对涉外经济技术展览会；公安报批是向公安机关申请大型群众性活动安全许可，主要关注活动的安全管理和应急措施。两者都是大型活动必须的前置审批环节。
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <div class="faq-question-text">材料预审服务具体包含哪些内容？</div>
+              <div class="faq-toggle" @click="toggleFaq(2)">
+                <el-icon :class="{ 'rotated': faqExpanded[2] }"><ArrowDown /></el-icon>
+              </div>
+            </div>
+            <div v-if="faqExpanded[2]" class="faq-answer">
+              材料预审服务包括：对提交的报批材料进行完整性检查、格式规范审核、内容逻辑审核，以及提供专业的修改建议，帮助您一次性通过审批，避免因材料问题导致的审批延误。
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <div class="faq-question-text">一站式服务可以帮助解决哪些问题？</div>
+              <div class="faq-toggle" @click="toggleFaq(3)">
+                <el-icon :class="{ 'rotated': faqExpanded[3] }"><ArrowDown /></el-icon>
+              </div>
+            </div>
+            <div v-if="faqExpanded[3]" class="faq-answer">
+              一站式服务可以帮助您解决：材料准备指导、审批流程代办、安全方案制定、应急预案编制、现场安全管理等全流程问题，让您专注于活动内容本身，无需担心审批和安全管理事务。
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <div class="faq-question-text">不同区域的报批要求有什么差异？</div>
+              <div class="faq-toggle" @click="toggleFaq(4)">
+                <el-icon :class="{ 'rotated': faqExpanded[4] }"><ArrowDown /></el-icon>
+              </div>
+            </div>
+            <div v-if="faqExpanded[4]" class="faq-answer">
+              不同区域的报批要求可能在具体材料清单、审批流程、时限要求等方面有所差异。我们的系统会根据您选择的区域，自动匹配相应的报批要求和材料清单，确保您的申报符合当地规定。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 悬浮窗 -->
+    <div class="floating-window">
+      <div class="floating-item" @click="handleMaterialPrecheck">
+        <div class="floating-icon">
+          <el-icon><Check /></el-icon>
+        </div>
+        <div class="floating-text">材料预审</div>
+      </div>
+      <div class="floating-item" @click="handleMyPrecheckRecords">
+        <div class="floating-icon">
+          <el-icon><View /></el-icon>
+        </div>
+        <div class="floating-text">我的预审记录</div>
+      </div>
+      <div class="floating-item" @click="handleOneStopService">
+        <div class="floating-icon">
+          <el-icon><Tools /></el-icon>
+        </div>
+        <div class="floating-text">一站式服务</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Document, DataAnalysis, Check, Service, DocumentCopy, QuestionFilled, SuccessFilled, Download, ChatLineSquare } from '@element-plus/icons-vue'
+import { Document, Download, Check, View, Tools, ArrowDown } from '@element-plus/icons-vue'
 
 const router = useRouter()
-// 相关政策
-const policies = [
-  {
-    title: '《艺术品经营管理办法》',
-    detail: '为了规范艺术品经营活动，加强艺术品市场管理，保护创作者、经营者、消费者的合法权益，促进艺术品市场健康发展，制定本办法。'
-  },
-  {
-    title: '《国务院对确需保留的行政审批项目设定行政许可的决定》',
-    detail: '为了保证改革开放和社会主义现代化建设的顺利进行，保障公民、法人和其他组织的合法权益，根据《中华人民共和国行政许可法》第十四条第二款的规定，现对法律、行政法规以外的规范性文件规定的，但确需保留且符合《中华人民共和国行政许可法》第十二条规定事项的行政审批项目，决定予以保留并设定行政许可。'
-  },
-  {
-    title: '《国务院关于取消和下放一批行政审批项目的决定》',
-    detail: '为了深入推进行政审批制度改革，加快政府职能转变，现决定取消和下放52项行政审批项目。'
-  },
-  {
-    title: '《中华人民共和国海关暂时进出境货物管理办法》',
-    detail: '为了规范海关对暂时进出境货物的监管，根据《中华人民共和国海关法》及有关法律、行政法规的规定，制定本办法。'
-  },
-  {
-    title: '《大型群众性活动安全管理条例》',
-    detail: '为了加强对大型群众性活动的安全管理，保护公民生命和财产安全，维护社会治安秩序和公共安全，制定本条例。'
-  }
-]
 
-// 资料下载
-const downloadMaterials = [
-  {
-    id: 1,
-    title: '大型活动报批办事指南',
-    type: 'pdf',
-    size: '2.5MB',
-    url: '#'
-  }
-]
+// 基础信息
+const eventName = ref('')
+const eventTime = ref([])
+const eventAttendance = ref('')
+const venueBooked = ref('')
+const selectedVenue = ref('')
+const selectedCity = ref('')
+const selectedDistrict = ref('')
+const formSubmitted = ref(false)
 
-// 查看政策详情
-const viewPolicyDetail = (policy) => {
-  // 这里可以实现查看详情的逻辑，比如弹窗显示详情
-  console.log('查看政策详情:', policy)
+// 计算表单是否有效
+const isFormValid = computed(() => {
+  if (!eventName.value) return false
+  if (!eventTime.value || eventTime.value.length !== 2) return false
+  if (!eventAttendance.value) return false
+  if (!venueBooked.value) return false
+  if (venueBooked.value === 'yes' && !selectedVenue.value) return false
+  if (venueBooked.value === 'no' && (!selectedCity.value || !selectedDistrict.value)) return false
+  return true
+})
+
+// 计算选中的区域
+const selectedRegion = computed(() => {
+  if (venueBooked.value === 'yes' && selectedVenue.value) {
+    return selectedVenue.value
+  } else if (venueBooked.value === 'no' && selectedCity.value && selectedDistrict.value) {
+    return `${selectedCity.value}-${selectedDistrict.value}`
+  }
+  return ''
+})
+
+// 计算流程标题
+const processTitle = computed(() => {
+  if (selectedCity.value && selectedDistrict.value) {
+    return `${selectedCity.value}-${selectedDistrict.value}大型活动审批流程说明`
+  }
+  return '大型活动审批流程说明'
+})
+
+// 北京市各区
+const districts = ref([
+  '东城区', '西城区', '朝阳区', '海淀区', '丰台区', '石景山区',
+  '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区',
+  '怀柔区', '平谷区', '密云区', '延庆区'
+])
+
+// 场馆列表
+const venues = ref([
+  '国家会议中心', '中国国际展览中心', '北京展览馆', '北京会议中心',
+  '中国国际展览中心新馆', '北京国家会议中心', '北京国际会议中心', '北京亦创国际会展中心',
+  '北京雁栖湖国际会展中心', '北京大兴国际机场会展中心'
+])
+
+// 常见问题展开状态
+const faqExpanded = ref([false, false, false, false, false])
+
+// 切换常见问题展开/收起
+const toggleFaq = (index) => {
+  faqExpanded.value[index] = !faqExpanded.value[index]
 }
 
-// 下载资料
-const downloadMaterial = (material) => {
+// 活动步骤数据
+const processSteps = ref([
+  {
+    id: '1',
+    title: '展览会备案',
+    status: 'completed',
+    description: '完成备案后获得“备案回执”',
+    requirements: [
+      {
+        title: '完成备案后获得“备案回执”',
+        required: true,
+        items: [
+          '境内举办涉外经济技术展览会备案网址：https://ecomp.mofcom.gov.cn/',
+          '注：部委、贸促会、国家级商协会等均具备展览会批复条件，主办单位可自行申报'
+        ]
+      }
+    ]
+  },
+  {
+    id: '2',
+    title: '按材料清单准备纸质材料并提交至场馆安保部',
+    status: 'completed',
+    description: '按材料清单准备材料并提交至场馆安保部',
+    requirements: [
+      {
+        title: '搭建单位资质证明',
+        required: false
+      },
+      {
+        title: '搭建公司营业执照',
+        required: false
+      },
+      {
+        title: '搭建安全保证书',
+        required: true,
+        downloadable: true
+      },
+      {
+        title: '安保服务合同(搭建期间)',
+        required: false
+      },
+      {
+        title: '安保服务合同(活动期间)',
+        required: false
+      }
+    ]
+  },
+  {
+    id: '3',
+    title: '公安报批（需至少展前20个工作日提交）',
+    status: 'pending',
+    description: '展前20个工作日提交',
+    substeps: [
+      {
+        id: '3.1',
+        title: '大型群众性活动安全许可申请表',
+        status: 'pending',
+        requirements: [
+          {
+            title: '大型群众性活动安全许可申请表',
+            required: true,
+            downloadable: true
+          }
+        ]
+      },
+      {
+        id: '3.2',
+        title: '主、承办单位之间的安全协议',
+        status: 'pending',
+        requirements: [
+          {
+            title: '承办资质',
+            required: false,
+            items: [
+              '营业执照',
+              '法人委托书',
+              '法人及委托人（安全责任人）身份证复印件'
+            ]
+          },
+          {
+            title: '主承办安全协议书/联合承办安全协议书',
+            required: true,
+            downloadable: true
+          }
+        ]
+      },
+      {
+        id: '3.3',
+        title: '主承办单位与参与活动第三方之间的安全协议',
+        status: 'pending',
+        requirements: [
+          {
+            title: '搭建合同/委托书',
+            required: false
+          },
+          {
+            title: '搭建单位资质证明（盖公章）',
+            required: false
+          },
+          {
+            title: '搭建安全协议',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '消防安全协议',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '现场平面图、效果图、尺寸图',
+            required: false
+          },
+          {
+            title: '安保人员聘用合同',
+            required: false
+          }
+        ]
+      },
+      {
+        id: '3.4',
+        title: '场所租赁借用协议',
+        status: 'pending',
+        requirements: [
+          {
+            title: '场地合同或场地确认函',
+            required: false
+          },
+          {
+            title: '活动场所消防安全措施',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '大型社会活动安检登记表',
+            required: true,
+            downloadable: true
+          }
+        ]
+      },
+      {
+        id: '3.5',
+        title: '承办单位安全工作方案撰写',
+        status: 'pending',
+        requirements: [
+          {
+            title: '安全工作人员的数量、任务分配和识别标志',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '活动场所可容纳的人员数量以及活动预计参加人数',
+            required: false
+          },
+          {
+            title: '票证管理方案和样本、入场人员的票证查验和安全检查措施',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '车辆停放、疏导措施',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '现场秩序维护、人员疏导措施',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '应急救援预案',
+            required: true,
+            downloadable: true
+          },
+          {
+            title: '附件：安保方案&安检方案',
+            required: true,
+            downloadable: true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: '4',
+    title: '现场安全监管报备',
+    status: 'pending',
+    description: '开展前递交资料，资料被接收即视为备案成功，无需等待审批',
+    requirements: [
+      {
+        title: '企业营业执照',
+        required: false
+      },
+      {
+        title: '企业法人身份证',
+        required: false
+      },
+      {
+        title: '展会基本情况',
+        required: true,
+        downloadable: true
+      },
+      {
+        title: '主办单位承揽合同及安全协议',
+        required: false,
+        downloadable: true
+      },
+      {
+        title: '主办单位搭建合同及安全协议',
+        required: false,
+        downloadable: true
+      },
+      {
+        title: '展区平面图',
+        required: false
+      },
+      {
+        title: '搭建展位情况表',
+        required: false,
+        downloadable: true
+      },
+      {
+        title: '应急预案',
+        required: true,
+        downloadable: true
+      },
+      {
+        title: '特种作业人员证件复印件及证明材料',
+        required: false
+      },
+      {
+        title: '主场、主办单位联系人电话表（主要负责人、具体联系人电话）',
+        required: false
+      }
+    ]
+  },
+  {
+    id: '5',
+    title: '市场监管报备（选择节点，二选一）',
+    status: 'pending',
+    description: '根据展会类型选择相应的报备方式',
+    substeps: [
+      {
+        id: '5.1',
+        title: '大型食品展销会',
+        status: 'pending',
+        requirements: [
+          {
+            title: '完成食品展销会展前报告',
+            required: true
+          }
+        ]
+      },
+      {
+        id: '5.2',
+        title: '非大型食品展销会',
+        status: 'pending',
+        requirements: [
+          {
+            title: '完成举办大型展览展销活动“一件事”集成服务”申报',
+            required: true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: '6',
+    title: '反恐怖和特巡警支队报备',
+    status: 'pending',
+    description: '开展前提交',
+    requirements: [
+      {
+        title: '主办方营业执照复印件',
+        required: false
+      },
+      {
+        title: '主办方安检工作方案、防爆安检突发事件处置预案',
+        required: false,
+        downloadable: true
+      },
+      {
+        title: '安检仪器设备租赁合同',
+        required: false
+      },
+      {
+        title: '安检服务合同，安检公司的资质证明复印件',
+        required: false
+      },
+      {
+        title: '大型社会活动防爆安检安全责任书',
+        required: false,
+        downloadable: true
+      },
+      {
+        title: '主办方现场安全责任人姓名，联系电话，各安检口',
+        required: false
+      },
+      {
+        title: '每时段定岗负责人姓名、联系电话',
+        required: false
+      }
+    ]
+  }
+])
+
+// 当前激活的步骤
+const activeStep = ref('')
+
+// 计算当前激活步骤的内容
+const activeStepContent = computed(() => {
+  // 查找主步骤
+  for (const step of processSteps.value) {
+    if (step.id === activeStep.value) {
+      // 如果是公安报批步骤，返回包含所有子步骤的对象
+      if (step.id === '3') {
+        // 直接返回原始步骤对象，不合并子步骤
+        return step
+      }
+      return step
+    }
+    // 查找子步骤
+    if (step.substeps) {
+      for (const substep of step.substeps) {
+        if (substep.id === activeStep.value) {
+          return substep
+        }
+      }
+    }
+  }
+  return null
+})
+
+// 人数选择处理
+const handleAttendanceChange = () => {
+  console.log('选择人数:', eventAttendance.value)
+  // 不再重置其他选择，保持已填写的内容
+}
+
+// 活动时间处理
+const handleTimeChange = () => {
+  console.log('选择活动时间:', eventTime.value)
+}
+
+// 场馆预订状态处理
+const handleVenueBookedChange = () => {
+  console.log('选择场馆预订状态:', venueBooked.value)
+  // 只重置相关的选择，不重置活动时间和活动名称
+  if (venueBooked.value === 'yes') {
+    // 选择已预订时，清空场馆选择
+    selectedVenue.value = ''
+  } else {
+    // 选择未预订时，清空场馆选择
+    selectedVenue.value = ''
+  }
+  // 重置步骤选择
+  activeStep.value = ''
+}
+
+// 城市选择处理
+const handleCityChange = () => {
+  console.log('选择城市:', selectedCity.value)
+  // 重置区域选择
+  selectedDistrict.value = ''
+  // 重置步骤选择
+  activeStep.value = ''
+}
+
+// 区域选择处理
+const handleDistrictChange = () => {
+  console.log('选择区域:', selectedDistrict.value)
+  // 选择区域后默认选中步骤1
+  activeStep.value = '1'
+}
+
+// 重置选择
+const resetSelections = () => {
+  eventTime.value = []
+  venueBooked.value = ''
+  selectedVenue.value = ''
+  selectedCity.value = ''
+  selectedDistrict.value = ''
+  activeStep.value = ''
+}
+
+// 提交表单处理
+const handleSubmit = () => {
+  if (isFormValid.value) {
+    formSubmitted.value = true
+    console.log('提交基础信息:', {
+      eventName: eventName.value,
+      eventTime: eventTime.value,
+      eventAttendance: eventAttendance.value,
+      venueBooked: venueBooked.value,
+      selectedVenue: selectedVenue.value,
+      selectedCity: selectedCity.value,
+      selectedDistrict: selectedDistrict.value,
+      selectedRegion: selectedRegion.value
+    })
+    // 提交后默认选中步骤1
+    activeStep.value = '1'
+  }
+}
+
+// 选择步骤
+const selectStep = (stepId) => {
+  activeStep.value = stepId
+  console.log('选择步骤:', stepId)
+}
+
+// 下载模板
+const downloadTemplate = (requirement) => {
+  console.log('下载模板:', requirement.title)
   // 这里可以实现下载逻辑
-  console.log('下载资料:', material)
 }
 
-const navigateTo = (path) => {
-  router.push(path)
+// 下载范文
+const downloadSample = (requirement) => {
+  console.log('下载范文:', requirement.title)
+  // 这里可以实现下载逻辑
 }
+
+// 悬浮窗点击处理函数
+const handleMaterialPrecheck = () => {
+  console.log('材料预审')
+  // 这里可以实现材料预审逻辑
+  // 例如：router.push('/policy/precheck')
+}
+
+const handleMyPrecheckRecords = () => {
+  console.log('我的预审记录')
+  // 这里可以实现查看预审记录逻辑
+  // 例如：router.push('/policy/precheck-records')
+}
+
+const handleOneStopService = () => {
+  console.log('一站式服务')
+  // 这里可以实现一站式服务逻辑
+  // 例如：router.push('/policy/one-stop-service')
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -311,261 +912,571 @@ const navigateTo = (path) => {
   }
 }
 
-// 核心功能
-.core-functions {
+// 区域选择
+.region-selection {
   background: #F9FAFB;
-  padding: 60px 0;
-}
+  padding: 40px 0;
+  margin-bottom: 24px;
 
-.functions-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.function-card {
-  background: white;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  text-align: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.1);
-    border-color: #3B82F6;
-  }
-
-  .function-icon {
-    width: 80px;
-    height: 80px;
-    background: #EFF6FF;
-    border-radius: 16px;
+  .region-selector {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    color: #2563EB;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
-  h3 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1F2937;
-    margin-bottom: 12px;
-  }
-
-  p {
-    font-size: 14px;
-    color: #6B7280;
-    line-height: 1.5;
-  }
-}
-
-// 常见问题
-.faq-section {
-  padding: 60px 0;
-}
-
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.faq-item {
-  background: white;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  }
-
-  .faq-question {
+  .region-select-level {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
     gap: 12px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1F2937;
-    margin-bottom: 16px;
-    line-height: 1.4;
-
-    .faq-question-icon {
-      color: #3B82F6;
-      font-size: 20px;
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
-
-    span {
-      flex: 1;
-    }
-  }
-
-  .faq-content {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-
-    .faq-answer-icon {
-      color: #10B981;
-      font-size: 18px;
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
-
-    .faq-answer-text {
-      flex: 1;
-
-      p {
-        font-size: 14px;
-        color: #6B7280;
-        line-height: 1.6;
-        margin-bottom: 8px;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-    }
-  }
-}
-
-// 相关政策
-.policies-section {
-  background: #F9FAFB;
-  padding: 60px 0;
-}
-
-.policies-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.policy-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: white;
-  padding: 20px 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  .policy-icon {
-    width: 48px;
-    height: 48px;
-    background: #EFF6FF;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #2563EB;
-    flex-shrink: 0;
-  }
-
-  .policy-content {
-    flex: 1;
 
     h3 {
       font-size: 16px;
       font-weight: 600;
       color: #1F2937;
       margin: 0;
-    }
-  }
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
-  .policy-action {
-    flex-shrink: 0;
+      &::before {
+        content: '';
+        width: 4px;
+        height: 16px;
+        background: #2563EB;
+        border-radius: 2px;
+      }
+    }
+
+    :deep(.el-radio-group) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    :deep(.el-radio-button) {
+      margin-right: 0;
+    }
+
+    :deep(.el-radio-button__inner) {
+      padding: 10px 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 2px solid #E5E7EB;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #2563EB;
+        color: #2563EB;
+      }
+    }
+
+    :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+      background-color: #2563EB;
+      border-color: #2563EB;
+      color: white;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
   }
 }
 
-// 资料下载
-.download-section {
-  padding: 60px 0;
+// 一站式服务模块样式
+.one-stop-service-section {
+  padding: 40px 0;
+  background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+  color: white;
+  margin-bottom: 40px;
+
+  .service-banner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+
+    .service-content {
+      text-align: center;
+
+      h2 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: white;
+      }
+
+      .service-desc {
+        font-size: 18px;
+        margin-bottom: 32px;
+        opacity: 0.9;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .service-features {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        margin-bottom: 32px;
+
+        @media (max-width: 768px) {
+          flex-wrap: wrap;
+          gap: 20px;
+        }
+
+        .service-feature-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 16px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          min-width: 150px;
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.15);
+          }
+
+          .feature-icon {
+            font-size: 24px;
+            color: #93C5FD;
+          }
+
+          .feature-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+          }
+        }
+      }
+
+      .service-cta {
+        margin-top: 16px;
+
+        :deep(.el-button--primary) {
+          padding: 12px 32px;
+          font-size: 16px;
+          font-weight: 600;
+          background: white;
+          color: #2563EB;
+          border-color: white;
+
+          &:hover {
+            background: #F3F4F6;
+            border-color: #F3F4F6;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式设计 - 一站式服务
+@media (max-width: 768px) {
+  .one-stop-service-section {
+    padding: 32px 0;
+
+    .service-banner {
+      padding: 32px 24px;
+
+      .service-content {
+        h2 {
+          font-size: 28px;
+        }
+
+        .service-desc {
+          font-size: 16px;
+        }
+
+        .service-features {
+          .service-feature-item {
+            min-width: 120px;
+            padding: 12px;
+
+            .feature-text {
+              font-size: 12px;
+            }
+          }
+        }
+
+        .service-cta {
+          :deep(.el-button--primary) {
+            padding: 10px 24px;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 提交按钮样式
+.submit-section {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 0;
+  margin-top: 8px;
+  border-top: 1px solid #E5E7EB;
+
+  :deep(.el-button--primary) {
+    padding: 12px 48px;
+    font-size: 16px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+    border-color: transparent;
+    color: white;
+  }
+
+  :deep(.el-button--primary:hover) {
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    border-color: transparent;
+  }
+
+  :deep(.el-button--primary:disabled) {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+    border-color: transparent;
+  }
+}
+
+// 响应式设计 - 提交按钮
+@media (max-width: 768px) {
+  .submit-section {
+    padding: 20px 0 0;
+
+    :deep(.el-button--primary) {
+      padding: 10px 32px;
+      font-size: 14px;
+    }
+  }
+}
+
+// 申报流程
+.process-section {
+  padding: 40px 0;
   background: #F9FAFB;
 }
 
-.download-list {
+// 流程标题区域
+.process-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 8px;
+  }
+
+  .process-desc {
+    font-size: 14px;
+    color: #6B7280;
+    margin-top: 0;
+  }
+}
+
+// 响应式设计 - 流程标题
+@media (max-width: 768px) {
+  .process-header {
+    padding: 20px;
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 20px;
+    }
+
+    .process-desc {
+      font-size: 13px;
+    }
+  }
+}
+
+.process-container {
+  display: flex;
+  gap: 32px;
+  min-height: 800px;
+  padding: 0;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+
+// 流程步骤标题
+.process-steps-header {
+  margin-bottom: 20px;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0;
+  }
+}
+
+// 左侧流程步骤
+.process-steps {
+  flex: 0 0 320px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+
+  @media (max-width: 1024px) {
+    flex: 1;
+    max-height: 400px;
+    padding: 20px;
+  }
+}
+
+.process-step {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  background: #F9FAFB;
+  border: 2px solid transparent;
+
+  &:hover {
+    background: #F3F4F6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: translateX(4px);
+  }
+
+  &.active {
+    background: #EFF6FF;
+    border: 2px solid #2563EB;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+    transform: translateX(8px);
+  }
+
+  .step-number {
+    flex: 0 0 32px;
+    height: 32px;
+    background: #2563EB;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+
+    .process-step.active & {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    }
+  }
+
+  .step-content {
+    flex: 1;
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #4B5563;
+      margin: 0 0 4px 0;
+      transition: all 0.3s ease;
+
+      .process-step.active & {
+        color: #2563EB;
+        font-weight: 700;
+      }
+    }
+
+    p {
+      font-size: 13px;
+      color: #6B7280;
+      margin: 0;
+      line-height: 1.4;
+
+      .process-step.active & {
+        color: #4B5563;
+      }
+    }
+  }
+}
+
+
+
+// 右侧内容区域
+.process-content {
+  flex: 1;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.step-content-detail {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1F2937;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+}
+
+.requirements-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.download-item {
+.requirement-item {
+  padding: 16px;
+  border-left: 4px solid #2563EB;
+  background: #F9FAFB;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.requirement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.requirement-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  flex: 1;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 8px;
+
+  :deep(.el-button) {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  :deep(.el-button--primary) {
+    background-color: #2563EB;
+    border-color: #2563EB;
+    color: white;
+
+    &:hover {
+      background-color: #1D4ED8;
+      border-color: #1D4ED8;
+    }
+  }
+
+  :deep(.el-button:not(.el-button--primary)) {
+    background-color: #EFF6FF;
+    border-color: #DBEAFE;
+    color: #2563EB;
+
+    &:hover {
+      background-color: #DBEAFE;
+      border-color: #93C5FD;
+    }
+  }
+}
+
+.requirement-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 16px;
+}
+
+.requirement-item-detail {
+  font-size: 13px;
+  color: #4B5563;
+  line-height: 1.5;
+  position: relative;
+
+  &::before {
+    content: '•';
+    position: absolute;
+    left: -16px;
+    color: #2563EB;
+    font-weight: 600;
+  }
+}
+
+// 子步骤区域
+.substep-section {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// 子步骤标题（二级标题）
+.substep-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2937;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #E5E7EB;
   display: flex;
   align-items: center;
-  gap: 16px;
-  background: white;
-  padding: 20px 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  gap: 8px;
+}
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.download-buttons {
+  display: flex;
+  gap: 8px;
+
+  :deep(.el-button) {
+    font-size: 12px;
+    padding: 4px 10px;
   }
 
-  .download-icon {
-    width: 48px;
-    height: 48px;
-    background: #EFF6FF;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  :deep(.el-button--primary) {
+    background-color: #2563EB;
+    border-color: #2563EB;
+    color: white;
+
+    &:hover {
+      background-color: #1D4ED8;
+      border-color: #1D4ED8;
+    }
+  }
+
+  :deep(.el-button:not(.el-button--primary)) {
+    background-color: #EFF6FF;
+    border-color: #DBEAFE;
     color: #2563EB;
-    flex-shrink: 0;
-  }
 
-  .download-content {
-    flex: 1;
-
-    h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #1F2937;
-      margin: 0 0 8px 0;
+    &:hover {
+      background-color: #DBEAFE;
+      border-color: #93C5FD;
     }
-
-    .download-info {
-      display: flex;
-      gap: 16px;
-      font-size: 14px;
-      color: #6B7280;
-
-      .file-type {
-        padding: 2px 8px;
-        background: #F3F4F6;
-        border-radius: 4px;
-      }
-    }
-  }
-
-  .download-action {
-    flex-shrink: 0;
   }
 }
 
@@ -585,9 +1496,8 @@ const navigateTo = (path) => {
     }
   }
 
-  .core-functions,
-  .faq-section,
-  .policies-section {
+  .region-selection,
+  .process-section {
     padding: 40px 0;
   }
 
@@ -597,109 +1507,262 @@ const navigateTo = (path) => {
     }
   }
 
-  .function-card {
-    padding: 24px;
+  .region-selector {
+    flex-direction: column;
+    align-items: center;
 
-    .function-icon {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 16px;
-
-      :deep(.el-icon) {
-        font-size: 32px;
-      }
+    :deep(.el-radio-button__inner) {
+      padding: 10px 20px;
+      font-size: 14px;
     }
+  }
 
+  .process-container {
+    gap: 24px;
+  }
+
+  .process-steps {
+    padding: 16px;
+  }
+
+  .process-step {
+    padding: 12px;
+    margin-bottom: 12px;
+
+    h3 {
+      font-size: 14px;
+    }
+  }
+
+  .substeps {
+    margin-left: 36px;
+  }
+
+  .substep {
+    padding: 6px 10px;
+
+    .substep-title {
+      font-size: 13px;
+    }
+  }
+
+  .process-content {
+    padding: 20px;
+  }
+
+  .step-content-detail {
+    h2 {
+      font-size: 20px;
+    }
+  }
+
+  .requirement-item {
+    padding: 16px;
+  }
+
+  .requirement-title {
+    font-size: 14px;
+  }
+
+  .requirement-item-detail {
+    font-size: 13px;
+  }
+
+  .online-form {
     h3 {
       font-size: 18px;
     }
+
+    :deep(.el-form-item) {
+      margin-bottom: 16px;
+    }
+
+    :deep(.el-button--primary) {
+      padding: 8px 20px;
+      font-size: 14px;
+    }
+  }
+}
+
+// 悬浮窗样式
+.floating-window {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .floating-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 12px;
+
+    &:hover {
+      transform: translateX(-8px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.2);
+      background: #EFF6FF;
+    }
+
+    .floating-icon {
+      font-size: 24px;
+      color: #2563EB;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .floating-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: #1F2937;
+      text-align: center;
+      line-height: 1.2;
+    }
+  }
+}
+
+// 响应式设计 - 悬浮窗
+@media (max-width: 768px) {
+  .floating-window {
+    right: 16px;
+    gap: 12px;
+
+    .floating-item {
+      width: 64px;
+      height: 64px;
+      padding: 8px;
+
+      .floating-icon {
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+
+      .floating-text {
+        font-size: 10px;
+      }
+    }
+  }
+}
+
+// 常见问题样式
+.faq-section {
+  background: #F9FAFB;
+  padding: 40px 0;
+  margin-top: 40px;
+
+  .faq-list {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .faq-item {
-    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: all 0.3s ease;
 
-    .faq-question {
-      font-size: 16px;
-      margin-bottom: 12px;
-      gap: 8px;
-
-      .faq-question-icon {
-        font-size: 18px;
-      }
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
 
-    .faq-content {
-      gap: 8px;
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
 
-      .faq-answer-icon {
-        font-size: 16px;
+      &:hover {
+        background: #F9FAFB;
       }
 
-      .faq-answer-text {
-        p {
-          font-size: 13px;
+      .faq-question-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1F2937;
+        flex: 1;
+        margin-right: 16px;
+      }
+
+      .faq-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        color: #2563EB;
+
+        .el-icon {
+          transition: transform 0.3s ease;
+
+          &.rotated {
+            transform: rotate(180deg);
+          }
         }
       }
     }
-  }
 
-  .policy-item {
-    padding: 16px 20px;
-
-    .policy-icon {
-      width: 40px;
-      height: 40px;
-
-      :deep(.el-icon) {
-        font-size: 20px;
-      }
-    }
-
-    .policy-content {
-      h3 {
-        font-size: 14px;
-      }
-    }
-
-    .policy-action {
-      :deep(.el-button) {
-        font-size: 12px;
-        padding: 4px 12px;
-      }
+    .faq-answer {
+      padding: 0 24px 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #4B5563;
+      background: #F9FAFB;
+      border-top: 1px solid #E5E7EB;
+      animation: slideDown 0.3s ease;
     }
   }
+}
 
-  .download-section {
-    padding: 40px 0;
+// 动画效果
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+  }
+}
 
-  .download-item {
-    padding: 16px 20px;
+// 响应式设计 - 常见问题
+@media (max-width: 768px) {
+  .faq-section {
+    padding: 32px 0;
 
-    .download-icon {
-      width: 40px;
-      height: 40px;
+    .faq-item {
+      .faq-question {
+        padding: 16px 20px;
 
-      :deep(.el-icon) {
-        font-size: 20px;
+        .faq-question-text {
+          font-size: 14px;
+        }
       }
-    }
 
-    .download-content {
-      h3 {
-        font-size: 14px;
-      }
-
-      .download-info {
-        font-size: 12px;
-        gap: 12px;
-      }
-    }
-
-    .download-action {
-      :deep(.el-button) {
-        font-size: 12px;
-        padding: 4px 12px;
+      .faq-answer {
+        padding: 0 20px 16px;
+        font-size: 13px;
       }
     }
   }
