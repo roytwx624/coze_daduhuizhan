@@ -13,7 +13,7 @@
       <div class="content-wrapper">
         <div class="section-header">
           <h2>活动报批流程查询</h2>
-          <p class="section-desc">匹配对应的活动报批流程</p>
+          <p class="section-desc">为您匹配对应的活动报批流程</p>
         </div>
         <div class="region-selector">
           <div class="region-select-level">
@@ -47,6 +47,12 @@
             </el-radio-group>
           </div>
           <div class="region-select-level" v-if="venueBooked === 'yes'">
+            <h3>选择城市</h3>
+            <el-radio-group v-model="selectedCity" @change="handleCityChange">
+              <el-radio-button label="北京市">北京市</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="region-select-level" v-if="venueBooked === 'yes' && selectedCity">
             <h3>选择场馆</h3>
             <el-select v-model="selectedVenue" placeholder="请选择场馆">
               <el-option v-for="venue in venues" :key="venue" :label="venue" :value="venue" />
@@ -65,9 +71,14 @@
             </el-radio-group>
           </div>
           <div class="region-select-level submit-section">
-            <el-button type="primary" size="large" @click="handleSubmit" :disabled="!isFormValid">
-              立即查询
-            </el-button>
+            <div class="button-group">
+              <el-button type="primary" size="large" @click="handleSubmit" :disabled="!isFormValid">
+                立即查询
+              </el-button>
+              <el-button size="large" @click="handleReset">
+                重置
+              </el-button>
+            </div>
           </div>
         </div>
       </div>
@@ -106,7 +117,12 @@
           <!-- 右侧内容区域 -->
           <div class="process-content">
             <div v-if="activeStepContent" class="step-content-detail">
-              <h2>{{ activeStepContent.title }}</h2>
+              <div class="step-title-with-deadline">
+                <h2>{{ activeStepContent.title }}</h2>
+                <div class="deadline-info" v-if="eventTime && eventTime.length > 0 && activeStepContent.id !== '1'">
+                  <span class="deadline-text">建议于 {{ calculateDeadline(activeStepContent.id, eventTime[0]) }} 前完成</span>
+                </div>
+              </div>
               <div class="requirements-list">
                 <!-- 显示子步骤作为二级标题 -->
                 <template v-if="activeStepContent.substeps">
@@ -177,43 +193,83 @@
       </div>
     </section>
 
-    <!-- 一站式服务 -->
+    <!-- 服务中心 -->
     <section class="one-stop-service-section" v-if="formSubmitted">
       <div class="content-wrapper">
-        <div class="service-banner">
-          <div class="service-content">
-            <h2>一站式代办服务</h2>
-            <p class="service-desc">让专业团队为您处理繁琐的报批流程，节省时间和精力</p>
-            <div class="service-features">
-              <div class="service-feature-item">
-                <div class="feature-icon">
-                  <el-icon><Check /></el-icon>
+        <div class="service-content">
+          <h2>服务中心</h2>
+          <div class="service-row">
+            <!-- 左侧材料预审服务 -->
+            <div class="service-column">
+              <h3>材料预审服务</h3>
+              <p class="service-column-desc">专业团队人工审核材料有效性，提高通过率</p>
+              <div class="service-features">
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><DocumentCopy /></el-icon>
+                  </div>
+                  <div class="feature-text">材料完整性检查</div>
                 </div>
-                <div class="feature-text">材料准备指导</div>
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><Check /></el-icon>
+                  </div>
+                  <div class="feature-text">格式规范性审核</div>
+                </div>
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><Star /></el-icon>
+                  </div>
+                  <div class="feature-text">专业意见反馈</div>
+                </div>
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><Timer /></el-icon>
+                  </div>
+                  <div class="feature-text">快速审核</div>
+                </div>
               </div>
-              <div class="service-feature-item">
-                <div class="feature-icon">
-                  <el-icon><Check /></el-icon>
-                </div>
-                <div class="feature-text">全流程代办</div>
-              </div>
-              <div class="service-feature-item">
-                <div class="feature-icon">
-                  <el-icon><Check /></el-icon>
-                </div>
-                <div class="feature-text">快速审批通道</div>
-              </div>
-              <div class="service-feature-item">
-                <div class="feature-icon">
-                  <el-icon><Check /></el-icon>
-                </div>
-                <div class="feature-text">专业顾问支持</div>
+              <div class="service-cta">
+                <el-button type="primary" size="large" @click="handleMaterialPrecheck">
+                  体验材料预审服务
+                </el-button>
               </div>
             </div>
-            <div class="service-cta">
-              <el-button type="primary" size="large" @click="handleOneStopService">
-                立即咨询代办服务
-              </el-button>
+            <!-- 右侧一站式代办服务 -->
+            <div class="service-column">
+              <h3>一站式代办服务</h3>
+              <p class="service-column-desc">让专业团队为您处理繁琐的报批流程，节省时间和精力</p>
+              <div class="service-features">
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><DocumentCopy /></el-icon>
+                  </div>
+                  <div class="feature-text">材料准备指导</div>
+                </div>
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><Timer /></el-icon>
+                  </div>
+                  <div class="feature-text">全流程代办</div>
+                </div>
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><Star /></el-icon>
+                  </div>
+                  <div class="feature-text">省心省时</div>
+                </div>
+                <div class="service-feature-item">
+                  <div class="feature-icon">
+                    <el-icon><ChatDotRound /></el-icon>
+                  </div>
+                  <div class="feature-text">专业顾问支持</div>
+                </div>
+              </div>
+              <div class="service-cta">
+                <el-button type="primary" size="large" @click="handleOneStopService">
+                  立即咨询代办服务
+                </el-button>
+              </div>
             </div>
           </div>
         </div>
@@ -224,63 +280,56 @@
     <section class="faq-section" v-if="formSubmitted">
       <div class="content-wrapper">
         <div class="section-header">
-          <h2>常见问题</h2>
+          <h2>{{ faqTitle }}</h2>
           <p class="section-desc">解答您在大型活动报批过程中的常见疑问</p>
         </div>
         <div class="faq-list">
           <div class="faq-item">
             <div class="faq-question">
-              <div class="faq-question-text">大型活动报批需要提前多久开始准备？</div>
-              <div class="faq-toggle" @click="toggleFaq(0)">
-                <el-icon :class="{ 'rotated': faqExpanded[0] }"><ArrowDown /></el-icon>
+              <div class="faq-icon">
+                <el-icon><QuestionFilled /></el-icon>
               </div>
+              <div class="faq-question-text">构成大型展览展销活动的标准是什么？</div>
             </div>
-            <div v-if="faqExpanded[0]" class="faq-answer">
-              建议至少提前30个工作日开始准备，特别是公安报批需要至少展前20个工作日提交材料。具体时间可能因活动规模、类型和当地政策有所不同。
+            <div class="faq-answer">
+              <div class="faq-icon">
+                <el-icon><Check /></el-icon>
+              </div>
+              <div class="faq-answer-text">
+                答：法人或其他组织，租用、借用或者以其他形式临时占用场所、场地，向社会公众举办的，单场次参加人数一千人以上的展览展销活动。
+              </div>
             </div>
           </div>
           <div class="faq-item">
             <div class="faq-question">
-              <div class="faq-question-text">展览会备案和公安报批有什么区别？</div>
-              <div class="faq-toggle" @click="toggleFaq(1)">
-                <el-icon :class="{ 'rotated': faqExpanded[1] }"><ArrowDown /></el-icon>
+              <div class="faq-icon">
+                <el-icon><QuestionFilled /></el-icon>
               </div>
+              <div class="faq-question-text">食品展销会的举办者应当履行哪些食品安全管理义务？</div>
             </div>
-            <div v-if="faqExpanded[1]" class="faq-answer">
-              展览会备案是在商务部系统进行的展会信息登记，主要针对涉外经济技术展览会；公安报批是向公安机关申请大型群众性活动安全许可，主要关注活动的安全管理和应急措施。两者都是大型活动必须的前置审批环节。
+            <div class="faq-answer">
+              <div class="faq-icon">
+                <el-icon><Check /></el-icon>
+              </div>
+              <div class="faq-answer-text">
+                答：依法审查入场食品经营者的许可证等主体资质，明确其食品安全管理责任，定期对其经营环境和条件进行检查，发现其有违反食品安全法律法规规定行为的，应当及时制止，并立即报告属地市场监督管理部门。
+              </div>
             </div>
           </div>
           <div class="faq-item">
             <div class="faq-question">
-              <div class="faq-question-text">材料预审服务具体包含哪些内容？</div>
-              <div class="faq-toggle" @click="toggleFaq(2)">
-                <el-icon :class="{ 'rotated': faqExpanded[2] }"><ArrowDown /></el-icon>
+              <div class="faq-icon">
+                <el-icon><QuestionFilled /></el-icon>
               </div>
+              <div class="faq-question-text">什么情况可申请设置临时性商业户外广告设施？</div>
             </div>
-            <div v-if="faqExpanded[2]" class="faq-answer">
-              材料预审服务包括：对提交的报批材料进行完整性检查、格式规范审核、内容逻辑审核，以及提供专业的修改建议，帮助您一次性通过审批，避免因材料问题导致的审批延误。
-            </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-question">
-              <div class="faq-question-text">一站式服务可以帮助解决哪些问题？</div>
-              <div class="faq-toggle" @click="toggleFaq(3)">
-                <el-icon :class="{ 'rotated': faqExpanded[3] }"><ArrowDown /></el-icon>
+            <div class="faq-answer">
+              <div class="faq-icon">
+                <el-icon><Check /></el-icon>
               </div>
-            </div>
-            <div v-if="faqExpanded[3]" class="faq-answer">
-              一站式服务可以帮助您解决：材料准备指导、审批流程代办、安全方案制定、应急预案编制、现场安全管理等全流程问题，让您专注于活动内容本身，无需担心审批和安全管理事务。
-            </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-question">
-              <div class="faq-question-text">不同区域的报批要求有什么差异？</div>
-              <div class="faq-toggle" @click="toggleFaq(4)">
-                <el-icon :class="{ 'rotated': faqExpanded[4] }"><ArrowDown /></el-icon>
+              <div class="faq-answer-text">
+                答：主要是政府机关批准举办的，具有一定影响力和社会关注度的重大文化、体育、商业活动可按照需要申请设置临时性商业户外广告设施。
               </div>
-            </div>
-            <div v-if="faqExpanded[4]" class="faq-answer">
-              不同区域的报批要求可能在具体材料清单、审批流程、时限要求等方面有所差异。我们的系统会根据您选择的区域，自动匹配相应的报批要求和材料清单，确保您的申报符合当地规定。
             </div>
           </div>
         </div>
@@ -314,7 +363,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Document, Download, Check, View, Tools, ArrowDown } from '@element-plus/icons-vue'
+import { Document, Download, Check, View, Tools, ArrowDown, QuestionFilled, Timer, Star, ChatDotRound, DocumentCopy } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
@@ -352,9 +401,14 @@ const selectedRegion = computed(() => {
 // 计算流程标题
 const processTitle = computed(() => {
   if (selectedCity.value && selectedDistrict.value) {
-    return `${selectedCity.value}-${selectedDistrict.value}大型活动审批流程说明`
+    return `${selectedCity.value}-${selectedDistrict.value}大型活动报批流程说明`
   }
-  return '大型活动审批流程说明'
+  return '大型活动报批流程说明'
+})
+
+// 计算常见问题标题
+const faqTitle = computed(() => {
+  return '常见问题'
 })
 
 // 北京市各区
@@ -371,13 +425,7 @@ const venues = ref([
   '北京雁栖湖国际会展中心', '北京大兴国际机场会展中心'
 ])
 
-// 常见问题展开状态
-const faqExpanded = ref([false, false, false, false, false])
-
-// 切换常见问题展开/收起
-const toggleFaq = (index) => {
-  faqExpanded.value[index] = !faqExpanded.value[index]
-}
+// 常见问题直接展示，不需要展开/收起功能
 
 // 活动步骤数据
 const processSteps = ref([
@@ -688,6 +736,56 @@ const processSteps = ref([
 // 当前激活的步骤
 const activeStep = ref('')
 
+// 计算截止日期
+const calculateDeadline = (stepId, eventStartDate) => {
+  if (!eventStartDate) return ''
+  
+  const startDate = new Date(eventStartDate)
+  let deadlineDate = new Date(startDate)
+  let workdays = 0
+  
+  switch (stepId) {
+    case '3': // 公安报批
+      // 提前20个工作日
+      workdays = 20
+      while (workdays > 0) {
+        deadlineDate.setDate(deadlineDate.getDate() - 1)
+        const dayOfWeek = deadlineDate.getDay()
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 排除周末
+          workdays--
+        }
+      }
+      break
+    case '6': // 反恐怖和特巡警支队报备
+      // 提前5个工作日
+      workdays = 5
+      while (workdays > 0) {
+        deadlineDate.setDate(deadlineDate.getDate() - 1)
+        const dayOfWeek = deadlineDate.getDay()
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          workdays--
+        }
+      }
+      break
+    default:
+      // 其他步骤提前10个工作日
+      workdays = 10
+      while (workdays > 0) {
+        deadlineDate.setDate(deadlineDate.getDate() - 1)
+        const dayOfWeek = deadlineDate.getDay()
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          workdays--
+        }
+      }
+  }
+  
+  // 格式化日期
+  const year = deadlineDate.getFullYear()
+  const month = String(deadlineDate.getMonth() + 1).padStart(2, '0')
+  const day = String(deadlineDate.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 // 计算当前激活步骤的内容
 const activeStepContent = computed(() => {
   // 查找主步骤
@@ -761,6 +859,19 @@ const resetSelections = () => {
   selectedVenue.value = ''
   selectedCity.value = ''
   selectedDistrict.value = ''
+  activeStep.value = ''
+}
+
+// 处理重置按钮点击
+const handleReset = () => {
+  eventName.value = ''
+  eventTime.value = []
+  eventAttendance.value = ''
+  venueBooked.value = ''
+  selectedVenue.value = ''
+  selectedCity.value = ''
+  selectedDistrict.value = ''
+  formSubmitted.value = false
   activeStep.value = ''
 }
 
@@ -992,87 +1103,108 @@ const handleOneStopService = () => {
   color: white;
   margin-bottom: 40px;
 
-  .service-banner {
-    max-width: 1000px;
+  .service-content {
+    text-align: center;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 40px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
+    padding: 0 24px;
 
-    .service-content {
-      text-align: center;
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      color: white;
+    }
 
-      h2 {
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 16px;
-        color: white;
-      }
+    .service-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 32px;
+      margin-bottom: 24px;
 
-      .service-desc {
-        font-size: 18px;
-        margin-bottom: 32px;
-        opacity: 0.9;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .service-features {
-        display: flex;
+      @media (max-width: 1024px) {
+        flex-direction: row;
+        flex-wrap: wrap;
         justify-content: center;
-        gap: 32px;
-        margin-bottom: 32px;
-
-        @media (max-width: 768px) {
-          flex-wrap: wrap;
-          gap: 20px;
-        }
-
-        .service-feature-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          padding: 16px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          min-width: 150px;
-          transition: all 0.3s ease;
-
-          &:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.15);
-          }
-
-          .feature-icon {
-            font-size: 24px;
-            color: #93C5FD;
-          }
-
-          .feature-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: white;
-          }
-        }
+        gap: 24px;
       }
 
-      .service-cta {
-        margin-top: 16px;
+      .service-column {
+        flex: 1;
+        min-width: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
 
-        :deep(.el-button--primary) {
-          padding: 12px 32px;
-          font-size: 16px;
+        h3 {
+          font-size: 20px;
           font-weight: 600;
-          background: white;
-          color: #2563EB;
-          border-color: white;
+          margin-bottom: 12px;
+          color: white;
+        }
 
-          &:hover {
-            background: #F3F4F6;
-            border-color: #F3F4F6;
+        .service-column-desc {
+          font-size: 14px;
+          margin-bottom: 24px;
+          opacity: 0.9;
+        }
+
+        .service-features {
+          display: flex;
+          flex-wrap: nowrap;
+          justify-content: center;
+          gap: 12px;
+          margin-bottom: 24px;
+
+          .service-feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            min-width: 90px;
+            max-width: 100px;
+            transition: all 0.3s ease;
+
+            &:hover {
+              transform: translateY(-4px);
+              background: rgba(255, 255, 255, 0.15);
+            }
+
+            .feature-icon {
+              font-size: 18px;
+              color: #93C5FD;
+            }
+
+            .feature-text {
+              font-size: 11px;
+              font-weight: 500;
+              color: white;
+              text-align: center;
+              line-height: 1.3;
+            }
+          }
+        }
+
+        .service-cta {
+          margin-top: 16px;
+
+          :deep(.el-button--primary) {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            background: white;
+            color: #2563EB;
+            border-color: white;
+
+            &:hover {
+              background: #F3F4F6;
+              border-color: #F3F4F6;
+            }
           }
         }
       }
@@ -1123,39 +1255,78 @@ const handleOneStopService = () => {
 .submit-section {
   display: flex;
   justify-content: center;
-  padding: 24px 0 0;
-  margin-top: 8px;
-  border-top: 1px solid #E5E7EB;
+  align-items: center;
+  padding: 24px 24px;
+  margin-top: 16px;
+  border-radius: 12px;
+  width: 100%;
+}
 
-  :deep(.el-button--primary) {
-    padding: 12px 48px;
-    font-size: 16px;
-    font-weight: 600;
-    background: linear-gradient(135deg, #1E3A8A, #3B82F6);
-    border-color: transparent;
-    color: white;
-  }
+.button-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+}
 
-  :deep(.el-button--primary:hover) {
-    background: linear-gradient(135deg, #1E40AF, #3B82F6);
-    border-color: transparent;
-  }
+.button-group :deep(.el-button) {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 140px;
+  max-width: 180px;
+  white-space: nowrap;
+}
 
-  :deep(.el-button--primary:disabled) {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background: linear-gradient(135deg, #1E3A8A, #3B82F6);
-    border-color: transparent;
+.button-group :deep(.el-button--primary) {
+  background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+  border-color: transparent;
+  color: white;
+}
+
+.button-group :deep(.el-button--primary:hover) {
+  background: linear-gradient(135deg, #1E40AF, #3B82F6);
+  border-color: transparent;
+}
+
+.button-group :deep(.el-button--primary:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+  border-color: transparent;
+}
+
+.button-group :deep(.el-button:not(.el-button--primary)) {
+  background: white;
+  border-color: #D1D5DB;
+  color: #4B5563;
+
+  &:hover {
+    background: #F3F4F6;
+    border-color: #9CA3AF;
   }
 }
 
 // 响应式设计 - 提交按钮
 @media (max-width: 768px) {
-  .submit-section {
+  .button-group {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 12px;
     padding: 20px 0 0;
+    max-width: 350px;
 
-    :deep(.el-button--primary) {
-      padding: 10px 32px;
+    :deep(.el-button) {
+      flex: 1;
+      min-width: 120px;
+      max-width: 150px;
+      padding: 10px 16px;
       font-size: 14px;
     }
   }
@@ -1171,37 +1342,44 @@ const handleOneStopService = () => {
 .process-header {
   text-align: center;
   margin-bottom: 32px;
-  padding: 24px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   h2 {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 700;
     color: #1F2937;
     margin-bottom: 8px;
+    display: inline-block;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 4px;
+      background: #2563EB;
+      border-radius: 2px;
+    }
   }
 
   .process-desc {
-    font-size: 14px;
+    font-size: 16px;
     color: #6B7280;
-    margin-top: 0;
+    margin-top: 12px;
   }
 }
 
 // 响应式设计 - 流程标题
 @media (max-width: 768px) {
   .process-header {
-    padding: 20px;
-    margin-bottom: 24px;
-
     h2 {
-      font-size: 20px;
+      font-size: 28px;
     }
 
     .process-desc {
-      font-size: 13px;
+      font-size: 14px;
     }
   }
 }
@@ -1335,13 +1513,35 @@ const handleOneStopService = () => {
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
-  h2 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1F2937;
+  .step-title-with-deadline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #E5E7EB;
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1F2937;
+      margin: 0;
+    }
+
+    .deadline-info {
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 16px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+
+      .deadline-text {
+        font-size: 12px;
+        color: #1E40AF;
+        font-weight: 500;
+      }
+    }
   }
 }
 
@@ -1668,7 +1868,7 @@ const handleOneStopService = () => {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 24px;
   }
 
   .faq-item {
@@ -1683,15 +1883,16 @@ const handleOneStopService = () => {
     }
 
     .faq-question {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       padding: 20px 24px;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
 
-      &:hover {
-        background: #F9FAFB;
+      .faq-icon {
+        font-size: 18px;
+        color: #2563EB;
+        margin-top: 2px;
+        flex-shrink: 0;
       }
 
       .faq-question-text {
@@ -1699,24 +1900,6 @@ const handleOneStopService = () => {
         font-weight: 600;
         color: #1F2937;
         flex: 1;
-        margin-right: 16px;
-      }
-
-      .faq-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        color: #2563EB;
-
-        .el-icon {
-          transition: transform 0.3s ease;
-
-          &.rotated {
-            transform: rotate(180deg);
-          }
-        }
       }
     }
 
@@ -1725,24 +1908,23 @@ const handleOneStopService = () => {
       font-size: 14px;
       line-height: 1.6;
       color: #4B5563;
-      background: #F9FAFB;
-      border-top: 1px solid #E5E7EB;
-      animation: slideDown 0.3s ease;
-    }
-  }
-}
+      background: white;
+      border-top: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
 
-// 动画效果
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-    max-height: 0;
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    max-height: 200px;
+      .faq-icon {
+        font-size: 16px;
+        color: #10B981;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+
+      .faq-answer-text {
+        flex: 1;
+      }
+    }
   }
 }
 
