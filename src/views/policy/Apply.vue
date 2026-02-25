@@ -93,6 +93,23 @@
           <h2>{{ processTitle }}</h2>
           <p class="process-desc">根据您提供的信息，为您匹配的活动审批流程</p>
         </div>
+        <div class="process-stats" v-if="formSubmitted">
+          <div class="stats-container">
+            <div class="stat-item">
+              <span class="stat-number">{{ processSteps.length }}</span>
+              <span class="stat-label">个流程节点</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-number">{{ calculateFileCount() }}</span>
+              <span class="stat-label">项文件</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-text">建议在 <span class="stat-date">{{ calculateSuggestedStartDate() }}</span> 前启动申报</span>
+            </div>
+          </div>
+        </div>
         <div class="process-container">
           <!-- 左侧流程步骤 -->
           <div class="process-steps">
@@ -120,7 +137,7 @@
               <div class="step-title-with-deadline">
                 <h2>{{ activeStepContent.title }}</h2>
                 <div class="deadline-info" v-if="eventTime && eventTime.length > 0 && activeStepContent.id !== '1'">
-                  <span class="deadline-text">建议于 {{ calculateDeadline(activeStepContent.id, eventTime[0]) }} 前完成</span>
+                  <span class="deadline-text">建议于 {{ calculateDeadline(activeStepContent.id, eventTime[0]) }} 前提交</span>
                 </div>
               </div>
               <div class="requirements-list">
@@ -197,7 +214,10 @@
     <section class="one-stop-service-section" v-if="formSubmitted">
       <div class="content-wrapper">
         <div class="service-content">
-          <h2>服务中心</h2>
+          <div class="service-section-header">
+            <h2>服务中心</h2>
+            <p class="service-section-desc">专业团队为您提供全方位的活动报批服务支持</p>
+          </div>
           <div class="service-row">
             <!-- 左侧材料预审服务 -->
             <div class="service-column">
@@ -340,19 +360,19 @@
     <div class="floating-window">
       <div class="floating-item" @click="handleMaterialPrecheck">
         <div class="floating-icon">
-          <el-icon><Check /></el-icon>
+          <el-icon><DocumentCopy /></el-icon>
         </div>
         <div class="floating-text">材料预审</div>
       </div>
       <div class="floating-item" @click="handleMyPrecheckRecords">
         <div class="floating-icon">
-          <el-icon><View /></el-icon>
+          <el-icon><Document /></el-icon>
         </div>
         <div class="floating-text">我的预审记录</div>
       </div>
       <div class="floating-item" @click="handleOneStopService">
         <div class="floating-icon">
-          <el-icon><Tools /></el-icon>
+          <el-icon><ChatDotRound /></el-icon>
         </div>
         <div class="floating-text">一站式服务</div>
       </div>
@@ -398,10 +418,28 @@ const selectedRegion = computed(() => {
   return ''
 })
 
+// 场馆区域映射
+const venueDistrictMap = {
+  '国家会议中心': '朝阳区',
+  '中国国际展览中心': '朝阳区',
+  '北京展览馆': '西城区',
+  '北京会议中心': '朝阳区',
+  '中国国际展览中心新馆': '顺义区',
+  '北京国家会议中心': '朝阳区',
+  '北京国际会议中心': '朝阳区',
+  '北京亦创国际会展中心': '大兴区',
+  '北京雁栖湖国际会展中心': '怀柔区',
+  '北京大兴国际机场会展中心': '大兴区'
+}
+
 // 计算流程标题
 const processTitle = computed(() => {
   if (selectedCity.value && selectedDistrict.value) {
     return `${selectedCity.value}-${selectedDistrict.value}大型活动报批流程说明`
+  } else if (selectedCity.value && selectedVenue.value) {
+    // 当选择场馆时，根据场馆名称推断所在区
+    const district = venueDistrictMap[selectedVenue.value] || '朝阳区'
+    return `${selectedCity.value}-${district}大型活动报批流程说明`
   }
   return '大型活动报批流程说明'
 })
@@ -924,11 +962,61 @@ const handleMyPrecheckRecords = () => {
   // 这里可以实现查看预审记录逻辑
   // 例如：router.push('/policy/precheck-records')
 }
-
+// 处理一站式服务
 const handleOneStopService = () => {
   console.log('一站式服务')
   // 这里可以实现一站式服务逻辑
   // 例如：router.push('/policy/one-stop-service')
+}
+
+// 计算文件数量
+const calculateFileCount = () => {
+  let fileCount = 0
+  
+  processSteps.value.forEach(step => {
+    if (step.requirements) {
+      fileCount += step.requirements.length
+    }
+    if (step.substeps) {
+      step.substeps.forEach(substep => {
+        if (substep.requirements) {
+          fileCount += substep.requirements.length
+        }
+      })
+    }
+  })
+  
+  return fileCount
+}
+
+// 计算建议启动申报时间
+const calculateSuggestedStartDate = () => {
+  if (!eventTime || !eventTime.value || eventTime.value.length === 0) {
+    return '尽快'
+  }
+  
+  // 计算最早的截止日期（公安报批需要提前20个工作日）
+  const earliestDeadline = calculateDeadline('3', eventTime.value[0])
+  
+  // 建议在最早截止日期前10个工作日启动
+  const deadlineDate = new Date(earliestDeadline)
+  let suggestedDate = new Date(deadlineDate)
+  
+  // 往前推10个工作日
+  let workdays = 10
+  while (workdays > 0) {
+    suggestedDate.setDate(suggestedDate.getDate() - 1)
+    const dayOfWeek = suggestedDate.getDay()
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 排除周末
+      workdays--
+    }
+  }
+  
+  // 格式化日期
+  const year = suggestedDate.getFullYear()
+  const month = String(suggestedDate.getMonth() + 1).padStart(2, '0')
+  const day = String(suggestedDate.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 </script>
@@ -1011,7 +1099,7 @@ const handleOneStopService = () => {
       transform: translateX(-50%);
       width: 40px;
       height: 4px;
-      background: #2563EB;
+      background: #93C5FD;
       border-radius: 2px;
     }
   }
@@ -1109,11 +1197,36 @@ const handleOneStopService = () => {
     margin: 0 auto;
     padding: 0 24px;
 
-    h2 {
-      font-size: 32px;
-      font-weight: 700;
+    .service-section-header {
+      text-align: center;
       margin-bottom: 32px;
-      color: white;
+
+      h2 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: white;
+        display: inline-block;
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40px;
+          height: 4px;
+          background: #93C5FD;
+          border-radius: 2px;
+        }
+      }
+
+      .service-section-desc {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: 12px;
+      }
     }
 
     .service-row {
@@ -1368,6 +1481,76 @@ const handleOneStopService = () => {
     font-size: 16px;
     color: #6B7280;
     margin-top: 12px;
+  }
+}
+
+// 流程统计信息
+.process-stats {
+  margin-bottom: 32px;
+
+  .stats-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2563EB;
+      }
+
+      .stat-label {
+        font-size: 16px;
+        color: #6B7280;
+      }
+
+      .stat-text {
+        font-size: 14px;
+        color: #1F2937;
+        font-weight: 500;
+
+        .stat-date {
+          font-size: 18px;
+          font-weight: 700;
+          color: #2563EB;
+          margin: 0 4px;
+        }
+      }
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 40px;
+      background: #E5E7EB;
+
+      @media (max-width: 768px) {
+        width: 80px;
+        height: 1px;
+      }
+    }
   }
 }
 
