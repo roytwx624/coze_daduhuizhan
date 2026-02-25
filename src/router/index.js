@@ -89,6 +89,7 @@ const routes = [
     component: () => import('@/views/policy/Apply.vue'),
     meta: { title: '大型活动报批' }
   },
+
   {
     path: '/bidding',
     name: 'TenderInfo',

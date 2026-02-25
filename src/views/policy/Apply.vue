@@ -109,6 +109,19 @@
               <span class="stat-text">建议在 <span class="stat-date">{{ calculateSuggestedStartDate() }}</span> 前启动申报</span>
             </div>
           </div>
+          
+          <!-- 上传进度显示（预审模式下） -->
+          <div v-if="isPrecheckMode" class="stats-divider"></div>
+          <div v-if="isPrecheckMode" class="upload-progress-section">
+            <div class="progress-header">
+              <span>文件上传进度</span>
+              <span class="progress-percentage">{{ uploadProgress }}%</span>
+            </div>
+            <el-progress :percentage="uploadProgress" :stroke-width="10" :color="'#2563EB'" />
+            <div class="progress-info">
+              <span>已上传 {{ uploadedFiles.size }}/{{ totalFiles }} 个文件</span>
+            </div>
+          </div>
         </div>
         <div class="process-container">
           <!-- 左侧流程步骤 -->
@@ -146,14 +159,83 @@
                   <div v-for="(substep, substepIndex) in activeStepContent.substeps" :key="substep.id" class="substep-section">
                     <!-- 二级标题 -->
                     <div class="substep-title">
-                      {{ substep.id }} {{ substep.title }}
+                      {{ substep.title }}
                     </div>
                     <!-- 子步骤的要求 -->
                     <div v-for="(req, reqIndex) in substep.requirements" :key="reqIndex" class="requirement-item">
                       <div class="requirement-header">
                         <div class="requirement-title">
-                      {{ req.title }}
+                          {{ req.title }}
+                        </div>
+                        <div class="action-buttons">
+                          <div v-if="req.downloadable" class="download-buttons">
+                            <el-button size="small" type="primary" @click="downloadTemplate(req)">
+                              <el-icon><Download /></el-icon>
+                              下载模板
+                            </el-button>
+                            <el-button size="small" @click="downloadSample(req)">
+                              <el-icon><Document /></el-icon>
+                              下载范文
+                            </el-button>
+                          </div>
+                          <div v-if="isPrecheckMode && !req.items" class="upload-buttons">
+                            <el-button 
+                              size="small" 
+                              :type="uploadedFiles.has(`${substep.id}-${reqIndex}`) ? 'success' : 'primary'"
+                              @click="handleFileUpload(`${substep.id}-${reqIndex}`)"
+                              :disabled="uploadedFiles.has(`${substep.id}-${reqIndex}`)"
+                            >
+                              <el-icon><Upload /></el-icon>
+                              {{ uploadedFiles.has(`${substep.id}-${reqIndex}`) ? '已上传' : '上传' }}
+                            </el-button>
+                            <el-button 
+                              v-if="uploadedFiles.has(`${substep.id}-${reqIndex}`)" 
+                              size="small" 
+                              @click="handleCancelUpload(`${substep.id}-${reqIndex}`)"
+                            >
+                              取消
+                            </el-button>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="req.items" class="requirement-items">
+                        <template v-if="activeStepContent.id === '1'">
+                          <!-- 完成备案后获得备案回执步骤：只在标题显示上传按钮，下方文字说明不需要 -->
+                          <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-detail">
+                            {{ item }}
+                          </div>
+                        </template>
+                        <template v-else>
+                          <!-- 其他步骤：为每个子项添加上传按钮 -->
+                          <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-with-upload">
+                            <div class="requirement-item-detail">
+                              {{ item }}
+                            </div>
+                            <div v-if="isPrecheckMode" class="item-upload-button">
+                              <el-button 
+                                size="small" 
+                                :type="uploadedFiles.has(`${substep.id}-${reqIndex}-${itemIndex}`) ? 'success' : 'primary'"
+                                @click="handleFileUpload(`${substep.id}-${reqIndex}-${itemIndex}`)"
+                                :disabled="uploadedFiles.has(`${substep.id}-${reqIndex}-${itemIndex}`)"
+                              >
+                                <el-icon><Upload /></el-icon>
+                                {{ uploadedFiles.has(`${substep.id}-${reqIndex}-${itemIndex}`) ? '已上传' : '上传' }}
+                              </el-button>
+                            </div>
+                          </div>
+                        </template>
+                      </div>
                     </div>
+                  </div>
+                </template>
+                <!-- 显示普通要求 -->
+                <template v-else>
+                  <div v-for="(req, index) in activeStepContent.requirements" :key="index" class="requirement-item">
+                    <div class="requirement-header">
+                      <div class="requirement-title">
+                        {{ req.title }}
+                      </div>
+                      <div class="action-buttons">
                         <div v-if="req.downloadable" class="download-buttons">
                           <el-button size="small" type="primary" @click="downloadTemplate(req)">
                             <el-icon><Download /></el-icon>
@@ -164,40 +246,73 @@
                             下载范文
                           </el-button>
                         </div>
-                      </div>
-                      <div v-if="req.items" class="requirement-items">
-                        <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-detail">
-                          {{ item }}
+                        <div v-if="isPrecheckMode && !req.items" class="upload-buttons">
+                          <el-button 
+                            size="small" 
+                            :type="uploadedFiles.has(`${activeStepContent.id}-${index}`) ? 'success' : 'primary'"
+                            @click="handleFileUpload(`${activeStepContent.id}-${index}`)"
+                            :disabled="uploadedFiles.has(`${activeStepContent.id}-${index}`)"
+                          >
+                            <el-icon><Upload /></el-icon>
+                            {{ uploadedFiles.has(`${activeStepContent.id}-${index}`) ? '已上传' : '上传' }}
+                          </el-button>
+                          <el-button 
+                            v-if="uploadedFiles.has(`${activeStepContent.id}-${index}`)" 
+                            size="small" 
+                            @click="handleCancelUpload(`${activeStepContent.id}-${index}`)"
+                          >
+                            取消
+                          </el-button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </template>
-                <!-- 显示普通要求 -->
-                <template v-else>
-                  <div v-for="(req, index) in activeStepContent.requirements" :key="index" class="requirement-item">
-                    <div class="requirement-header">
-                      <div class="requirement-title">
-                      {{ req.title }}
-                    </div>
-                      <div v-if="req.downloadable" class="download-buttons">
-                        <el-button size="small" type="primary" @click="downloadTemplate(req)">
-                          <el-icon><Download /></el-icon>
-                          下载模板
-                        </el-button>
-                        <el-button size="small" @click="downloadSample(req)">
-                          <el-icon><Document /></el-icon>
-                          下载范文
-                        </el-button>
-                      </div>
-                    </div>
                     <div v-if="req.items" class="requirement-items">
-                      <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-detail">
-                        {{ item }}
-                      </div>
+                      <template v-if="activeStepContent.id === '1'">
+                        <!-- 完成备案后获得备案回执步骤：只在标题显示上传按钮，下方文字说明不需要 -->
+                        <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-detail">
+                          {{ item }}
+                        </div>
+                      </template>
+                      <template v-else>
+                        <!-- 其他步骤：为每个子项添加上传按钮 -->
+                        <div v-for="(item, itemIndex) in req.items" :key="itemIndex" class="requirement-item-with-upload">
+                          <div class="requirement-item-detail">
+                            {{ item }}
+                          </div>
+                          <div v-if="isPrecheckMode" class="item-upload-button">
+                            <el-button 
+                              size="small" 
+                              :type="uploadedFiles.has(`${activeStepContent.id}-${index}-${itemIndex}`) ? 'success' : 'primary'"
+                              @click="handleFileUpload(`${activeStepContent.id}-${index}-${itemIndex}`)"
+                              :disabled="uploadedFiles.has(`${activeStepContent.id}-${index}-${itemIndex}`)"
+                            >
+                              <el-icon><Upload /></el-icon>
+                              {{ uploadedFiles.has(`${activeStepContent.id}-${index}-${itemIndex}`) ? '已上传' : '上传' }}
+                            </el-button>
+                          </div>
+                        </div>
+                      </template>
                     </div>
                   </div>
                 </template>
+                
+                <!-- 提交和保存按钮 -->
+                <div v-if="isPrecheckMode" class="precheck-actions">
+                  <el-button size="large" @click="exitPrecheckMode">
+                    退出预审
+                  </el-button>
+                  <el-button size="large" @click="handleSaveDraft">
+                    保存草稿
+                  </el-button>
+                  <el-button 
+                    size="large" 
+                    type="primary" 
+                    @click="handleSubmitPrecheck"
+                    :disabled="!allFilesUploaded"
+                  >
+                    提交预审
+                  </el-button>
+                </div>
               </div>
               
 
@@ -377,13 +492,63 @@
         <div class="floating-text">一站式服务</div>
       </div>
     </div>
+    <!-- 一站式服务留资弹窗 -->
+    <el-dialog
+      v-model="oneStopDialogVisible"
+      width="600px"
+      center
+    >
+      <template #header>
+        <div class="dialog-header">
+          <h3 class="dialog-title">一站式服务留资</h3>
+        </div>
+      </template>
+      <div class="one-stop-dialog-content">
+        <p class="dialog-desc">填写以下信息，我们的专业团队将会尽快与您联系</p>
+        
+        <el-form :model="oneStopForm" :rules="oneStopRules" ref="oneStopFormRef" label-width="120px">
+          <el-form-item label="企业名称" prop="companyName">
+            <el-input v-model="oneStopForm.companyName" placeholder="请输入企业名称" />
+          </el-form-item>
+          
+          <el-form-item label="联系人" prop="contactPerson">
+            <el-input v-model="oneStopForm.contactPerson" placeholder="请输入联系人姓名" />
+          </el-form-item>
+          
+          <el-form-item label="联系方式" prop="contactPhone">
+            <el-input v-model="oneStopForm.contactPhone" placeholder="请输入手机号码" />
+          </el-form-item>
+          
+          <el-form-item label="微信号" prop="wechat">
+            <el-input v-model="oneStopForm.wechat" placeholder="请输入微信号" />
+          </el-form-item>
+          
+          <el-form-item label="备注" prop="remark">
+            <el-input 
+              v-model="oneStopForm.remark" 
+              type="textarea" 
+              placeholder="请输入您的需求或疑问" 
+              rows="4"
+            />
+          </el-form-item>
+        </el-form>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="oneStopDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleSubmitOneStop" :loading="submittingOneStop">
+            提交留资
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Document, Download, Check, View, Tools, ArrowDown, QuestionFilled, Timer, Star, ChatDotRound, DocumentCopy } from '@element-plus/icons-vue'
+import { Document, Download, Check, View, Tools, ArrowDown, QuestionFilled, Timer, Star, ChatDotRound, DocumentCopy, Upload } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
@@ -396,6 +561,40 @@ const selectedVenue = ref('')
 const selectedCity = ref('')
 const selectedDistrict = ref('')
 const formSubmitted = ref(false)
+
+// 一站式服务弹窗
+const oneStopDialogVisible = ref(false)
+const oneStopFormRef = ref(null)
+const submittingOneStop = ref(false)
+
+// 弹窗表单数据
+const oneStopForm = ref({
+  companyName: '',
+  contactPerson: '',
+  contactPhone: '',
+  wechat: '',
+  remark: ''
+})
+
+// 弹窗表单验证规则
+const oneStopRules = ref({
+  companyName: [
+    { required: true, message: '请输入企业名称', trigger: 'blur' }
+  ],
+  contactPerson: [
+    { required: true, message: '请输入联系人姓名', trigger: 'blur' }
+  ],
+  contactPhone: [
+    { required: true, message: '请输入手机号码', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+  ],
+  wechat: [
+    { required: true, message: '请输入微信号', trigger: 'blur' }
+  ],
+  remark: [
+    { required: false, message: '请输入备注信息', trigger: 'blur' }
+  ]
+})
 
 // 计算表单是否有效
 const isFormValid = computed(() => {
@@ -950,11 +1149,84 @@ const downloadSample = (requirement) => {
   // 这里可以实现下载逻辑
 }
 
+// 预审模式状态
+const isPrecheckMode = ref(false)
+const uploadProgress = ref(0)
+const uploadedFiles = ref(new Set())
+const totalFiles = ref(0)
+
+// 计算是否所有文件都已上传
+const allFilesUploaded = computed(() => {
+  return uploadedFiles.value.size >= totalFiles.value && totalFiles.value > 0
+})
+
+// 计算上传进度
+const updateUploadProgress = () => {
+  if (totalFiles.value > 0) {
+    uploadProgress.value = Math.round((uploadedFiles.value.size / totalFiles.value) * 100)
+  } else {
+    uploadProgress.value = 0
+  }
+}
+
+// 处理文件上传
+const handleFileUpload = (fileId) => {
+  console.log('上传文件:', fileId)
+  // 模拟文件上传过程
+  setTimeout(() => {
+    uploadedFiles.value.add(fileId)
+    updateUploadProgress()
+    console.log('文件上传完成:', fileId)
+  }, 1000)
+}
+
+// 处理取消上传
+const handleCancelUpload = (fileId) => {
+  console.log('取消上传:', fileId)
+  uploadedFiles.value.delete(fileId)
+  updateUploadProgress()
+}
+
+// 处理保存草稿
+const handleSaveDraft = () => {
+  console.log('保存草稿')
+  // 这里可以实现保存草稿逻辑
+}
+
+// 处理提交预审
+const handleSubmitPrecheck = () => {
+  if (allFilesUploaded.value) {
+    console.log('提交预审')
+    // 这里可以实现提交预审逻辑
+  } else {
+    console.log('请上传所有文件后再提交')
+  }
+}
+
+// 进入预审模式
+const enterPrecheckMode = () => {
+  isPrecheckMode.value = true
+  // 计算总文件数
+  totalFiles.value = calculateFileCount()
+  // 重置上传状态
+  uploadedFiles.value.clear()
+  uploadProgress.value = 0
+  console.log('进入预审模式，总文件数:', totalFiles.value)
+}
+
+// 退出预审模式
+const exitPrecheckMode = () => {
+  isPrecheckMode.value = false
+  uploadedFiles.value.clear()
+  uploadProgress.value = 0
+  totalFiles.value = 0
+  console.log('退出预审模式')
+}
+
 // 悬浮窗点击处理函数
 const handleMaterialPrecheck = () => {
   console.log('材料预审')
-  // 这里可以实现材料预审逻辑
-  // 例如：router.push('/policy/precheck')
+  enterPrecheckMode()
 }
 
 const handleMyPrecheckRecords = () => {
@@ -965,8 +1237,39 @@ const handleMyPrecheckRecords = () => {
 // 处理一站式服务
 const handleOneStopService = () => {
   console.log('一站式服务')
-  // 这里可以实现一站式服务逻辑
-  // 例如：router.push('/policy/one-stop-service')
+  // 显示弹窗而不是跳转到新页面
+  oneStopDialogVisible.value = true
+}
+
+// 处理弹窗表单提交
+const handleSubmitOneStop = async () => {
+  if (!oneStopFormRef.value) return
+  
+  try {
+    await oneStopFormRef.value.validate()
+    submittingOneStop.value = true
+    
+    // 模拟提交过程
+    setTimeout(() => {
+      console.log('提交留资信息:', oneStopForm.value)
+      submittingOneStop.value = false
+      oneStopDialogVisible.value = false
+      
+      // 重置表单
+      oneStopForm.value = {
+        companyName: '',
+        contactPerson: '',
+        contactPhone: '',
+        wechat: '',
+        remark: ''
+      }
+      
+      // 可以添加成功提示
+      console.log('提交成功')
+    }, 1000)
+  } catch (error) {
+    console.log('表单验证失败:', error)
+  }
 }
 
 // 计算文件数量
@@ -975,12 +1278,28 @@ const calculateFileCount = () => {
   
   processSteps.value.forEach(step => {
     if (step.requirements) {
-      fileCount += step.requirements.length
+      step.requirements.forEach(req => {
+        if (req.items) {
+          // 如果有子项，只计算子项数量
+          fileCount += req.items.length
+        } else {
+          // 如果没有子项，计算本身
+          fileCount += 1
+        }
+      })
     }
     if (step.substeps) {
       step.substeps.forEach(substep => {
         if (substep.requirements) {
-          fileCount += substep.requirements.length
+          substep.requirements.forEach(req => {
+            if (req.items) {
+              // 如果有子项，只计算子项数量
+              fileCount += req.items.length
+            } else {
+              // 如果没有子项，计算本身
+              fileCount += 1
+            }
+          })
         }
       })
     }
@@ -1495,7 +1814,7 @@ const calculateSuggestedStartDate = () => {
     gap: 32px;
     padding: 20px;
     background: white;
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     max-width: 900px;
     margin: 0 auto;
@@ -1550,6 +1869,51 @@ const calculateSuggestedStartDate = () => {
         width: 80px;
         height: 1px;
       }
+    }
+  }
+
+  // 统计信息与上传进度的分割线
+  .stats-divider {
+    width: 100%;
+    height: 1px;
+    background: #E5E7EB;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  // 上传进度区域
+  .upload-progress-section {
+    padding: 20px;
+    background: white;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
+    margin: 0 auto;
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      span {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1E293B;
+      }
+
+      .progress-percentage {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2563EB;
+      }
+    }
+
+    .progress-info {
+      margin-top: 12px;
+      text-align: right;
+      font-size: 12px;
+      color: #64748B;
     }
   }
 }
@@ -1757,6 +2121,12 @@ const calculateSuggestedStartDate = () => {
   flex: 1;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .download-buttons {
   display: flex;
   gap: 8px;
@@ -1789,6 +2159,42 @@ const calculateSuggestedStartDate = () => {
   }
 }
 
+.upload-buttons {
+  display: flex;
+  gap: 8px;
+
+  :deep(.el-button) {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+}
+
+
+
+// 预审操作按钮
+.precheck-actions {
+  margin-top: 32px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #E2E8F0;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  :deep(.el-button) {
+    flex: 1;
+    max-width: 150px;
+
+    @media (max-width: 768px) {
+      max-width: none;
+    }
+  }
+}
+
 .requirement-items {
   display: flex;
   flex-direction: column;
@@ -1796,19 +2202,37 @@ const calculateSuggestedStartDate = () => {
   margin-left: 16px;
 }
 
+.requirement-item-with-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  position: relative;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .requirement-item-detail {
   font-size: 13px;
   color: #4B5563;
   line-height: 1.5;
+  flex: 1;
   position: relative;
+  padding-left: 20px;
 
   &::before {
     content: '•';
     position: absolute;
-    left: -16px;
+    left: 0;
     color: #2563EB;
     font-weight: 600;
   }
+}
+
+.item-upload-button {
+  flex-shrink: 0;
 }
 
 // 子步骤区域
@@ -2129,6 +2553,63 @@ const calculateSuggestedStartDate = () => {
         padding: 0 20px 16px;
         font-size: 13px;
       }
+    }
+  }
+}
+// 弹窗标题样式
+.dialog-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 16px 0;
+  
+  .dialog-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// 一站式服务弹窗样式
+.one-stop-dialog-content {
+  .dialog-desc {
+    font-size: 16px;
+    color: #6B7280;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+  }
+  
+  :deep(.el-input) {
+    width: 100%;
+  }
+  
+  .dialog-footer {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    
+    :deep(.el-button) {
+      min-width: 120px;
+    }
+  }
+}
+
+// 响应式设计 - 弹窗
+@media (max-width: 768px) {
+  .one-stop-dialog-content {
+    :deep(.el-form) {
+      label-width: 100px;
+    }
+    
+    :deep(.el-form-item__content) {
+      margin-left: 100px !important;
     }
   }
 }
