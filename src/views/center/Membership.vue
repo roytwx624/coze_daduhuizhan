@@ -185,7 +185,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Trophy, Money, Ticket, Headphones, Lightning, ChatDotRound, DataAnalysis, Present, Star, Crown, Gift, Check } from '@element-plus/icons-vue'
+import { Trophy, Money, Ticket, Phone, Lightning, ChatDotRound, DataAnalysis, Present, Star, Medal, Check } from '@element-plus/icons-vue'
 
 const membershipInfo = ref({
   level: '铂金会员',
@@ -215,7 +215,7 @@ const benefitsList = ref([
   {
     id: 3,
     name: '专属客服',
-    icon: Headphones,
+    icon: Phone,
     description: '7x24小时专属客服服务',
     available: true
   },
@@ -257,14 +257,14 @@ const benefitsList = ref([
   {
     id: 9,
     name: 'VIP通道',
-    icon: Crown,
+    icon: Medal,
     description: '展会现场VIP快速通道',
     available: false
   },
   {
     id: 10,
     name: '专属礼遇',
-    icon: Gift,
+    icon: Present,
     description: '节日专属礼品赠送',
     available: false
   }

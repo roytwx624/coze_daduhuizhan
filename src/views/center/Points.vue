@@ -170,7 +170,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon"><el-icon :size="24"><Crown /></el-icon></div>
+                    <div class="rule-icon"><el-icon :size="24"><Medal /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">生日福利</h4>
                       <p class="rule-desc">生日当天可获得500积分奖励</p>
@@ -200,7 +200,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon"><el-icon :size="24"><Gift /></el-icon></div>
+                    <div class="rule-icon"><el-icon :size="24"><Present /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">兑换礼品</h4>
                       <p class="rule-desc">使用积分兑换平台礼品，根据礼品价值扣除对应积分</p>
@@ -208,7 +208,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon"><el-icon :size="24"><Banknote /></el-icon></div>
+                    <div class="rule-icon"><el-icon :size="24"><Money /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">积分抵现</h4>
                       <p class="rule-desc">消费时可使用积分抵扣现金，100积分=1元</p>
@@ -216,7 +216,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon"><el-icon :size="24"><PartyPopper /></el-icon></div>
+                    <div class="rule-icon"><el-icon :size="24"><Present /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">参与活动</h4>
                       <p class="rule-desc">参与特定活动需消耗一定积分</p>
@@ -334,7 +334,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Star, Present, ShoppingBag, Document, ChatDotRound, Money, Calendar, Ticket, Gift, ShoppingCart, PartyPopper, Trophy, Edit, Crown, Banknote, Reading } from '@element-plus/icons-vue'
+import { Star, Present, ShoppingBag, Document, ChatDotRound, Money, Calendar, Ticket, ShoppingCart, Trophy, Edit, Medal, Reading } from '@element-plus/icons-vue'
 
 const activeTab = ref('details')
 const dateRange = ref([])
@@ -420,7 +420,7 @@ const exchangeList = ref([
     id: 2,
     name: 'VIP展会门票',
     description: '可兑换VIP展会门票1张',
-    icon: Crown,
+    icon: Medal,
     points: 300,
     stock: 50,
     type: 'ticket'
@@ -429,7 +429,7 @@ const exchangeList = ref([
     id: 3,
     name: '定制礼品套装',
     description: '平台定制精美礼品套装一份',
-    icon: Gift,
+    icon: Present,
     points: 500,
     stock: 100,
     type: 'gift'
