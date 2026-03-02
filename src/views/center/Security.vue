@@ -69,7 +69,7 @@
         <div class="devices-list">
           <div v-for="(device, index) in devices" :key="index" class="device-item">
             <div class="device-info">
-              <div class="device-icon">{{ device.icon }}</div>
+              <div class="device-icon"><el-icon><component :is="device.icon" /></el-icon></div>
               <div class="device-details">
                 <div class="device-name">{{ device.name }}</div>
                 <div class="device-time">最后登录：{{ device.lastLogin }}</div>
@@ -116,6 +116,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Monitor, Phone } from '@element-plus/icons-vue'
 
 const passwordFormRef = ref(null)
 
@@ -172,19 +173,19 @@ const maskedEmail = 'zhang***@example.com'
 const devices = ref([
   {
     name: 'Windows Chrome 浏览器',
-    icon: '💻',
+    icon: Monitor,
     lastLogin: '2024-01-20 14:30',
     current: true
   },
   {
     name: 'iPhone Safari 浏览器',
-    icon: '📱',
+    icon: Phone,
     lastLogin: '2024-01-19 09:15',
     current: false
   },
   {
     name: 'Mac Chrome 浏览器',
-    icon: '🖥️',
+    icon: Monitor,
     lastLogin: '2024-01-18 16:45',
     current: false
   }

@@ -108,7 +108,7 @@
     </div>
 
     <div class="empty-state" v-else>
-      <div class="empty-icon">📄</div>
+      <div class="empty-icon"><el-icon><Document /></el-icon></div>
       <h3>暂无发票记录</h3>
       <p>完成订单后可以申请发票</p>
       <el-button type="primary" @click="goToOrders">去订单页</el-button>
@@ -150,6 +150,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Document } from '@element-plus/icons-vue'
 
 const router = useRouter()
 

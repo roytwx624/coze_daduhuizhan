@@ -67,7 +67,7 @@
     </div>
 
     <div class="empty-state" v-else>
-      <div class="empty-icon">🔔</div>
+      <div class="empty-icon"><el-icon><Bell /></el-icon></div>
       <h3>暂无消息通知</h3>
       <p>开启消息通知，及时获取重要信息</p>
     </div>
@@ -94,6 +94,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Bell } from '@element-plus/icons-vue'
 
 const activeTab = ref('all')
 const detailVisible = ref(false)

@@ -16,7 +16,7 @@
                 <span class="unit">积分</span>
               </div>
             </div>
-            <div class="points-icon">⭐</div>
+            <div class="points-icon"><el-icon><Star /></el-icon></div>
           </div>
           <div class="points-details">
             <div class="detail-item">
@@ -32,11 +32,11 @@
 
         <div class="points-actions">
           <el-button type="primary" size="large" @click="handleEarnPoints">
-            <span class="icon">🎁</span>
+            <span class="icon"><el-icon><Present /></el-icon></span>
             获取更多积分
           </el-button>
           <el-button size="large" @click="handleUsePoints">
-            <span class="icon">🛍️</span>
+            <span class="icon"><el-icon><ShoppingBag /></el-icon></span>
             积分兑换
           </el-button>
         </div>
@@ -138,7 +138,7 @@
                 <h3 class="rules-title">获取积分规则</h3>
                 <div class="rules-list">
                   <div class="rule-item">
-                    <div class="rule-icon">📝</div>
+                    <div class="rule-icon"><el-icon :size="24"><Edit /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">完善个人资料</h4>
                       <p class="rule-desc">首次完善个人资料可获得100积分</p>
@@ -146,7 +146,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">🎫</div>
+                    <div class="rule-icon"><el-icon :size="24"><Ticket /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">报名展会</h4>
                       <p class="rule-desc">每次成功报名展会可获得50-200积分，根据展会等级确定</p>
@@ -154,7 +154,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">💬</div>
+                    <div class="rule-icon"><el-icon :size="24"><ChatDotRound /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">发表评价</h4>
                       <p class="rule-desc">对展会或服务发表评价可获得10-30积分</p>
@@ -162,7 +162,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">💰</div>
+                    <div class="rule-icon"><el-icon :size="24"><Money /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">消费获得积分</h4>
                       <p class="rule-desc">每消费1元可获得1积分，会员可获得双倍积分</p>
@@ -170,7 +170,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">🎂</div>
+                    <div class="rule-icon"><el-icon :size="24"><Crown /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">生日福利</h4>
                       <p class="rule-desc">生日当天可获得500积分奖励</p>
@@ -178,7 +178,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">📅</div>
+                    <div class="rule-icon"><el-icon :size="24"><Calendar /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">签到奖励</h4>
                       <p class="rule-desc">每日签到可获得5-20积分，连续签到有额外奖励</p>
@@ -192,7 +192,7 @@
                 <h3 class="rules-title">积分消耗规则</h3>
                 <div class="rules-list">
                   <div class="rule-item">
-                    <div class="rule-icon">🎟️</div>
+                    <div class="rule-icon"><el-icon :size="24"><Ticket /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">兑换门票</h4>
                       <p class="rule-desc">使用积分兑换展会门票，100积分=1张普通门票</p>
@@ -200,7 +200,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">🎁</div>
+                    <div class="rule-icon"><el-icon :size="24"><Gift /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">兑换礼品</h4>
                       <p class="rule-desc">使用积分兑换平台礼品，根据礼品价值扣除对应积分</p>
@@ -208,7 +208,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">💸</div>
+                    <div class="rule-icon"><el-icon :size="24"><Banknote /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">积分抵现</h4>
                       <p class="rule-desc">消费时可使用积分抵扣现金，100积分=1元</p>
@@ -216,7 +216,7 @@
                     </div>
                   </div>
                   <div class="rule-item">
-                    <div class="rule-icon">🎉</div>
+                    <div class="rule-icon"><el-icon :size="24"><PartyPopper /></el-icon></div>
                     <div class="rule-content">
                       <h4 class="rule-name">参与活动</h4>
                       <p class="rule-desc">参与特定活动需消耗一定积分</p>
@@ -258,7 +258,7 @@
                   class="exchange-item"
                 >
                   <div class="item-image">
-                    <span class="item-type-icon">{{ item.icon }}</span>
+                    <span class="item-type-icon"><el-icon :size="60"><component :is="item.icon" /></el-icon></span>
                   </div>
                   <div class="item-content">
                     <h4 class="item-name">{{ item.name }}</h4>
@@ -302,7 +302,7 @@
     <el-dialog v-model="exchangeVisible" title="确认兑换" width="500px">
       <div class="exchange-confirm">
         <div class="item-preview">
-          <span class="icon">{{ selectedItem?.icon }}</span>
+          <span class="icon"><el-icon :size="48"><component :is="selectedItem?.icon" /></el-icon></span>
           <div class="item-info">
             <h3 class="item-name">{{ selectedItem?.name }}</h3>
             <p class="item-desc">{{ selectedItem?.description }}</p>
@@ -334,6 +334,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Star, Present, ShoppingBag, Document, ChatDotRound, Money, Calendar, Ticket, Gift, ShoppingCart, PartyPopper, Trophy, Edit, Crown, Banknote, Reading } from '@element-plus/icons-vue'
 
 const activeTab = ref('details')
 const dateRange = ref([])
@@ -410,7 +411,7 @@ const exchangeList = ref([
     id: 1,
     name: '普通展会门票',
     description: '可兑换任意普通展会门票1张',
-    icon: '🎫',
+    icon: Ticket,
     points: 100,
     stock: 999,
     type: 'ticket'
@@ -419,7 +420,7 @@ const exchangeList = ref([
     id: 2,
     name: 'VIP展会门票',
     description: '可兑换VIP展会门票1张',
-    icon: '👑',
+    icon: Crown,
     points: 300,
     stock: 50,
     type: 'ticket'
@@ -428,7 +429,7 @@ const exchangeList = ref([
     id: 3,
     name: '定制礼品套装',
     description: '平台定制精美礼品套装一份',
-    icon: '🎁',
+    icon: Gift,
     points: 500,
     stock: 100,
     type: 'gift'
@@ -437,7 +438,7 @@ const exchangeList = ref([
     id: 4,
     name: '50元优惠券',
     description: '可用于展会服务消费',
-    icon: '📝',
+    icon: Document,
     points: 200,
     stock: 200,
     type: 'discount'
@@ -446,7 +447,7 @@ const exchangeList = ref([
     id: 5,
     name: '100元优惠券',
     description: '可用于展会服务消费',
-    icon: '📝',
+    icon: Document,
     points: 400,
     stock: 150,
     type: 'discount'
@@ -455,7 +456,7 @@ const exchangeList = ref([
     id: 6,
     name: '纪念水杯',
     description: '平台定制纪念水杯一个',
-    icon: '🏆',
+    icon: Trophy,
     points: 250,
     stock: 300,
     type: 'gift'

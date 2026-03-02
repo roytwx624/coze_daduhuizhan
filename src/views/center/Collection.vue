@@ -14,7 +14,7 @@
             class="collection-item"
             @click="goToDetail(item)"
           >
-            <div class="item-icon">{{ item.icon }}</div>
+            <div class="item-icon"><el-icon :size="36"><component :is="item.icon" /></el-icon></div>
             <div class="item-info">
               <h3 class="item-title">{{ item.title }}</h3>
               <p class="item-desc">{{ item.description }}</p>
@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="empty-state" v-else>
-          <div class="empty-icon">📚</div>
+          <div class="empty-icon"><el-icon><Reading /></el-icon></div>
           <h3>暂无收藏的内容资料</h3>
           <p>去展会文集页面探索更多内容</p>
           <el-button type="primary" @click="goToCollection">去看看</el-button>
@@ -70,7 +70,7 @@
           </div>
         </div>
         <div class="empty-state" v-else>
-          <div class="empty-icon">🎬</div>
+          <div class="empty-icon"><el-icon><VideoCamera /></el-icon></div>
           <h3>暂无收藏的媒体资源</h3>
           <p>去视频中心发现更多精彩内容</p>
           <el-button type="primary" @click="goToVideoCenter">去看看</el-button>
@@ -85,19 +85,19 @@
             class="collection-item service-item"
             @click="goToDetail(item)"
           >
-            <div class="item-icon">{{ item.icon }}</div>
+            <div class="item-icon"><el-icon :size="36"><component :is="item.icon" /></el-icon></div>
             <div class="item-info">
               <h3 class="item-title">{{ item.name }}</h3>
               <p class="item-desc">{{ item.provider }}</p>
               <div class="item-meta">
                 <span class="meta-price">¥{{ item.price }}</span>
-                <span class="meta-rating">⭐ {{ item.rating }}</span>
+                <span class="meta-rating"><el-icon><Star /></el-icon> {{ item.rating }}</span>
                 <span class="meta-time">收藏于：{{ item.collectTime }}</span>
               </div>
             </div>
             <div class="item-actions">
               <el-button type="primary" size="small" @click.stop="handleChat(item)">
-                洽谈
+                免费体验材料预审服务
               </el-button>
               <el-button size="small" @click.stop="handleUncollect(item.id)">
                 取消收藏
@@ -106,7 +106,7 @@
           </div>
         </div>
         <div class="empty-state" v-else>
-          <div class="empty-icon">🔧</div>
+          <div class="empty-icon"><el-icon><Tools /></el-icon></div>
           <h3>暂无收藏的服务资源</h3>
           <p>去展会服务页面寻找优质服务商</p>
           <el-button type="primary" @click="goToServiceSearch">去看看</el-button>
@@ -120,6 +120,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { DataAnalysis, Document, ShoppingBag, Star, Reading, VideoCamera, Tools } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
@@ -140,7 +141,7 @@ const loadCollections = () => {
       title: '2024年会展行业深度分析报告',
       description: '全面分析2024年会展行业发展趋势、市场规模及未来预测',
       type: 'report',
-      icon: '📊',
+      icon: DataAnalysis,
       collectTime: '2024-01-15'
     },
     {
@@ -148,7 +149,7 @@ const loadCollections = () => {
       title: '国家会展业发展扶持政策汇编',
       description: '收录最新国家及地方会展业扶持政策文件',
       type: 'policy',
-      icon: '📋',
+      icon: Document,
       collectTime: '2024-01-10'
     }
   ]
@@ -161,7 +162,7 @@ const loadCollections = () => {
       type: 'live',
       status: 'live',
       statusText: '正在直播',
-      cover: 'https://via.placeholder.com/200x120/2563EB/ffffff?text=直播封面',
+      cover: 'https://images.unsplash.com/photo-1591115765373-5207764f72e4?w=800&h=600&fit=crop',
       collectTime: '2024-01-20'
     },
     {
@@ -171,7 +172,7 @@ const loadCollections = () => {
       type: 'replay',
       status: 'replay',
       statusText: '回放',
-      cover: 'https://via.placeholder.com/200x120/204E9C/ffffff?text=回放封面',
+      cover: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=600&fit=crop',
       collectTime: '2024-01-18'
     }
   ]
@@ -179,20 +180,20 @@ const loadCollections = () => {
   serviceCollection.value = [
     {
       id: 1,
-      name: '专业展位搭建服务',
-      provider: '北京某某展览展示有限公司',
-      price: '5000起',
-      rating: 4.8,
-      icon: '🏗️',
+      name: '场馆管理系统',
+      provider: '北京北辰会展信息服务有限公司',
+      price: '150000元/套',
+      rating: 5.0,
+      icon: ShoppingBag,
       collectTime: '2024-01-12'
     },
     {
       id: 2,
-      name: '展会物流运输服务',
-      provider: '顺通物流有限公司',
-      price: '按距离计费',
-      rating: 4.5,
-      icon: '🚚',
+      name: '展会物流仓储服务',
+      provider: '顺丰速运（会展专享）',
+      price: '50元/立方米',
+      rating: 4.7,
+      icon: Tools,
       collectTime: '2024-01-08'
     }
   ]
@@ -212,7 +213,7 @@ const handleUncollect = (id) => {
 }
 
 const handleChat = (item) => {
-  ElMessage.info(`与${item.provider}洽谈`)
+  ElMessage.info(`申请${item.provider}的免费体验材料预审服务`)
 }
 
 const goToCollection = () => {

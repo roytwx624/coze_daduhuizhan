@@ -23,11 +23,11 @@
           <p class="live-exhibition">所属展会：{{ item.exhibition }}</p>
           <div class="live-meta">
             <span class="meta-item">
-              <i class="icon">📅</i>
+              <i class="icon"><el-icon><Calendar /></el-icon></i>
               {{ item.startTime }}
             </span>
             <span class="meta-item" v-if="item.duration">
-              <i class="icon">⏱️</i>
+              <i class="icon"><el-icon><Timer /></el-icon></i>
               时长：{{ item.duration }}
             </span>
           </div>
@@ -56,7 +56,7 @@
     </div>
 
     <div class="empty-state" v-else>
-      <div class="empty-icon">📅</div>
+      <div class="empty-icon"><el-icon><Calendar /></el-icon></div>
       <h3>暂无预约记录</h3>
       <p>去视频中心预约感兴趣的直播和活动</p>
       <el-button type="primary" @click="goToVideoCenter">去预约</el-button>
@@ -68,6 +68,11 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Calendar, Timer } from '@element-plus/icons-vue'
+import exhibition1 from '@/assets/images/exhibition/20260122-111812.430-1.jpg'
+import exhibition2 from '@/assets/images/exhibition/20260122-111812.430-2.jpg'
+import exhibition3 from '@/assets/images/exhibition/20260122-111812.430-3.jpg'
+import exhibition4 from '@/assets/images/exhibition/插画展.png'
 
 const router = useRouter()
 
@@ -87,7 +92,7 @@ const loadReservations = () => {
       duration: '2小时',
       status: 'upcoming',
       statusText: '即将开始',
-      cover: 'https://via.placeholder.com/200x120/2563EB/ffffff?text=开幕式直播',
+      cover: exhibition2,
       reserveTime: '2024-01-20 15:30'
     },
     {
@@ -98,7 +103,7 @@ const loadReservations = () => {
       duration: '1.5小时',
       status: 'upcoming',
       statusText: '即将开始',
-      cover: 'https://via.placeholder.com/200x120/204E9C/ffffff?text=论坛直播',
+      cover: exhibition3,
       reserveTime: '2024-01-19 09:15'
     },
     {
@@ -109,7 +114,7 @@ const loadReservations = () => {
       duration: '2.5小时',
       status: 'past',
       statusText: '已结束',
-      cover: 'https://via.placeholder.com/200x120/22c55e/ffffff?text=科博会开幕式',
+      cover: exhibition1,
       reserveTime: '2024-01-10 16:45'
     },
     {
@@ -120,7 +125,7 @@ const loadReservations = () => {
       duration: '1小时',
       status: 'past',
       statusText: '已结束',
-      cover: 'https://via.placeholder.com/200x120/f59e0b/ffffff?text=行业讲座',
+      cover: exhibition4,
       reserveTime: '2024-01-08 11:20'
     }
   ]

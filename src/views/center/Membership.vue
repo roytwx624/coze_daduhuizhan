@@ -10,7 +10,7 @@
         <div class="membership-card" :class="membershipInfo.level.toLowerCase()">
           <div class="card-header">
             <div class="membership-logo">
-              <span class="logo-icon">👑</span>
+              <span class="logo-icon"><el-icon><Trophy /></el-icon></span>
               <div class="membership-title">
                 <h3>{{ membershipInfo.level }}</h3>
                 <p>{{ membershipInfo.levelName }}</p>
@@ -48,7 +48,7 @@
             :class="{ disabled: !benefit.available }"
           >
             <div class="benefit-icon">
-              <span>{{ benefit.icon }}</span>
+              <el-icon><component :is="benefit.icon" /></el-icon>
               <div class="available-badge" v-if="benefit.available">已开通</div>
             </div>
             <div class="benefit-info">
@@ -101,7 +101,7 @@
                 :key="feature"
                 class="feature-item"
               >
-                <i class="check-icon">✓</i>
+                <i class="check-icon"><el-icon><Check /></el-icon></i>
                 <span>{{ feature }}</span>
               </div>
             </div>
@@ -185,6 +185,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Trophy, Money, Ticket, Headphones, Lightning, ChatDotRound, DataAnalysis, Present, Star, Crown, Gift, Check } from '@element-plus/icons-vue'
 
 const membershipInfo = ref({
   level: '铂金会员',
@@ -200,70 +201,70 @@ const benefitsList = ref([
   {
     id: 1,
     name: '专属折扣',
-    icon: '💰',
+    icon: Money,
     description: '展会服务、门票等消费享受专属折扣优惠',
     available: true
   },
   {
     id: 2,
     name: '免费门票',
-    icon: '🎫',
+    icon: Ticket,
     description: '每月可获得2张免费展会门票',
     available: true
   },
   {
     id: 3,
     name: '专属客服',
-    icon: '🎧',
+    icon: Headphones,
     description: '7x24小时专属客服服务',
     available: true
   },
   {
     id: 4,
     name: '优先报名',
-    icon: '⚡',
+    icon: Lightning,
     description: '热门展会优先报名通道',
     available: true
   },
   {
     id: 5,
     name: '免费咨询',
-    icon: '💬',
+    icon: ChatDotRound,
     description: '每月免费咨询5次专业顾问',
     available: true
   },
   {
     id: 6,
     name: '数据报告',
-    icon: '📊',
+    icon: DataAnalysis,
     description: '每月免费获取行业数据报告',
     available: true
   },
   {
     id: 7,
     name: '专属活动',
-    icon: '🎉',
+    icon: Present,
     description: '受邀参加会员专属线下活动',
     available: true
   },
   {
     id: 8,
     name: '积分加倍',
-    icon: '⭐',
+    icon: Star,
     description: '消费积分双倍累积',
     available: true
   },
   {
     id: 9,
     name: 'VIP通道',
-    icon: '👑',
+    icon: Crown,
     description: '展会现场VIP快速通道',
     available: false
   },
   {
     id: 10,
     name: '专属礼遇',
-    icon: '🎁',
+    icon: Gift,
     description: '节日专属礼品赠送',
     available: false
   }

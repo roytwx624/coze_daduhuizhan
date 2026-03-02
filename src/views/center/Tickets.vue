@@ -5,18 +5,59 @@
       <p class="subtitle">数字化管理您的展会入场信息</p>
     </div>
 
-    <div class="tickets-list" v-if="tickets.length > 0">
-      <div v-for="ticket in tickets" :key="ticket.id" class="ticket-card">
+    <!-- 筛选和搜索区域 -->
+    <div class="filter-section">
+      <div class="filter-content">
+        <div class="search-box">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="搜索展会名称"
+            prefix-icon="Search"
+            clearable
+            @input="handleSearch"
+          />
+        </div>
+        <div class="filter-controls">
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            @change="handleDateFilter"
+            style="width: 240px"
+          />
+          <el-select
+            v-model="selectedVenue"
+            placeholder="选择场馆"
+            clearable
+            @change="handleVenueFilter"
+            style="width: 180px"
+          >
+            <el-option
+              v-for="venue in venues"
+              :key="venue"
+              :label="venue"
+              :value="venue"
+            />
+          </el-select>
+          <el-button @click="resetFilters">重置筛选</el-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tickets-list" v-if="filteredTickets.length > 0">
+      <div v-for="ticket in filteredTickets" :key="ticket.id" class="ticket-card">
         <div class="ticket-header">
           <div class="ticket-info">
             <h3 class="exhibition-name">{{ ticket.exhibitionName }}</h3>
             <div class="ticket-meta">
               <span class="meta-item">
-                <i class="icon">📅</i>
+                <i class="icon"><el-icon><Calendar /></el-icon></i>
                 {{ ticket.time }}
               </span>
               <span class="meta-item">
-                <i class="icon">📍</i>
+                <i class="icon"><el-icon><Location /></el-icon></i>
                 {{ ticket.venue }}
               </span>
             </div>
@@ -53,7 +94,7 @@
 
           <div class="ticket-notice">
             <div class="notice-header">
-              <i class="notice-icon">ℹ️</i>
+              <i class="notice-icon"><el-icon><InfoFilled /></el-icon></i>
               <h4>温馨提示</h4>
             </div>
             <p class="notice-content">
@@ -70,22 +111,27 @@
     </div>
 
     <div class="empty-state" v-else>
-      <div class="empty-icon">🎟️</div>
-      <h3>暂无门票</h3>
-      <p>去展会搜索页面注册心仪的展会</p>
+      <div class="empty-icon"><el-icon><Ticket /></el-icon></div>
+      <h3>暂无符合条件的门票</h3>
+      <p v-if="searchKeyword || dateRange || selectedVenue">尝试调整筛选条件</p>
+      <p v-else>去展会搜索页面注册心仪的展会</p>
       <el-button type="primary" @click="goToExhibitionSearch">去找展会</el-button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Calendar, Location, InfoFilled, Ticket, Search } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
 const tickets = ref([])
+const searchKeyword = ref('')
+const dateRange = ref([])
+const selectedVenue = ref('')
 
 onMounted(() => {
   loadTickets()
@@ -126,6 +172,69 @@ const loadTickets = () => {
   ]
 }
 
+// 场馆列表
+const venues = computed(() => {
+  const venueSet = new Set()
+  tickets.value.forEach(ticket => {
+    venueSet.add(ticket.venue)
+  })
+  return Array.from(venueSet)
+})
+
+// 筛选后的门票列表
+const filteredTickets = computed(() => {
+  return tickets.value.filter(ticket => {
+    // 搜索关键词筛选
+    if (searchKeyword.value) {
+      const keyword = searchKeyword.value.toLowerCase()
+      if (!ticket.exhibitionName.toLowerCase().includes(keyword)) {
+        return false
+      }
+    }
+    
+    // 日期范围筛选
+    if (dateRange.value && dateRange.value.length === 2) {
+      const startDate = new Date(dateRange.value[0])
+      const endDate = new Date(dateRange.value[1])
+      const ticketStartDate = new Date(ticket.time.split(' - ')[0])
+      if (ticketStartDate < startDate || ticketStartDate > endDate) {
+        return false
+      }
+    }
+    
+    // 场馆筛选
+    if (selectedVenue.value) {
+      if (ticket.venue !== selectedVenue.value) {
+        return false
+      }
+    }
+    
+    return true
+  })
+})
+
+// 搜索处理
+const handleSearch = () => {
+  console.log('搜索关键词:', searchKeyword.value)
+}
+
+// 日期筛选处理
+const handleDateFilter = () => {
+  console.log('日期范围:', dateRange.value)
+}
+
+// 场馆筛选处理
+const handleVenueFilter = () => {
+  console.log('选择场馆:', selectedVenue.value)
+}
+
+// 重置筛选
+const resetFilters = () => {
+  searchKeyword.value = ''
+  dateRange.value = []
+  selectedVenue.value = ''
+}
+
 const handleViewTicket = (ticket) => {
   ElMessage.info(`查看${ticket.exhibitionName}的门票详情`)
 }
@@ -162,6 +271,67 @@ const goToExhibitionSearch = () => {
     font-size: 16px;
     color: #6b7280;
     margin: 0;
+  }
+}
+
+// 筛选和搜索区域
+.filter-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+
+  .filter-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+
+    .search-box {
+      flex: 1;
+      min-width: 300px;
+
+      :deep(.el-input) {
+        width: 100%;
+      }
+    }
+
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+
+      :deep(.el-date-picker),
+      :deep(.el-select) {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .filter-section {
+    .filter-content {
+      flex-direction: column;
+      align-items: stretch;
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+
+        :deep(.el-date-picker),
+        :deep(.el-select) {
+          width: 100%;
+        }
+      }
+    }
   }
 }
 

@@ -13,7 +13,7 @@
         :class="{ active: activeTab === tab.value }"
         @click="activeTab = tab.value"
       >
-        <span class="tab-icon">{{ tab.icon }}</span>
+        <span class="tab-icon"><el-icon><component :is="tab.icon" /></el-icon></span>
         <span class="tab-label">{{ tab.label }}</span>
         <span v-if="tab.count > 0" class="tab-count">{{ tab.count }}</span>
       </div>
@@ -28,7 +28,7 @@
           :class="item.type"
         >
           <div class="card-header">
-            <div class="benefit-icon">{{ item.icon }}</div>
+            <div class="benefit-icon"><el-icon><component :is="item.icon" /></el-icon></div>
             <el-tag :type="item.tagType" size="small">{{ item.category }}</el-tag>
           </div>
           <div class="card-body">
@@ -36,11 +36,11 @@
             <p class="benefit-desc">{{ item.description }}</p>
             <div class="benefit-meta">
               <span class="meta-item">
-                <i class="icon">📅</i>
+                <i class="icon"><el-icon><Calendar /></el-icon></i>
                 有效期至：{{ item.expiryDate }}
               </span>
               <span class="meta-item" v-if="item.quantity">
-                <i class="icon">🎟️</i>
+                <i class="icon"><el-icon><TicketIcon /></el-icon></i>
                 数量：{{ item.quantity }}
               </span>
             </div>
@@ -59,7 +59,7 @@
           class="benefit-card used"
         >
           <div class="card-header">
-            <div class="benefit-icon">{{ item.icon }}</div>
+            <div class="benefit-icon"><el-icon><component :is="item.icon" /></el-icon></div>
             <el-tag type="info" size="small">{{ item.category }}</el-tag>
           </div>
           <div class="card-body">
@@ -67,7 +67,7 @@
             <p class="benefit-desc">{{ item.description }}</p>
             <div class="benefit-meta">
               <span class="meta-item">
-                <i class="icon">📅</i>
+                <i class="icon"><el-icon><Clock /></el-icon></i>
                 使用时间：{{ item.useTime }}
               </span>
             </div>
@@ -85,15 +85,15 @@
           class="benefit-card expired"
         >
           <div class="card-header">
-            <div class="benefit-icon">{{ item.icon }}</div>
-            <el-tag type="warning" size="small">{{ item.category }}</el-tag>
+            <div class="benefit-icon"><el-icon><component :is="item.icon" /></el-icon></div>
+            <el-tag type="danger" size="small">{{ item.category }}</el-tag>
           </div>
           <div class="card-body">
             <h3 class="benefit-name">{{ item.name }}</h3>
             <p class="benefit-desc">{{ item.description }}</p>
             <div class="benefit-meta">
               <span class="meta-item">
-                <i class="icon">📅</i>
+                <i class="icon"><el-icon><Calendar /></el-icon></i>
                 过期时间：{{ item.expiryDate }}
               </span>
             </div>
@@ -112,7 +112,7 @@
           :class="item.status"
         >
           <div class="card-header">
-            <div class="benefit-icon">{{ item.icon }}</div>
+            <div class="benefit-icon"><el-icon><component :is="item.icon" /></el-icon></div>
             <el-tag :type="getTagType(item.status)" size="small">{{ item.category }}</el-tag>
           </div>
           <div class="card-body">
@@ -120,11 +120,11 @@
             <p class="benefit-desc">{{ item.description }}</p>
             <div class="benefit-meta">
               <span class="meta-item">
-                <i class="icon">📅</i>
+                <i class="icon"><el-icon><Calendar /></el-icon></i>
                 有效期至：{{ item.expiryDate }}
               </span>
               <span v-if="item.status === 'used'" class="meta-item">
-                <i class="icon">⏰</i>
+                <i class="icon"><el-icon><Clock /></el-icon></i>
                 使用时间：{{ item.useTime }}
               </span>
             </div>
@@ -149,7 +149,7 @@
     <el-dialog v-model="detailVisible" title="权益说明" width="600px">
       <div v-if="selectedBenefit" class="benefit-detail">
         <div class="detail-header">
-          <div class="detail-icon">{{ selectedBenefit.icon }}</div>
+          <div class="detail-icon"><el-icon><component :is="selectedBenefit.icon" /></el-icon></div>
           <div class="detail-info">
             <h3>{{ selectedBenefit.name }}</h3>
             <el-tag :type="selectedBenefit.tagType">{{ selectedBenefit.category }}</el-tag>
@@ -171,16 +171,17 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Present, Check, Timer, Document, Van, Ticket, Ticket as TicketIcon, Clock, Calendar, ShoppingCart, OfficeBuilding } from '@element-plus/icons-vue'
 
 const activeTab = ref('unused')
 const detailVisible = ref(false)
 const selectedBenefit = ref(null)
 
 const tabs = [
-  { label: '未使用', value: 'unused', icon: '🎁', count: 3 },
-  { label: '已使用', value: 'used', icon: '✅', count: 2 },
-  { label: '已过期', value: 'expired', icon: '⏰', count: 1 },
-  { label: '全部', value: 'all', icon: '📋', count: 6 }
+  { label: '未使用', value: 'unused', icon: Present, count: 3 },
+  { label: '已使用', value: 'used', icon: Check, count: 2 },
+  { label: '已过期', value: 'expired', icon: Timer, count: 1 },
+  { label: '全部', value: 'all', icon: Document, count: 6 }
 ]
 
 const unusedBenefits = ref([])
@@ -201,7 +202,7 @@ const loadBenefits = () => {
       id: 1,
       name: '免费地铁乘车码',
       description: '可免费乘坐地铁5次',
-      icon: '🚇',
+      icon: Van,
       category: '出行福利',
       tagType: 'success',
       quantity: 5,
@@ -213,7 +214,7 @@ const loadBenefits = () => {
       id: 2,
       name: '展会VIP入场券',
       description: '优先通道入场，专属休息区',
-      icon: '🎟️',
+      icon: Ticket,
       category: '展会权益',
       tagType: 'primary',
       quantity: 2,
@@ -225,7 +226,7 @@ const loadBenefits = () => {
       id: 3,
       name: '服务商优惠券',
       description: '展会服务满1000减200',
-      icon: '🎫',
+      icon: ShoppingCart,
       category: '优惠劵',
       tagType: 'warning',
       quantity: 1,
@@ -240,7 +241,7 @@ const loadBenefits = () => {
       id: 4,
       name: '免费停车券',
       description: '停车场2小时免费停车',
-      icon: '🅿️',
+      icon: Van,
       category: '出行福利',
       quantity: 1,
       expiryDate: '2024-01-15',
@@ -252,7 +253,7 @@ const loadBenefits = () => {
       id: 5,
       name: '会员专享折扣',
       description: '酒店预订85折优惠',
-      icon: '🏨',
+      icon: OfficeBuilding,
       category: '酒店优惠',
       quantity: 1,
       expiryDate: '2024-01-20',
@@ -267,7 +268,7 @@ const loadBenefits = () => {
       id: 6,
       name: '新年礼包',
       description: '包含展会纪念品和优惠券',
-      icon: '🎁',
+      icon: Present,
       category: '节日福利',
       quantity: 1,
       expiryDate: '2024-01-01',

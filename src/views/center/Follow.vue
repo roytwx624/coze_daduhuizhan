@@ -6,7 +6,7 @@
     </div>
 
     <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-      <el-tab-pane label="展会与活动" name="exhibition">
+      <el-tab-pane label="展会" name="exhibition">
         <div class="follow-list" v-if="exhibitionFollows.length > 0">
           <div
             v-for="item in exhibitionFollows"
@@ -25,11 +25,11 @@
               </div>
               <div class="item-meta">
                 <span class="meta-item">
-                  <i class="icon">📅</i>
+                  <i class="icon"><el-icon><Calendar /></el-icon></i>
                   {{ item.time }}
                 </span>
                 <span class="meta-item">
-                  <i class="icon">📍</i>
+                  <i class="icon"><el-icon><Location /></el-icon></i>
                   {{ item.venue }}
                 </span>
               </div>
@@ -46,7 +46,7 @@
           </div>
         </div>
         <div class="empty-state" v-else>
-          <div class="empty-icon">🎪</div>
+          <div class="empty-icon"><el-icon><Calendar /></el-icon></div>
           <h3>暂无关注的展会</h3>
           <p>去展会搜索页面发现更多精彩展会</p>
           <el-button type="primary" @click="goToExhibitionSearch">去看看</el-button>
@@ -72,11 +72,11 @@
               </div>
               <div class="item-meta">
                 <span class="meta-item">
-                  <i class="icon">📍</i>
+                  <i class="icon"><el-icon><Place /></el-icon></i>
                   {{ item.address }}
                 </span>
                 <span class="meta-item">
-                  <i class="icon">📏</i>
+                  <i class="icon"><el-icon><Box /></el-icon></i>
                   {{ item.area }}
                 </span>
               </div>
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="empty-state" v-else>
-          <div class="empty-icon">🏟️</div>
+          <div class="empty-icon"><el-icon><OfficeBuilding /></el-icon></div>
           <h3>暂无关注的场馆</h3>
           <p>去场馆搜索页面寻找心仪场馆</p>
           <el-button type="primary" @click="goToVenueSearch">去看看</el-button>
@@ -113,15 +113,15 @@
             <div class="item-info">
               <div class="item-header">
                 <h3 class="item-name">{{ item.name }}</h3>
-                <div class="item-rating">⭐ {{ item.rating }}</div>
+                <div class="item-rating"><el-icon><Star /></el-icon> {{ item.rating }}</div>
               </div>
               <div class="item-meta">
                 <span class="meta-item">
-                  <i class="icon">🏢</i>
+                  <i class="icon"><el-icon><OfficeBuilding /></el-icon></i>
                   {{ item.type }}
                 </span>
                 <span class="meta-item">
-                  <i class="icon">📦</i>
+                  <i class="icon"><el-icon><Box /></el-icon></i>
                   成交 {{ item.orders }} 单
                 </span>
               </div>
@@ -144,7 +144,7 @@
           </div>
         </div>
         <div class="empty-state" v-else>
-          <div class="empty-icon">👥</div>
+          <div class="empty-icon"><el-icon><Box /></el-icon></div>
           <h3>暂无关注的服务商</h3>
           <p>去展会服务页面找到优质服务商</p>
           <el-button type="primary" @click="goToServiceSearch">去看看</el-button>
@@ -158,6 +158,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Calendar, Location, Place, OfficeBuilding, Box, Star } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
@@ -176,7 +177,7 @@ const loadFollows = () => {
     {
       id: 1,
       name: '第三十七届制冷展',
-      cover: 'https://via.placeholder.com/120x120/2563EB/ffffff?text=制冷展',
+      cover: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop',
       time: '2024-03-15 - 03-18',
       venue: '国家会议中心',
       updates: [
@@ -187,7 +188,7 @@ const loadFollows = () => {
     {
       id: 2,
       name: '第66届中国特许加盟展',
-      cover: 'https://via.placeholder.com/120x120/204E9C/ffffff?text=加盟展',
+      cover: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop',
       time: '2024-04-20 - 04-22',
       venue: '北京展览馆',
       updates: [
@@ -201,7 +202,7 @@ const loadFollows = () => {
     {
       id: 1,
       name: '国家会议中心',
-      cover: 'https://via.placeholder.com/120x120/22c55e/ffffff?text=国家会议中心',
+      cover: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop',
       address: '北京市朝阳区天辰东路7号',
       area: '27万㎡',
       updates: [

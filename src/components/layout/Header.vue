@@ -363,9 +363,13 @@ const handleCommand = (command) => {
 }
 
 .message-badge {
+  position: relative;
+  
   :deep(.el-badge__content) {
     background: #DC2626;
     border: none;
+    top: -2px;
+    right: -2px;
   }
 }
 

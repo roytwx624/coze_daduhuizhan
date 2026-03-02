@@ -109,7 +109,7 @@
     </div>
 
     <div class="empty-state" v-else>
-      <div class="empty-icon">📦</div>
+      <div class="empty-icon"><el-icon><ShoppingCart /></el-icon></div>
       <h3>暂无订单</h3>
       <p>去发现更多优质服务和产品</p>
       <el-button type="primary" @click="goToHome">回到首页</el-button>
@@ -121,6 +121,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { ShoppingCart } from '@element-plus/icons-vue'
 
 const router = useRouter()
 

@@ -101,7 +101,7 @@
                   <img :src="msg.image" alt="消息图片" />
                 </div>
                 <div class="message-file" v-if="msg.file">
-                  <i class="icon">📎</i>
+                  <i class="icon"><el-icon><Paperclip /></el-icon></i>
                   <span>{{ msg.fileName }}</span>
                   <el-button size="small" type="text" @click="downloadFile(msg.file)">下载</el-button>
                 </div>
@@ -155,7 +155,7 @@
       </div>
 
       <div class="chat-placeholder" v-else>
-        <div class="placeholder-icon">💬</div>
+        <div class="placeholder-icon"><el-icon><ChatLineSquare /></el-icon></div>
         <h3>选择一个会话开始聊天</h3>
         <p>与服务商实时沟通，快速解决问题</p>
       </div>
@@ -191,7 +191,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Promotion } from '@element-plus/icons-vue'
+import { Promotion, ChatLineSquare, Paperclip } from '@element-plus/icons-vue'
 
 const searchKeyword = ref('')
 const selectedConversation = ref(null)

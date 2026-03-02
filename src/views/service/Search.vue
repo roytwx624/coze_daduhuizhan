@@ -301,6 +301,10 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, OfficeBuilding, Document, Star, ShoppingCart, Clock, ChatLineSquare } from '@element-plus/icons-vue'
 import { services } from '@/data/mockData'
+import exhibition1 from '@/assets/images/exhibition/20260122-111812.430-1.jpg'
+import exhibition2 from '@/assets/images/exhibition/20260122-111812.430-2.jpg'
+import exhibition3 from '@/assets/images/exhibition/20260122-111812.430-3.jpg'
+import exhibition4 from '@/assets/images/exhibition/插画展.png'
 
 const router = useRouter()
 
@@ -367,7 +371,7 @@ const regionOptions = [
 
 const serviceData = ref([])
 const recommendedServices = ref([])
-const defaultServiceImage = 'https://via.placeholder.com/200x150?text=服务图片'
+const defaultServiceImage = exhibition1
 
 onMounted(() => {
   serviceData.value = services || []

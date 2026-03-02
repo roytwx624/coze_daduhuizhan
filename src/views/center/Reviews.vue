@@ -50,9 +50,7 @@
             </div>
           </div>
           <div class="review-rating">
-            <span v-for="i in 5" :key="i" class="star" :class="{ filled: i <= review.rating }">
-              ⭐
-            </span>
+            <el-rate v-model="review.rating" disabled :max="5" show-score="false" />
           </div>
         </div>
 
@@ -98,7 +96,7 @@
     </div>
 
     <div class="empty-state" v-else>
-      <div class="empty-icon">💬</div>
+      <div class="empty-icon"><el-icon><ChatLineSquare /></el-icon></div>
       <h3>暂无评价记录</h3>
       <p>去订单页面对已完成的订单进行评价</p>
       <el-button type="primary" @click="goToOrders">去评价</el-button>
@@ -140,6 +138,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { ChatLineSquare, Star } from '@element-plus/icons-vue'
+import exhibition1 from '@/assets/images/exhibition/20260122-111812.430-1.jpg'
+import exhibition2 from '@/assets/images/exhibition/20260122-111812.430-2.jpg'
+import exhibition3 from '@/assets/images/exhibition/20260122-111812.430-3.jpg'
+import exhibition4 from '@/assets/images/exhibition/插画展.png'
 
 const router = useRouter()
 
@@ -185,8 +188,8 @@ const loadReviews = () => {
       content: '服务非常专业，搭建质量很好，按时完成交付，值得推荐！',
       reviewTime: '2024-01-20 14:30',
       images: [
-        'https://via.placeholder.com/120x120/2563EB/ffffff?text=图片1',
-        'https://via.placeholder.com/120x120/204E9C/ffffff?text=图片2'
+        exhibition1,
+        exhibition2
       ],
       targetName: '北京某某展览展示有限公司',
       targetType: '展会服务',

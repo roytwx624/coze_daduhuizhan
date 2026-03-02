@@ -284,6 +284,13 @@ const goToSettings = () => {
 
       .badge {
         margin-left: auto;
+        display: flex;
+        align-items: center;
+        :deep(.el-badge__content) {
+          position: relative;
+          top: -1px;
+          transform: translateY(0);
+        }
       }
     }
   }
